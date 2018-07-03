@@ -98,6 +98,7 @@ public class MnemonicServiceImpl implements MnemonicService {
             }
         }
 
+        decrypt(rsp.getId(), req.getPassword());
 
         return rsp;
     }
