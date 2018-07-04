@@ -11,20 +11,24 @@ package com.sharingif.blockchain.crypto.api.mnemonic;
 public class MnemonicGenerateRsp {
 
     /**
-     * 唯一编号
+     * 助记词唯一编号
      */
-    private String id;
+    private String mnemonicId;
     /**
      * 助记词
      */
     private String mnemonic;
+    /**
+     * 生成助记词存放文件名
+     */
+    private String fileName;
 
-    public String getId() {
-        return id;
+    public String getMnemonicId() {
+        return mnemonicId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setMnemonicId(String mnemonicId) {
+        this.mnemonicId = mnemonicId;
     }
 
     public String getMnemonic() {
@@ -35,12 +39,11 @@ public class MnemonicGenerateRsp {
         this.mnemonic = mnemonic;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("MnemonicGenerateRsp{");
-        sb.append("id='").append(id).append('\'');
-        sb.append(", mnemonic='").append(mnemonic).append('\'');
-        sb.append('}');
-        return sb.toString();
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

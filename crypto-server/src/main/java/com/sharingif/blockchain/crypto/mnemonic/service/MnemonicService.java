@@ -20,20 +20,4 @@ public interface MnemonicService {
      */
     MnemonicGenerateRsp generate(MnemonicGenerateReq req);
 
-    /**
-     * 加密种子
-     * @param mnemonic
-     * @param password
-     * @return
-     */
-    String encrypt(String mnemonic, String password);
-
-    /**
-     * 解密种子
-     * @param id : 种子sha256后的值
-     * @param password
-     * @return
-     */
-    String decrypt(String id, String password);
-
 }
