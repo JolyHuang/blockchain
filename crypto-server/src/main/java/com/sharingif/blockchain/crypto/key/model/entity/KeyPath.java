@@ -52,28 +52,24 @@ public class KeyPath {
             bitcoinjParentPath = bitcoinjPathStringBuilder.toString();
             stringBuilder.append("/").append(req.getCoinType()).append("'");
             bitcoinjPathStringBuilder.append("/").append(req.getCoinType()).append("H");
-            return;
         }
         if(req.getAccount() != null) {
             parentPath = stringBuilder.toString();
             bitcoinjParentPath = bitcoinjPathStringBuilder.toString();
             stringBuilder.append("/").append(req.getAccount()).append("'");
             bitcoinjPathStringBuilder.append("/").append(req.getAccount()).append("H");
-            return;
         }
         if(req.getChange() != null) {
             parentPath = stringBuilder.toString();
             bitcoinjParentPath = bitcoinjPathStringBuilder.toString();
             stringBuilder.append("/").append(req.getChange());
             bitcoinjPathStringBuilder.append("/").append(req.getChange());
-            return;
         }
         if(req.getAddressIndex() != null) {
             parentPath = stringBuilder.toString();
             bitcoinjParentPath = bitcoinjPathStringBuilder.toString();
             stringBuilder.append("/").append(req.getAddressIndex());
             bitcoinjPathStringBuilder.append("/").append(req.getAddressIndex());
-            return;
         }
 
         path = stringBuilder.toString();

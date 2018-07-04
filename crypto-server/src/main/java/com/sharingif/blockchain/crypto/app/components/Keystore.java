@@ -40,14 +40,14 @@ public class Keystore {
         return keyRootPath;
     }
 
-    public String encrypt(String mnemonic, String password) {
+    public String encrypt(String text, String password) {
 
         byte[] passwordBytes = getUTF8Bytes(password);
         byte[] keysByte = sha256Encryptor.encrypt(passwordBytes);
 
         AESECBEncryptor encryptor = new AESECBEncryptor(keysByte, base64Coder);
 
-        return encryptor.encrypt(mnemonic);
+        return encryptor.encrypt(text);
     }
 
     public String decrypt(String filePath, String fileName, String password) {
@@ -110,7 +110,7 @@ public class Keystore {
         }
 
         // 加密文本
-        String encryptText = encrypt(password, text);
+        String encryptText = encrypt(text, password);
 
         // 生成保存文件路径
         filePath = filePathStringBuilder.toString();

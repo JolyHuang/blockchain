@@ -17,15 +17,15 @@ public class BIP44ChangeReq {
     /**
      * 币种
      */
-    private String coinType;
+    private Integer coinType;
     /**
      * 账号
      */
-    private String account;
+    private Integer account;
     /**
      * 零钱
      */
-    private String change;
+    private Integer change;
     /**
      * 助记词密码
      */
@@ -47,27 +47,27 @@ public class BIP44ChangeReq {
         this.mnemonicId = mnemonicId;
     }
 
-    public String getCoinType() {
+    public Integer getCoinType() {
         return coinType;
     }
 
-    public void setCoinType(String coinType) {
+    public void setCoinType(Integer coinType) {
         this.coinType = coinType;
     }
 
-    public String getAccount() {
+    public Integer getAccount() {
         return account;
     }
 
-    public void setAccount(String account) {
+    public void setAccount(Integer account) {
         this.account = account;
     }
 
-    public String getChange() {
+    public Integer getChange() {
         return change;
     }
 
-    public void setChange(String change) {
+    public void setChange(Integer change) {
         this.change = change;
     }
 
@@ -99,9 +99,9 @@ public class BIP44ChangeReq {
     public String toString() {
         final StringBuilder sb = new StringBuilder("BIP44ChangeReq{");
         sb.append("mnemonicId='").append(mnemonicId).append('\'');
-        sb.append(", coinType='").append(coinType).append('\'');
-        sb.append(", account='").append(account).append('\'');
-        sb.append(", change='").append(change).append('\'');
+        sb.append(", coinType=").append(coinType);
+        sb.append(", account=").append(account);
+        sb.append(", change=").append(change);
         sb.append(", mnemonicPassword='").append(mnemonicPassword).append('\'');
         sb.append(", mnemonicFileName='").append(mnemonicFileName).append('\'');
         sb.append(", password='").append(password).append('\'');

@@ -10,7 +10,7 @@ package com.sharingif.blockchain.crypto.api.key;
  */
 public class BIP44GenerateReq {
 
-    public static final String COIN_TYPE_ETH = "60";
+    public static final int COIN_TYPE_ETH = 60;
 
     /**
      * 助记词唯一编号
@@ -19,19 +19,19 @@ public class BIP44GenerateReq {
     /**
      * 币种
      */
-    private String coinType;
+    private Integer coinType;
     /**
      * 账号
      */
-    private String account;
+    private Integer account;
     /**
      * 零钱
      */
-    private String change;
+    private Integer change;
     /**
      * 地址索引
      */
-    private String addressIndex;
+    private Integer addressIndex;
     /**
      * 上级密码
      */
@@ -49,35 +49,35 @@ public class BIP44GenerateReq {
         this.mnemonicId = mnemonicId;
     }
 
-    public String getCoinType() {
+    public Integer getCoinType() {
         return coinType;
     }
 
-    public void setCoinType(String coinType) {
+    public void setCoinType(Integer coinType) {
         this.coinType = coinType;
     }
 
-    public String getAccount() {
+    public Integer getAccount() {
         return account;
     }
 
-    public void setAccount(String account) {
+    public void setAccount(Integer account) {
         this.account = account;
     }
 
-    public String getChange() {
+    public Integer getChange() {
         return change;
     }
 
-    public void setChange(String change) {
+    public void setChange(Integer change) {
         this.change = change;
     }
 
-    public String getAddressIndex() {
+    public Integer getAddressIndex() {
         return addressIndex;
     }
 
-    public void setAddressIndex(String addressIndex) {
+    public void setAddressIndex(Integer addressIndex) {
         this.addressIndex = addressIndex;
     }
 
@@ -95,5 +95,19 @@ public class BIP44GenerateReq {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("BIP44GenerateReq{");
+        sb.append("mnemonicId='").append(mnemonicId).append('\'');
+        sb.append(", coinType=").append(coinType);
+        sb.append(", account=").append(account);
+        sb.append(", change=").append(change);
+        sb.append(", addressIndex=").append(addressIndex);
+        sb.append(", parentPassword='").append(parentPassword).append('\'');
+        sb.append(", password='").append(password).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -7,6 +7,7 @@ import com.sharingif.blockchain.crypto.app.components.Keystore;
 import com.sharingif.blockchain.crypto.mnemonic.service.MnemonicService;
 import com.sharingif.cube.core.exception.validation.ValidationCubeException;
 import com.sharingif.cube.core.util.UUIDUtils;
+import com.sharingif.cube.security.confidentiality.encrypt.digest.SHA256Encryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,10 +28,16 @@ public class MnemonicServiceImpl implements MnemonicService {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Keystore keystore;
+    private SHA256Encryptor sha256Encryptor;
 
     @Resource
     public void setKeystore(Keystore keystore) {
         this.keystore = keystore;
+    }
+
+    @Resource
+    public void setSha256Encryptor(SHA256Encryptor sha256Encryptor) {
+        this.sha256Encryptor = sha256Encryptor;
     }
 
     @Override
@@ -41,7 +48,7 @@ public class MnemonicServiceImpl implements MnemonicService {
         // 生成返回对象
         MnemonicGenerateRsp rsp = new MnemonicGenerateRsp();
         rsp.setMnemonicId(UUIDUtils.generateUUID());
-        rsp.setFileName(new StringBuilder(rsp.getMnemonicId()).append(".").append(Keystore.MNEMONIC_FILE_POSTFIX).toString());
+        rsp.setFileName(sha256Encryptor.encrypt(mnemonic.getMnemonic()));
         rsp.setMnemonic(mnemonic.getMnemonic());
 
         // 助记词加密存储

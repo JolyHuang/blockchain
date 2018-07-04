@@ -6,6 +6,7 @@ import com.sharingif.blockchain.crypto.key.model.entity.KeyPath;
 import com.sharingif.blockchain.crypto.key.service.BIP44Service;
 import com.sharingif.cube.core.exception.validation.ValidationCubeException;
 import com.sharingif.cube.core.util.UUIDUtils;
+import com.sharingif.cube.security.confidentiality.encrypt.digest.SHA256Encryptor;
 import org.bitcoinj.crypto.*;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.DeterministicKeyChain;
@@ -35,10 +36,16 @@ public class BIP44ServiceImpl implements BIP44Service {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Keystore keystore;
+    private SHA256Encryptor sha256Encryptor;
 
     @Resource
     public void setKeystore(Keystore keystore) {
         this.keystore = keystore;
+    }
+
+    @Resource
+    public void setSha256Encryptor(SHA256Encryptor sha256Encryptor) {
+        this.sha256Encryptor = sha256Encryptor;
     }
 
     @Override
@@ -61,12 +68,12 @@ public class BIP44ServiceImpl implements BIP44Service {
         DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
         List<ChildNumber> childNumberList = HDUtils.parsePath(keyPath.getBitcoinjPath());
         DeterministicKey changeDeterministicKey = chain.getKeyByPath(childNumberList, true);
+        String deterministicKeyStr = changeDeterministicKey.serializePrivB58(MainNetParams.get());
 
         BIP44ChangeRsp bip44ChangeRsp = new BIP44ChangeRsp();
         bip44ChangeRsp.setExtendedKeyId(UUIDUtils.generateUUID());
-        bip44ChangeRsp.setFileName(new StringBuilder(bip44ChangeRsp.getExtendedKeyId()).append(".").append(Keystore.EXTENDEDKEY_FILE_POSTFIX).toString());
+        bip44ChangeRsp.setFileName(sha256Encryptor.encrypt(deterministicKeyStr));
 
-        String deterministicKeyStr = changeDeterministicKey.serializePrivB58(MainNetParams.get());
         keystore.persistenceExtendedKey(req.getMnemonicId(), keyPath.getPath(), bip44ChangeRsp.getFileName(), deterministicKeyStr, req.getPassword());
 
 
@@ -81,11 +88,11 @@ public class BIP44ServiceImpl implements BIP44Service {
         DeterministicKey changeDeterministicKey = DeterministicKey.deserializeB58(changeDeterministicKeyBase58, MainNetParams.get());
         changeDeterministicKey = new DeterministicKey(HDUtils.append(HDUtils.parsePath(keyPath.getBitcoinjParentPath()), ChildNumber.ZERO), changeDeterministicKey.getChainCode(), changeDeterministicKey.getPrivKey(), changeDeterministicKey);
 
-        DeterministicKey addressIndexDeterministicKey = HDKeyDerivation.deriveChildKey(changeDeterministicKey, new ChildNumber(0, false));
+        DeterministicKey addressIndexDeterministicKey = HDKeyDerivation.deriveChildKey(changeDeterministicKey, new ChildNumber(req.getAddressIndex(), false));
 
         BIP44AddressIndexRsp bip44AddressIndexRsp = new BIP44AddressIndexRsp();
         bip44AddressIndexRsp.setKeyId(UUIDUtils.generateUUID());
-        if(BIP44GenerateReq.COIN_TYPE_ETH.equals(req.getCoinType())) {
+        if(BIP44GenerateReq.COIN_TYPE_ETH == req.getCoinType()) {
             ECKeyPair ecKeyPair = ECKeyPair.create(addressIndexDeterministicKey.getPrivKey());
             Credentials credentials = Credentials.create(ecKeyPair);
             bip44AddressIndexRsp.setAddress(credentials.getAddress());
@@ -96,6 +103,12 @@ public class BIP44ServiceImpl implements BIP44Service {
                         .append("/").append(keyPath.getPath())
                         .toString()
                 );
+
+                if(!(filePath.mkdirs())) {
+                    logger.error("create directory error, path:{}", filePath);
+                    throw new ValidationCubeException("generate addressIndex key error");
+                }
+
                 String fileName = WalletUtils.generateWalletFile(req.getPassword(), ecKeyPair, filePath, true);
                 bip44AddressIndexRsp.setFileName(fileName);
             } catch (IOException | CipherException e) {
