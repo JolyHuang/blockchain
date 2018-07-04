@@ -2,6 +2,7 @@ package com.sharingif.blockchain.crypto.key.service.impl;
 
 import com.sharingif.blockchain.crypto.api.key.*;
 import com.sharingif.blockchain.crypto.app.components.Keystore;
+import com.sharingif.blockchain.crypto.app.constants.ErrorConstants;
 import com.sharingif.blockchain.crypto.key.model.entity.KeyPath;
 import com.sharingif.blockchain.crypto.key.service.BIP44Service;
 import com.sharingif.cube.core.exception.validation.ValidationCubeException;
@@ -63,7 +64,7 @@ public class BIP44ServiceImpl implements BIP44Service {
         try {
             seed = new DeterministicSeed(mnemonic, null, "", MnemonicCode.BIP39_STANDARDISATION_TIME_SECS);
         } catch (UnreadableWalletException e) {
-            throw new RuntimeException("generate change error", e);
+            throw new RuntimeException(ErrorConstants.GENERATE_CHANGE_ERROR, e);
         }
         DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
         List<ChildNumber> childNumberList = HDUtils.parsePath(keyPath.getBitcoinjPath());
@@ -106,14 +107,14 @@ public class BIP44ServiceImpl implements BIP44Service {
 
                 if(!(filePath.mkdirs())) {
                     logger.error("create directory error, path:{}", filePath);
-                    throw new ValidationCubeException("generate addressIndex key error");
+                    throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
                 }
 
                 String fileName = WalletUtils.generateWalletFile(req.getPassword(), ecKeyPair, filePath, true);
                 bip44AddressIndexRsp.setFileName(fileName);
             } catch (IOException | CipherException e) {
                 logger.error("generate addressIndex key error", e);
-                throw new ValidationCubeException("generate addressIndex key error");
+                throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
             }
         }
 

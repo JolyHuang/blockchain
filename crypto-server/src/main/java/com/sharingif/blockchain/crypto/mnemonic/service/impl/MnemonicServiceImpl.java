@@ -4,6 +4,7 @@ import com.sharingif.bips.bip0032.Mnemonic;
 import com.sharingif.blockchain.crypto.api.mnemonic.MnemonicGenerateReq;
 import com.sharingif.blockchain.crypto.api.mnemonic.MnemonicGenerateRsp;
 import com.sharingif.blockchain.crypto.app.components.Keystore;
+import com.sharingif.blockchain.crypto.app.constants.ErrorConstants;
 import com.sharingif.blockchain.crypto.mnemonic.service.MnemonicService;
 import com.sharingif.cube.core.exception.validation.ValidationCubeException;
 import com.sharingif.cube.core.util.UUIDUtils;
@@ -55,7 +56,7 @@ public class MnemonicServiceImpl implements MnemonicService {
         try {
             keystore.persistence(rsp.getMnemonicId(), rsp.getFileName(), mnemonic.getMnemonic(), req.getPassword());
         } catch (Exception e) {
-            throw new ValidationCubeException("generate mnemonic error");
+            throw new ValidationCubeException(ErrorConstants.GENERATE_MNEMONIC_ERROR);
         }
 
         return rsp;
