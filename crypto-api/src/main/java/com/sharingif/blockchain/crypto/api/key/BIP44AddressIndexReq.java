@@ -37,7 +37,7 @@ public class BIP44AddressIndexReq {
     /**
      * change扩展密钥文件名
      */
-    private String changeExtendedKeyFileName;
+    private String changeExtendedKeyFilePath;
     /**
      * 密码
      */
@@ -91,12 +91,12 @@ public class BIP44AddressIndexReq {
         this.changeExtendedKeyPassword = changeExtendedKeyPassword;
     }
 
-    public String getChangeExtendedKeyFileName() {
-        return changeExtendedKeyFileName;
+    public String getChangeExtendedKeyFilePath() {
+        return changeExtendedKeyFilePath;
     }
 
-    public void setChangeExtendedKeyFileName(String changeExtendedKeyFileName) {
-        this.changeExtendedKeyFileName = changeExtendedKeyFileName;
+    public void setChangeExtendedKeyFilePath(String changeExtendedKeyFilePath) {
+        this.changeExtendedKeyFilePath = changeExtendedKeyFilePath;
     }
 
     public String getPassword() {
@@ -116,7 +116,7 @@ public class BIP44AddressIndexReq {
         sb.append(", change=").append(change);
         sb.append(", addressIndex=").append(addressIndex);
         sb.append(", changeExtendedKeyPassword='").append(changeExtendedKeyPassword).append('\'');
-        sb.append(", changeExtendedKeyFileName='").append(changeExtendedKeyFileName).append('\'');
+        sb.append(", changeExtendedKeyFilePath='").append(changeExtendedKeyFilePath).append('\'');
         sb.append(", password='").append(password).append('\'');
         sb.append('}');
         return sb.toString();

@@ -50,21 +50,16 @@ public class Keystore {
         return encryptor.encrypt(text);
     }
 
-    public String decrypt(String filePath, String fileName, String password) {
+    public String decrypt(String filePath, String password) {
 
-        StringBuilder fileNamePathStringBuilder = new StringBuilder(keyRootPath);
-        if(!StringUtils.isTrimEmpty(filePath)) {
-            fileNamePathStringBuilder.append("/").append(filePath);
-        }
-        fileNamePathStringBuilder.append("/").append(fileName);
-        String fileNamePath = fileNamePathStringBuilder.toString();
+        filePath = new StringBuilder(keyRootPath).append("/").append(filePath).toString();
 
-        File file = new File(fileNamePath);
-        Long fileLength = file.length();
+        File filePathFile = new File(filePath);
+        Long fileLength = filePathFile.length();
         byte[] mnemonicByte = new byte[fileLength.intValue()];
         FileInputStream in = null;
         try {
-            in = new FileInputStream(file);
+            in = new FileInputStream(filePathFile);
             in.read(mnemonicByte);
         } catch (IOException e) {
             logger.error("read file error", e);
@@ -90,51 +85,51 @@ public class Keystore {
         // 生成文件名
         String mnemonicSha256 = sha256Encryptor.encrypt(mnemonic);
 
-        if(!(fileName.equals(mnemonicSha256))) {
+        if(!(filePathFile.getName().equals(mnemonicSha256))) {
             throw new ValidationCubeException("password error");
         }
 
         return mnemonic;
     }
 
-    public void persistenceExtendedKey(String mnemonicId, String keyPath, String fileName, String text, String password) {
-        String filePath = new StringBuilder(mnemonicId).append("/").append(keyPath).toString();
-        persistence(filePath, fileName, text, password);
+    public String persistenceExtendedKey(String mnemonicId, String keyPath, String fileName, String text, String password) {
+        String directory = new StringBuilder(mnemonicId).append("/").append(keyPath).toString();
+        return persistence(directory, fileName, text, password);
     }
 
-    public void persistence(String filePath, String fileName, String text, String password) {
+    public String persistence(String directory, String fileName, String text, String password) {
 
-        StringBuilder filePathStringBuilder = new StringBuilder(keyRootPath);
-        if(!StringUtils.isTrimEmpty(filePath)) {
-            filePathStringBuilder.append("/").append(filePath);
+        StringBuilder directoryStringBuilder = new StringBuilder(keyRootPath);
+        if(!StringUtils.isTrimEmpty(directory)) {
+            directoryStringBuilder.append("/").append(directory);
         }
 
         // 加密文本
         String encryptText = encrypt(text, password);
 
         // 生成保存文件路径
-        filePath = filePathStringBuilder.toString();
-        File filePathFile = new File(filePath);
-        if(!(filePathFile.mkdirs())) {
-            logger.error("create directory error, path:{}", filePath);
+        directory = directoryStringBuilder.toString();
+        File directoryFile = new File(directory);
+        if(!(directoryFile.mkdirs())) {
+            logger.error("create directory error, directory:{}", directoryFile);
             throw new ValidationCubeException("create directory error");
         }
-        String fileNamePath = filePathStringBuilder.append("/").append(fileName).toString();
-        File fileNamePathFile = new File(fileNamePath);
+        String filePathStr = directoryStringBuilder.append("/").append(fileName).toString();
+        File filePath = new File(filePathStr);
         try {
-            fileNamePathFile.createNewFile();
+            filePath.createNewFile();
         } catch (IOException e) {
-            logger.error("create file error, file name:{}", fileNamePath);
+            logger.error("create file error, file name:{}", filePathStr);
             throw new RuntimeException(e);
         }
 
         // 保存助记词
         FileWriter fileWriter = null;
         try {
-            fileWriter = new FileWriter(fileNamePathFile);
+            fileWriter = new FileWriter(filePath);
             fileWriter.write(encryptText);
         } catch (IOException e) {
-            logger.error("write file error, file name:{}", fileNamePath);
+            logger.error("write file error, file name:{}", filePathStr);
             throw new RuntimeException(e);
         } finally {
             try {
@@ -147,10 +142,11 @@ public class Keystore {
             }
         }
 
+        return filePathStr;
     }
 
-    public String load(String filePath, String fileName, String password) {
-        return decrypt(filePath, fileName, password);
+    public String load(String filePath, String password) {
+        return decrypt(filePath, password);
     }
 
     protected byte[] getUTF8Bytes(String text) {
@@ -160,15 +156,6 @@ public class Keystore {
             logger.error("unsupported encoding exception", e);
             throw new RuntimeException(e);
         }
-    }
-
-    public String loadMnemonic(String mnemonicId, String fileName, String password) {
-        return load(mnemonicId, fileName, password);
-    }
-
-    public String loadExtendedKey(String mnemonicId, String keyPath, String fileName, String password) {
-        String filePath = new StringBuilder(mnemonicId).append("/").append(keyPath).toString();
-        return load(filePath, fileName, password);
     }
 
 }

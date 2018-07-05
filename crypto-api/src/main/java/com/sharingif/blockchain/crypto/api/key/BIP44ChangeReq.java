@@ -33,7 +33,7 @@ public class BIP44ChangeReq {
     /**
      * 助记词文件名称
      */
-    private String mnemonicFileName;
+    private String mnemonicFilePath;
     /**
      * 密码
      */
@@ -79,12 +79,12 @@ public class BIP44ChangeReq {
         this.mnemonicPassword = mnemonicPassword;
     }
 
-    public String getMnemonicFileName() {
-        return mnemonicFileName;
+    public String getMnemonicFilePath() {
+        return mnemonicFilePath;
     }
 
-    public void setMnemonicFileName(String mnemonicFileName) {
-        this.mnemonicFileName = mnemonicFileName;
+    public void setMnemonicFilePath(String mnemonicFilePath) {
+        this.mnemonicFilePath = mnemonicFilePath;
     }
 
     public String getPassword() {
@@ -103,7 +103,7 @@ public class BIP44ChangeReq {
         sb.append(", account=").append(account);
         sb.append(", change=").append(change);
         sb.append(", mnemonicPassword='").append(mnemonicPassword).append('\'');
-        sb.append(", mnemonicFileName='").append(mnemonicFileName).append('\'');
+        sb.append(", mnemonicFilePath='").append(mnemonicFilePath).append('\'');
         sb.append(", password='").append(password).append('\'');
         sb.append('}');
         return sb.toString();

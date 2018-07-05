@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="false" debug="false">
 
-	<property name="APP_NAME" value="coin" />
+	<property name="APP_NAME" value="crypto-server" />
 	<property name="LOG_HOME" value="/tmp/logs/${APP_NAME}" />
 
 	<contextName>${APP_NAME}</contextName>

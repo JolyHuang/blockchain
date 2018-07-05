@@ -46,18 +46,21 @@ public class MnemonicServiceImpl implements MnemonicService {
         // 生成助记词
         Mnemonic mnemonic = new Mnemonic(req.getLocale(), req.getLength());
 
-        // 生成返回对象
-        MnemonicGenerateRsp rsp = new MnemonicGenerateRsp();
-        rsp.setMnemonicId(UUIDUtils.generateUUID());
-        rsp.setFileName(sha256Encryptor.encrypt(mnemonic.getMnemonic()));
-        rsp.setMnemonic(mnemonic.getMnemonic());
+        String directory = UUIDUtils.generateUUID();
+        String fileName = sha256Encryptor.encrypt(mnemonic.getMnemonic());
 
+        String filePath;
         // 助记词加密存储
         try {
-            keystore.persistence(rsp.getMnemonicId(), rsp.getFileName(), mnemonic.getMnemonic(), req.getPassword());
+            filePath = keystore.persistence(directory, fileName, mnemonic.getMnemonic(), req.getPassword());
         } catch (Exception e) {
             throw new ValidationCubeException(ErrorConstants.GENERATE_MNEMONIC_ERROR);
         }
+
+        // 生成返回对象
+        MnemonicGenerateRsp rsp = new MnemonicGenerateRsp();
+        rsp.setMnemonic(mnemonic.getMnemonic());
+        rsp.setFilePath(filePath);
 
         return rsp;
     }

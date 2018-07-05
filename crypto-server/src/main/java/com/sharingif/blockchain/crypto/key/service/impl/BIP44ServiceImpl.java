@@ -60,7 +60,7 @@ public class BIP44ServiceImpl implements BIP44Service {
 
     @Override
     public BIP44ChangeRsp change(BIP44ChangeReq req) {
-        String mnemonic = keystore.loadMnemonic(req.getMnemonicId(), req.getMnemonicFileName(), req.getMnemonicPassword());
+        String mnemonic = keystore.load(req.getMnemonicFilePath(), req.getMnemonicPassword());
         KeyPath keyPath = new KeyPath(req);
 
         DeterministicSeed seed;
@@ -74,12 +74,12 @@ public class BIP44ServiceImpl implements BIP44Service {
         DeterministicKey changeDeterministicKey = chain.getKeyByPath(childNumberList, true);
         String deterministicKeyStr = changeDeterministicKey.serializePrivB58(MainNetParams.get());
 
+        String fileName = sha256Encryptor.encrypt(sha256Encryptor.encrypt(deterministicKeyStr));
+
+        String filePath = keystore.persistenceExtendedKey(req.getMnemonicId(), keyPath.getPath(), fileName, deterministicKeyStr, req.getPassword());
+
         BIP44ChangeRsp bip44ChangeRsp = new BIP44ChangeRsp();
-        bip44ChangeRsp.setExtendedKeyId(UUIDUtils.generateUUID());
-        bip44ChangeRsp.setFileName(sha256Encryptor.encrypt(deterministicKeyStr));
-
-        keystore.persistenceExtendedKey(req.getMnemonicId(), keyPath.getPath(), bip44ChangeRsp.getFileName(), deterministicKeyStr, req.getPassword());
-
+        bip44ChangeRsp.setFilePath(filePath);
 
         return bip44ChangeRsp;
     }
@@ -88,33 +88,36 @@ public class BIP44ServiceImpl implements BIP44Service {
     public BIP44AddressIndexRsp addressIndex(BIP44AddressIndexReq req) {
         KeyPath keyPath = new KeyPath(req);
 
-        String changeDeterministicKeyBase58 = keystore.loadExtendedKey(req.getMnemonicId(), keyPath.getParentPath(), req.getChangeExtendedKeyFileName(), req.getChangeExtendedKeyPassword());
+        String changeDeterministicKeyBase58 = keystore.load(req.getChangeExtendedKeyFilePath(), req.getChangeExtendedKeyPassword());
         DeterministicKey changeDeterministicKey = DeterministicKey.deserializeB58(changeDeterministicKeyBase58, MainNetParams.get());
         changeDeterministicKey = new DeterministicKey(HDUtils.append(HDUtils.parsePath(keyPath.getBitcoinjParentPath()), ChildNumber.ZERO), changeDeterministicKey.getChainCode(), changeDeterministicKey.getPrivKey(), changeDeterministicKey);
 
         DeterministicKey addressIndexDeterministicKey = HDKeyDerivation.deriveChildKey(changeDeterministicKey, new ChildNumber(req.getAddressIndex(), false));
 
         BIP44AddressIndexRsp bip44AddressIndexRsp = new BIP44AddressIndexRsp();
-        bip44AddressIndexRsp.setKeyId(UUIDUtils.generateUUID());
         if(BIP44GenerateReq.COIN_TYPE_ETH == req.getCoinType()) {
             ECKeyPair ecKeyPair = ECKeyPair.create(addressIndexDeterministicKey.getPrivKey());
             Credentials credentials = Credentials.create(ecKeyPair);
             bip44AddressIndexRsp.setAddress(credentials.getAddress());
 
             try {
-                File filePath = new File(new StringBuilder(keystore.getKeyRootPath())
+                String directoryStr = new StringBuilder(keystore.getKeyRootPath())
                         .append("/").append(req.getMnemonicId())
                         .append("/").append(keyPath.getPath())
-                        .toString()
-                );
+                        .toString();
 
-                if(!(filePath.mkdirs())) {
-                    logger.error("create directory error, path:{}", filePath);
+                File directory = new File(directoryStr);
+
+                if(!(directory.mkdirs())) {
+                    logger.error("create directory error, path:{}", directoryStr);
                     throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
                 }
 
-                String fileName = WalletUtils.generateWalletFile(req.getPassword(), ecKeyPair, filePath, true);
-                bip44AddressIndexRsp.setFileName(fileName);
+                String fileName = WalletUtils.generateWalletFile(req.getPassword(), ecKeyPair, directory, true);
+
+                String filePath = new StringBuilder(directoryStr).append("/").append(fileName).toString();
+
+                bip44AddressIndexRsp.setFilePath(filePath);
             } catch (IOException | CipherException e) {
                 logger.error("generate addressIndex key error", e);
                 throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
