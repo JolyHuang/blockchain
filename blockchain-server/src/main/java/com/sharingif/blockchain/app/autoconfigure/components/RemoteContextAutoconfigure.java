@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.app.autoconfigure.components.http;
+package com.sharingif.blockchain.app.autoconfigure.components;
 
 import com.sharingif.cube.communication.JsonModel;
 import com.sharingif.cube.communication.exception.JsonModelBusinessCommunicationExceptionHandler;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * RemoteOPayContextAutoconfigure
+ * RemoteContextAutoconfigure
  * 2017/6/1 下午3:23
  *
  * @author Joly

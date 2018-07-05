@@ -2,9 +2,12 @@ package com.sharingif.blockchain.crypto.controller;
 
 import com.sharingif.blockchain.api.crypto.MnemonicGenerateReq;
 import com.sharingif.blockchain.api.crypto.MnemonicGenerateRsp;
+import com.sharingif.blockchain.crypto.service.MnemonicService;
 import com.sharingif.cube.core.handler.bind.annotation.RequestMapping;
 import com.sharingif.cube.core.handler.bind.annotation.RequestMethod;
 import org.springframework.stereotype.Controller;
+
+import javax.annotation.Resource;
 
 /**
  * MnemonicController
@@ -17,6 +20,13 @@ import org.springframework.stereotype.Controller;
 @Controller
 @RequestMapping(value="mnemonic")
 public class MnemonicController {
+
+    private MnemonicService mnemonicService;
+
+    @Resource
+    public void setMnemonicService(MnemonicService mnemonicService) {
+        this.mnemonicService = mnemonicService;
+    }
 
     /**
      * 生成助记词

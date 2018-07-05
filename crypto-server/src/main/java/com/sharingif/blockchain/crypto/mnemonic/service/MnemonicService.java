@@ -2,7 +2,8 @@ package com.sharingif.blockchain.crypto.mnemonic.service;
 
 import com.sharingif.blockchain.crypto.api.mnemonic.entity.MnemonicGenerateReq;
 import com.sharingif.blockchain.crypto.api.mnemonic.entity.MnemonicGenerateRsp;
-import com.sharingif.blockchain.crypto.api.mnemonic.service.MnemonicApiService;
+import com.sharingif.cube.core.handler.bind.annotation.RequestMapping;
+import com.sharingif.cube.core.handler.bind.annotation.RequestMethod;
 
 /**
  * MnemonicService
@@ -12,6 +13,14 @@ import com.sharingif.blockchain.crypto.api.mnemonic.service.MnemonicApiService;
  * @since v1.0
  * 2018/7/2 下午4:43
  */
-public interface MnemonicService extends MnemonicApiService {
+public interface MnemonicService {
+
+    /**
+     * 生成助记词
+     * @param req
+     * @return
+     */
+    @RequestMapping(value="generate", method= RequestMethod.POST)
+    MnemonicGenerateRsp generate(MnemonicGenerateReq req);
 
 }

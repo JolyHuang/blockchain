@@ -1,15 +1,15 @@
 package com.sharingif.blockchain.crypto.dao.impl;
 
 
+import com.sharingif.blockchain.app.dao.impl.BaseDAOImpl;
 import org.springframework.stereotype.Repository;
 
 
 import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.dao.SecretKeyDAO;
-import com.sharingif.blockchain.common.dao.impl.BaseDAOImpl;
 
 
 @Repository
-public class SecretKeyDAOImpl extends BaseDAOImpl<SecretKey,java.lang.String> implements SecretKeyDAO {
+public class SecretKeyDAOImpl extends BaseDAOImpl<SecretKey,String> implements SecretKeyDAO {
 	
 }

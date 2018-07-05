@@ -7,6 +7,7 @@ import com.sharingif.blockchain.crypto.dao.MnemonicDAO;
 import com.sharingif.blockchain.crypto.model.entity.Mnemonic;
 import com.sharingif.blockchain.crypto.service.MnemonicService;
 import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
@@ -18,6 +19,7 @@ import javax.annotation.Resource;
  * @since v1.0
  * 2018/7/5 下午7:55
  */
+@Service
 public class MnemonicServiceImpl extends BaseServiceImpl<Mnemonic, String> implements MnemonicService {
 
     private MnemonicDAO mnemonicDAO;
@@ -28,7 +30,7 @@ public class MnemonicServiceImpl extends BaseServiceImpl<Mnemonic, String> imple
         super.setBaseDAO(mnemonicDAO);
         this.mnemonicDAO = mnemonicDAO;
     }
-    @Resource
+//    @Resource
     public void setMnemonicApiService(MnemonicApiService mnemonicApiService) {
         this.mnemonicApiService = mnemonicApiService;
     }
