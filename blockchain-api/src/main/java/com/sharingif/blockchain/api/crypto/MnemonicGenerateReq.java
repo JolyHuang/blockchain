@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.crypto.api.mnemonic;
+package com.sharingif.blockchain.api.crypto;
 
 import java.util.Locale;
 
@@ -56,5 +56,15 @@ public class MnemonicGenerateReq {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("MnemonicGenerateReq{");
+        sb.append("locale=").append(locale);
+        sb.append(", length=").append(length);
+        sb.append(", password='").append(password).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

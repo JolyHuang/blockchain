@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.crypto.api.key;
+package com.sharingif.blockchain.crypto.api.key.entity;
 
 /**
  * 生成密钥请求

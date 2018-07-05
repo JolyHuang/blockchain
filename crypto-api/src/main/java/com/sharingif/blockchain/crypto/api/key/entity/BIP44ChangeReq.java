@@ -1,14 +1,14 @@
-package com.sharingif.blockchain.crypto.api.key;
+package com.sharingif.blockchain.crypto.api.key.entity;
 
 /**
- * 生成addressIndex请求
+ * 生成change ExtendedKey请求
  *
  * @author Joly
  * @version v1.0
  * @since v1.0
- * 2018/7/4 下午2:28
+ * 2018/7/4 上午11:13
  */
-public class BIP44AddressIndexReq {
+public class BIP44ChangeReq {
 
     /**
      * 助记词唯一编号
@@ -27,17 +27,13 @@ public class BIP44AddressIndexReq {
      */
     private Integer change;
     /**
-     * 地址索引
+     * 助记词密码
      */
-    private Integer addressIndex;
+    private String mnemonicPassword;
     /**
-     * change扩展密钥密码
+     * 助记词文件名称
      */
-    private String changeExtendedKeyPassword;
-    /**
-     * change扩展密钥文件名
-     */
-    private String changeExtendedKeyFilePath;
+    private String mnemonicFilePath;
     /**
      * 密码
      */
@@ -75,28 +71,20 @@ public class BIP44AddressIndexReq {
         this.change = change;
     }
 
-    public Integer getAddressIndex() {
-        return addressIndex;
+    public String getMnemonicPassword() {
+        return mnemonicPassword;
     }
 
-    public void setAddressIndex(Integer addressIndex) {
-        this.addressIndex = addressIndex;
+    public void setMnemonicPassword(String mnemonicPassword) {
+        this.mnemonicPassword = mnemonicPassword;
     }
 
-    public String getChangeExtendedKeyPassword() {
-        return changeExtendedKeyPassword;
+    public String getMnemonicFilePath() {
+        return mnemonicFilePath;
     }
 
-    public void setChangeExtendedKeyPassword(String changeExtendedKeyPassword) {
-        this.changeExtendedKeyPassword = changeExtendedKeyPassword;
-    }
-
-    public String getChangeExtendedKeyFilePath() {
-        return changeExtendedKeyFilePath;
-    }
-
-    public void setChangeExtendedKeyFilePath(String changeExtendedKeyFilePath) {
-        this.changeExtendedKeyFilePath = changeExtendedKeyFilePath;
+    public void setMnemonicFilePath(String mnemonicFilePath) {
+        this.mnemonicFilePath = mnemonicFilePath;
     }
 
     public String getPassword() {
@@ -109,14 +97,13 @@ public class BIP44AddressIndexReq {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("BIP44AddressIndexReq{");
+        final StringBuilder sb = new StringBuilder("BIP44ChangeReq{");
         sb.append("mnemonicId='").append(mnemonicId).append('\'');
         sb.append(", coinType=").append(coinType);
         sb.append(", account=").append(account);
         sb.append(", change=").append(change);
-        sb.append(", addressIndex=").append(addressIndex);
-        sb.append(", changeExtendedKeyPassword='").append(changeExtendedKeyPassword).append('\'');
-        sb.append(", changeExtendedKeyFilePath='").append(changeExtendedKeyFilePath).append('\'');
+        sb.append(", mnemonicPassword='").append(mnemonicPassword).append('\'');
+        sb.append(", mnemonicFilePath='").append(mnemonicFilePath).append('\'');
         sb.append(", password='").append(password).append('\'');
         sb.append('}');
         return sb.toString();

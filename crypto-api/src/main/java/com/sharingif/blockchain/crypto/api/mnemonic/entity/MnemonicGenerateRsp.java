@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.crypto.api.mnemonic;
+package com.sharingif.blockchain.crypto.api.mnemonic.entity;
 
 /**
  * 生成助记词响应

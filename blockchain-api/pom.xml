@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.sharingif.blockchain</groupId>
-	<artifactId>blockchain-server</artifactId>
+	<artifactId>blockchain-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>blockchain-server</name>
+	<name>blockchain-api</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
@@ -20,71 +20,7 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
 
-        <dependency>
-            <groupId>${maven.cube.boot.groupId}</groupId>
-            <artifactId>com.sharingif.cube.spring.boot.persistence.mybatis</artifactId>
-            <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${maven.cube.groupId}</groupId>
-            <artifactId>com.sharingif.cube.communication.http.apache</artifactId>
-            <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${maven.cube.boot.groupId}</groupId>
-            <artifactId>com.sharingif.cube.spring.boot.web.vert.x</artifactId>
-            <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${maven.cube.groupId}</groupId>
-            <artifactId>com.sharingif.cube.support</artifactId>
-            <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
-            <version>3.0.1-b10</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.30</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <version>8.5.14</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>blockchain-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>crypto-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.web3j</groupId>
-            <artifactId>core</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bitcoinj</groupId>
-            <artifactId>bitcoinj-core</artifactId>
-            <version>0.14.7</version>
-        </dependency>
-        
 	</dependencies>
 	
 	<build>

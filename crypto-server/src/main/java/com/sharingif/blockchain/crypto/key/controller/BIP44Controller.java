@@ -1,6 +1,6 @@
 package com.sharingif.blockchain.crypto.key.controller;
 
-import com.sharingif.blockchain.crypto.api.key.*;
+import com.sharingif.blockchain.crypto.api.key.entity.*;
 import com.sharingif.blockchain.crypto.key.service.BIP44Service;
 import com.sharingif.cube.core.handler.bind.annotation.RequestMapping;
 import com.sharingif.cube.core.handler.bind.annotation.RequestMethod;

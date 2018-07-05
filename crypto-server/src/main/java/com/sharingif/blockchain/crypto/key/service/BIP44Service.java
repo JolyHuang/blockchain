@@ -1,6 +1,6 @@
 package com.sharingif.blockchain.crypto.key.service;
 
-import com.sharingif.blockchain.crypto.api.key.*;
+import com.sharingif.blockchain.crypto.api.key.entity.*;
 
 /**
  * KeyService

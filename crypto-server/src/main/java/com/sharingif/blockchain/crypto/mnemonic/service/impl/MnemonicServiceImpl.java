@@ -1,8 +1,8 @@
 package com.sharingif.blockchain.crypto.mnemonic.service.impl;
 
 import com.sharingif.bips.bip0032.Mnemonic;
-import com.sharingif.blockchain.crypto.api.mnemonic.MnemonicGenerateReq;
-import com.sharingif.blockchain.crypto.api.mnemonic.MnemonicGenerateRsp;
+import com.sharingif.blockchain.crypto.api.mnemonic.entity.MnemonicGenerateReq;
+import com.sharingif.blockchain.crypto.api.mnemonic.entity.MnemonicGenerateRsp;
 import com.sharingif.blockchain.crypto.app.components.Keystore;
 import com.sharingif.blockchain.crypto.app.constants.ErrorConstants;
 import com.sharingif.blockchain.crypto.mnemonic.service.MnemonicService;

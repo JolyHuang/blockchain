@@ -1,11 +1,12 @@
 package com.sharingif.blockchain.crypto.model.entity;
 
 
-import javax.validation.constraints.*;
-import org.hibernate.validator.constraints.*;
+import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
+import com.sharingif.cube.components.sequence.Sequence;
+import org.hibernate.validator.constraints.Length;
 
 
-public class Mnemonic implements java.io.Serializable {
+public class Mnemonic implements java.io.Serializable, IObjectDateOperationHistory {
 	
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
 	//columns START
@@ -13,6 +14,7 @@ public class Mnemonic implements java.io.Serializable {
      * id			db_column: ID 
      */	
 	@Length(max=32)
+	@Sequence(ref="uuidSequenceGenerator")
 	private java.lang.String id;
     /**
      * 文件路径			db_column: FILE_PATH 

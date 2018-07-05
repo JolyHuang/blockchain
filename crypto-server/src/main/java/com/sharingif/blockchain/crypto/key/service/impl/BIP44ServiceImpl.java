@@ -1,12 +1,11 @@
 package com.sharingif.blockchain.crypto.key.service.impl;
 
-import com.sharingif.blockchain.crypto.api.key.*;
+import com.sharingif.blockchain.crypto.api.key.entity.*;
 import com.sharingif.blockchain.crypto.app.components.Keystore;
 import com.sharingif.blockchain.crypto.app.constants.ErrorConstants;
 import com.sharingif.blockchain.crypto.key.model.entity.KeyPath;
 import com.sharingif.blockchain.crypto.key.service.BIP44Service;
 import com.sharingif.cube.core.exception.validation.ValidationCubeException;
-import com.sharingif.cube.core.util.UUIDUtils;
 import com.sharingif.cube.security.confidentiality.encrypt.digest.SHA256Encryptor;
 import org.bitcoinj.crypto.*;
 import org.bitcoinj.params.MainNetParams;

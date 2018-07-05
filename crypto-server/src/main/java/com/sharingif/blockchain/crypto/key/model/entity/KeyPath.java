@@ -1,8 +1,8 @@
 package com.sharingif.blockchain.crypto.key.model.entity;
 
-import com.sharingif.blockchain.crypto.api.key.BIP44AddressIndexReq;
-import com.sharingif.blockchain.crypto.api.key.BIP44ChangeReq;
-import com.sharingif.blockchain.crypto.api.key.BIP44GenerateReq;
+import com.sharingif.blockchain.crypto.api.key.entity.BIP44AddressIndexReq;
+import com.sharingif.blockchain.crypto.api.key.entity.BIP44ChangeReq;
+import com.sharingif.blockchain.crypto.api.key.entity.BIP44GenerateReq;
 
 /**
  * KeyPath
