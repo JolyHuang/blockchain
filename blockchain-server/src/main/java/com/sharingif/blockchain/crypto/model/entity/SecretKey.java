@@ -2,6 +2,7 @@ package com.sharingif.blockchain.crypto.model.entity;
 
 
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
+import com.sharingif.cube.components.sequence.Sequence;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -14,6 +15,7 @@ public class SecretKey implements java.io.Serializable, IObjectDateOperationHist
      * id			db_column: ID 
      */	
 	@Length(max=32)
+	@Sequence(ref="uuidSequenceGenerator")
 	private java.lang.String id;
     /**
      * 助记词id			db_column: MNEMONIC_ID 

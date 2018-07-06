@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.crypto.api.key.entity;
+package com.sharingif.blockchain.api.crypto.entity;
 
 /**
  * 生成change ExtendedKey响应
@@ -11,22 +11,22 @@ package com.sharingif.blockchain.crypto.api.key.entity;
 public class BIP44ChangeRsp {
 
     /**
-     * 文件路径
+     * id
      */
-    private String filePath;
+    private String id;
 
-    public String getFilePath() {
-        return filePath;
+    public String getId() {
+        return id;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("BIP44ChangeRsp{");
-        sb.append("filePath='").append(filePath).append('\'');
+        sb.append("id='").append(id).append('\'');
         sb.append('}');
         return sb.toString();
     }

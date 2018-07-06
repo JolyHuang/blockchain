@@ -1,7 +1,7 @@
 package com.sharingif.blockchain.crypto.controller;
 
-import com.sharingif.blockchain.api.crypto.MnemonicGenerateReq;
-import com.sharingif.blockchain.api.crypto.MnemonicGenerateRsp;
+import com.sharingif.blockchain.api.crypto.entity.MnemonicGenerateReq;
+import com.sharingif.blockchain.api.crypto.entity.MnemonicGenerateRsp;
 import com.sharingif.blockchain.crypto.service.MnemonicService;
 import com.sharingif.cube.core.handler.bind.annotation.RequestMapping;
 import com.sharingif.cube.core.handler.bind.annotation.RequestMethod;

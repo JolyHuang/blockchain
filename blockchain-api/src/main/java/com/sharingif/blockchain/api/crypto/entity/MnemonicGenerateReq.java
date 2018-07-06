@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.api.crypto;
+package com.sharingif.blockchain.api.crypto.entity;
 
 import java.util.Locale;
 

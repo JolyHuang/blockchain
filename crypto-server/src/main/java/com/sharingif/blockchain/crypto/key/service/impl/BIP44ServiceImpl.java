@@ -33,7 +33,7 @@ import java.util.List;
  * @since v1.0
  * 2018/7/3 下午12:38
  */
-@Service("bip44ServiceImpl")
+@Service("bip44Service")
 public class BIP44ServiceImpl implements BIP44Service {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -73,7 +73,7 @@ public class BIP44ServiceImpl implements BIP44Service {
         DeterministicKey changeDeterministicKey = chain.getKeyByPath(childNumberList, true);
         String deterministicKeyStr = changeDeterministicKey.serializePrivB58(MainNetParams.get());
 
-        String fileName = sha256Encryptor.encrypt(sha256Encryptor.encrypt(deterministicKeyStr));
+        String fileName = sha256Encryptor.encrypt(deterministicKeyStr);
 
         String filePath = keystore.persistenceExtendedKey(req.getMnemonicId(), keyPath.getPath(), fileName, deterministicKeyStr, req.getPassword());
 

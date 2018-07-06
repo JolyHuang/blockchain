@@ -2,4 +2,4 @@ CREATE DATABASE blockchain CHARACTER SET UTF8 COLLATE UTF8_GENERAL_CI;
 
 CREATE USER 'blockchain'@'%' IDENTIFIED BY 'jfYYWE!*&NCs437923';
 
-GRANT ALL PRIVILEGES ON olewallet.* TO 'blockchain'@'%';
+GRANT ALL PRIVILEGES ON blockchain.* TO 'blockchain'@'%';

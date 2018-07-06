@@ -64,6 +64,7 @@ public class RemoteContextAutoconfigure {
         List<String> services = new ArrayList<String>();
 
         services.add("com.sharingif.blockchain.crypto.api.mnemonic.service.MnemonicApiService");
+        services.add("com.sharingif.blockchain.crypto.api.key.service.BIP44ApiService");
 
 
         RemoteServices remoteServices = new RemoteServices();

@@ -1,7 +1,7 @@
 package com.sharingif.blockchain.crypto.service;
 
-import com.sharingif.blockchain.api.crypto.MnemonicGenerateReq;
-import com.sharingif.blockchain.api.crypto.MnemonicGenerateRsp;
+import com.sharingif.blockchain.api.crypto.entity.MnemonicGenerateReq;
+import com.sharingif.blockchain.api.crypto.entity.MnemonicGenerateRsp;
 import com.sharingif.blockchain.crypto.model.entity.Mnemonic;
 import com.sharingif.cube.support.service.base.IBaseService;
 
@@ -21,5 +21,12 @@ public interface MnemonicService extends IBaseService<Mnemonic, String> {
      * @return
      */
     MnemonicGenerateRsp generate(MnemonicGenerateReq req);
+
+    /**
+     * 根据助记词id获取助记词文件路径
+     * @param id
+     * @return
+     */
+    String getFilePath(String id);
 
 }

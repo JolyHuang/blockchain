@@ -99,19 +99,16 @@ public class Keystore {
 
     public String persistence(String directory, String fileName, String text, String password) {
 
-        StringBuilder directoryStringBuilder = new StringBuilder(keyRootPath);
-        if(!StringUtils.isTrimEmpty(directory)) {
-            directoryStringBuilder.append("/").append(directory);
-        }
+        StringBuilder directoryStringBuilder = new StringBuilder(keyRootPath).append("/").append(directory);
 
         // 加密文本
         String encryptText = encrypt(text, password);
 
         // 生成保存文件路径
-        directory = directoryStringBuilder.toString();
-        File directoryFile = new File(directory);
-        if(!(directoryFile.mkdirs())) {
-            logger.error("create directory error, directory:{}", directoryFile);
+        String keyDirectory = directoryStringBuilder.toString();
+        File keyDirectoryFile = new File(keyDirectory);
+        if(!(keyDirectoryFile.mkdirs())) {
+            logger.error("create directory error, directory:{}", keyDirectory);
             throw new ValidationCubeException("create directory error");
         }
         String filePathStr = directoryStringBuilder.append("/").append(fileName).toString();
@@ -142,7 +139,7 @@ public class Keystore {
             }
         }
 
-        return filePathStr;
+        return new StringBuilder(directory).append("/").append(fileName).toString();
     }
 
     public String load(String filePath, String password) {

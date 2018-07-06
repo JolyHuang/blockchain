@@ -1,7 +1,7 @@
 package com.sharingif.blockchain.crypto.service.impl;
 
-import com.sharingif.blockchain.api.crypto.MnemonicGenerateReq;
-import com.sharingif.blockchain.api.crypto.MnemonicGenerateRsp;
+import com.sharingif.blockchain.api.crypto.entity.MnemonicGenerateReq;
+import com.sharingif.blockchain.api.crypto.entity.MnemonicGenerateRsp;
 import com.sharingif.blockchain.crypto.api.mnemonic.service.MnemonicApiService;
 import com.sharingif.blockchain.crypto.dao.MnemonicDAO;
 import com.sharingif.blockchain.crypto.model.entity.Mnemonic;
@@ -30,7 +30,7 @@ public class MnemonicServiceImpl extends BaseServiceImpl<Mnemonic, String> imple
         super.setBaseDAO(mnemonicDAO);
         this.mnemonicDAO = mnemonicDAO;
     }
-//    @Resource
+    @Resource
     public void setMnemonicApiService(MnemonicApiService mnemonicApiService) {
         this.mnemonicApiService = mnemonicApiService;
     }
@@ -52,10 +52,15 @@ public class MnemonicServiceImpl extends BaseServiceImpl<Mnemonic, String> imple
 
         // 返回助记词id、助记词
         MnemonicGenerateRsp mnemonicGenerateRsp = new MnemonicGenerateRsp();
-        mnemonicGenerateRsp.setMnemonicId(mnemonic.getId());
+        mnemonicGenerateRsp.setId(mnemonic.getId());
         mnemonicGenerateRsp.setMnemonic(apiRsp.getMnemonic());
 
         return mnemonicGenerateRsp;
+    }
+
+    @Override
+    public String getFilePath(String id) {
+        return mnemonicDAO.queryById(id).getFilePath();
     }
 
 }

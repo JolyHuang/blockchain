@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.api.crypto;
+package com.sharingif.blockchain.api.crypto.entity;
 
 /**
  * 生成助记词响应
@@ -11,20 +11,20 @@ package com.sharingif.blockchain.api.crypto;
 public class MnemonicGenerateRsp {
 
     /**
-     * 助记词编号
+     * id
      */
-    private String mnemonicId;
+    private String id;
     /**
      * 助记词
      */
     private String mnemonic;
 
-    public String getMnemonicId() {
-        return mnemonicId;
+    public String getId() {
+        return id;
     }
 
-    public void setMnemonicId(String mnemonicId) {
-        this.mnemonicId = mnemonicId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getMnemonic() {
@@ -38,7 +38,7 @@ public class MnemonicGenerateRsp {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("MnemonicGenerateRsp{");
-        sb.append("mnemonicId='").append(mnemonicId).append('\'');
+        sb.append("id='").append(id).append('\'');
         sb.append(", mnemonic='").append(mnemonic).append('\'');
         sb.append('}');
         return sb.toString();
