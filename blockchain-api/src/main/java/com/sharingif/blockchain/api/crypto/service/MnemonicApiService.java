@@ -11,7 +11,7 @@ import com.sharingif.blockchain.api.crypto.entity.MnemonicGenerateRsp;
  * @since v1.0
  * 2018/7/5 下午7:54
  */
-public interface MnemonicService {
+public interface MnemonicApiService {
 
     /**
      * 生成助记词

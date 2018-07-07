@@ -5,15 +5,21 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 
 
 <!-- 不使用namespace的话sql搜索定位会比较方便 -->
-<mapper namespace="mnemonic">
+<mapper namespace="account">
 
 	<!-- 用于select查询公用抽取的列 -->
-	<sql id="mnemonicColumns">
+	<sql id="accountColumns">
     	<if test="null!=id">
     		and ID = #{id}
     	</if>
-    	<if test="null!=filePath">
-    		and FILE_PATH = #{filePath}
+    	<if test="null!=address">
+    		and ADDRESS = #{address}
+    	</if>
+    	<if test="null!=coinType">
+    		and COIN_TYPE = #{coinType}
+    	</if>
+    	<if test="null!=balance">
+    		and BALANCE = #{balance}
     	</if>
     	<if test="null!=createTime">
     		and CREATE_TIME = #{createTime}
@@ -23,12 +29,18 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	</if>
 	</sql>
 	
-	<sql id="mnemonicSetColumns">
+	<sql id="accountSetColumns">
 		    <if test="null!=id">
 		    ID = #{id},
 		    </if>
-		    <if test="null!=filePath">
-		    FILE_PATH = #{filePath},
+		    <if test="null!=address">
+		    ADDRESS = #{address},
+		    </if>
+		    <if test="null!=coinType">
+		    COIN_TYPE = #{coinType},
+		    </if>
+		    <if test="null!=balance">
+		    BALANCE = #{balance},
 		    </if>
 		    <if test="null!=createTime">
 		    CREATE_TIME = #{createTime},
@@ -38,23 +50,29 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    </if>
 	</sql>
 
-	<resultMap id="mnemonicResultMap" type="com.sharingif.blockchain.account.api.entity.Mnemonic">
+	<resultMap id="accountResultMap" type="com.sharingif.blockchain.account.model.entity.Account">
         <result property="id" column="ID"/>
-        <result property="filePath" column="FILE_PATH"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="coinType" column="COIN_TYPE"/>
+        <result property="balance" column="BALANCE"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="modifyTime" column="MODIFY_TIME"/>
 	</resultMap>
 
 	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
 	<insert id="insert">
-        INSERT INTO MNEMONIC (
+        INSERT INTO ACCOUNT (
         	ID
-        	,FILE_PATH
+        	,ADDRESS
+        	,COIN_TYPE
+        	,BALANCE
         	,CREATE_TIME
         	,MODIFY_TIME
         ) VALUES (
         	#{id}
-        	,#{filePath}
+        	,#{address}
+        	,#{coinType}
+        	,#{balance}
         	,#{createTime}
         	,#{modifyTime}
         )
@@ -62,64 +80,70 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	
 	<delete id="deleteById">
 	    DELETE FROM
-	    	MNEMONIC 
+	    	ACCOUNT 
 	    WHERE
 	    ID = #{id} 
     </delete>
     
     <delete id="deleteByCondition">
 	    DELETE FROM
-	    	MNEMONIC 
+	    	ACCOUNT 
 	    WHERE
 	    	1=1
-		    <include refid="mnemonicColumns" />
+		    <include refid="accountColumns" />
     </delete>
     
 	<update id="updateById">
 	    UPDATE
-	    	MNEMONIC 
+	    	ACCOUNT 
         <set>
-	        <include refid="mnemonicSetColumns" />
+	        <include refid="accountSetColumns" />
 		</set>
 	    WHERE
 	    ID = #{id} 
 	</update>
 	
-    <select id="queryById" resultMap="mnemonicResultMap">
+    <select id="queryById" resultMap="accountResultMap">
 		SELECT
 			ID
-			,FILE_PATH
+			,ADDRESS
+			,COIN_TYPE
+			,BALANCE
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
-			MNEMONIC 
+			ACCOUNT 
 		WHERE 
 			ID = #{id} 
 	</select>
 	
-	<select id="queryList" resultMap="mnemonicResultMap">
+	<select id="queryList" resultMap="accountResultMap">
 		SELECT
 			ID
-			,FILE_PATH
+			,ADDRESS
+			,COIN_TYPE
+			,BALANCE
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
-			MNEMONIC
+			ACCOUNT
 		WHERE
 			1=1
-			<include refid="mnemonicColumns" />
+			<include refid="accountColumns" />
 		ORDER BY
 			ID
 	</select>
 	
-	<select id="queryAll" resultMap="mnemonicResultMap">
+	<select id="queryAll" resultMap="accountResultMap">
 		SELECT
 			ID
-			,FILE_PATH
+			,ADDRESS
+			,COIN_TYPE
+			,BALANCE
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
-			MNEMONIC 
+			ACCOUNT 
 		ORDER BY
 			ID
 	</select>
@@ -128,23 +152,25 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		SELECT
 			COUNT(0)
 		FROM
-			MNEMONIC 
+			ACCOUNT 
 		WHERE
 			1=1 
-			<include refid="mnemonicColumns" />
+			<include refid="accountColumns" />
 	</select>
 	
-	<select id="queryPaginationList" parameterType="PaginationCondition" resultMap="mnemonicResultMap">
+	<select id="queryPaginationList" parameterType="PaginationCondition" resultMap="accountResultMap">
 		SELECT
 			ID
-			,FILE_PATH
+			,ADDRESS
+			,COIN_TYPE
+			,BALANCE
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
-			MNEMONIC
+			ACCOUNT
 		WHERE
 			1=1
-			<include refid="mnemonicColumns" />
+			<include refid="accountColumns" />
 		ORDER BY
 			ID
 	</select>

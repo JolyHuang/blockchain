@@ -56,7 +56,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    </if>
 	</sql>
 
-	<resultMap id="extendedKeyResultMap" type="com.sharingif.blockchain.crypto.model.entity.ExtendedKey">
+	<resultMap id="extendedKeyResultMap" type="com.sharingif.blockchain.account.api.entity.ExtendedKey">
         <result property="id" column="ID"/>
         <result property="mnemonicId" column="MNEMONIC_ID"/>
         <result property="extendedKeyPath" column="EXTENDED_KEY_PATH"/>

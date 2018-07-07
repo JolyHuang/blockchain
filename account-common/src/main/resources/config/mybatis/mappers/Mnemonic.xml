@@ -12,8 +12,11 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	<if test="null!=id">
     		and ID = #{id}
     	</if>
-    	<if test="null!=filePath">
-    		and FILE_PATH = #{filePath}
+    	<if test="null!=alias">
+    		and ALIAS = #{alias}
+    	</if>
+    	<if test="null!=password">
+    		and PASSWORD = #{password}
     	</if>
     	<if test="null!=createTime">
     		and CREATE_TIME = #{createTime}
@@ -27,8 +30,11 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    <if test="null!=id">
 		    ID = #{id},
 		    </if>
-		    <if test="null!=filePath">
-		    FILE_PATH = #{filePath},
+		    <if test="null!=alias">
+		    ALIAS = #{alias},
+		    </if>
+		    <if test="null!=password">
+		    PASSWORD = #{password},
 		    </if>
 		    <if test="null!=createTime">
 		    CREATE_TIME = #{createTime},
@@ -40,7 +46,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 
 	<resultMap id="mnemonicResultMap" type="com.sharingif.blockchain.account.api.entity.Mnemonic">
         <result property="id" column="ID"/>
-        <result property="filePath" column="FILE_PATH"/>
+        <result property="alias" column="ALIAS"/>
+        <result property="password" column="PASSWORD"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="modifyTime" column="MODIFY_TIME"/>
 	</resultMap>
@@ -49,12 +56,14 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<insert id="insert">
         INSERT INTO MNEMONIC (
         	ID
-        	,FILE_PATH
+        	,ALIAS
+        	,PASSWORD
         	,CREATE_TIME
         	,MODIFY_TIME
         ) VALUES (
         	#{id}
-        	,#{filePath}
+        	,#{alias}
+        	,#{password}
         	,#{createTime}
         	,#{modifyTime}
         )
@@ -88,7 +97,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     <select id="queryById" resultMap="mnemonicResultMap">
 		SELECT
 			ID
-			,FILE_PATH
+			,ALIAS
+			,PASSWORD
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -100,7 +110,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<select id="queryList" resultMap="mnemonicResultMap">
 		SELECT
 			ID
-			,FILE_PATH
+			,ALIAS
+			,PASSWORD
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -115,7 +126,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<select id="queryAll" resultMap="mnemonicResultMap">
 		SELECT
 			ID
-			,FILE_PATH
+			,ALIAS
+			,PASSWORD
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -137,7 +149,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<select id="queryPaginationList" parameterType="PaginationCondition" resultMap="mnemonicResultMap">
 		SELECT
 			ID
-			,FILE_PATH
+			,ALIAS
+			,PASSWORD
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM

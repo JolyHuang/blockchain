@@ -14,7 +14,7 @@ import com.sharingif.blockchain.api.crypto.entity.BIP44ChangeRsp;
  * @since v1.0
  * 2018/7/3 下午12:38
  */
-public interface BIP44Service {
+public interface BIP44ApiService {
 
     /**
      * 生成change ExtendedKey

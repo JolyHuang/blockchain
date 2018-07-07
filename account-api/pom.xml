@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.sharingif.blockchain</groupId>
-	<artifactId>account-server</artifactId>
+	<artifactId>account-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>account-server</name>
+	<name>account-api</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
@@ -67,16 +67,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>blockchain-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>account-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>account-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         
