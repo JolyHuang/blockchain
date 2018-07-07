@@ -44,7 +44,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    </if>
 	</sql>
 
-	<resultMap id="mnemonicResultMap" type="com.sharingif.blockchain.account.api.entity.Mnemonic">
+	<resultMap id="mnemonicResultMap" type="com.sharingif.blockchain.crypto.model.entity.Mnemonic">
         <result property="id" column="ID"/>
         <result property="alias" column="ALIAS"/>
         <result property="password" column="PASSWORD"/>
