@@ -1,10 +1,9 @@
 package com.sharingif.blockchain.crypto.model.entity;
 
 
-import javax.validation.constraints.*;
-
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
-import org.hibernate.validator.constraints.*;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 
 public class Mnemonic implements java.io.Serializable, IObjectDateOperationHistory {
@@ -26,6 +25,11 @@ public class Mnemonic implements java.io.Serializable, IObjectDateOperationHisto
      */	
 	@NotBlank @Length(max=500)
 	private java.lang.String password;
+    /**
+     * 状态(00:未启用、01:已启用)			db_column: STATUS 
+     */	
+	@NotBlank @Length(max=2)
+	private java.lang.String status;
     /**
      * 创建时间			db_column: CREATE_TIME 
      */	
@@ -56,6 +60,12 @@ public class Mnemonic implements java.io.Serializable, IObjectDateOperationHisto
 	public java.lang.String getPassword() {
 		return this.password;
 	}
+	public void setStatus(java.lang.String status) {
+		this.status = status;
+	}
+	public java.lang.String getStatus() {
+		return this.status;
+	}
 	public void setCreateTime(java.util.Date createTime) {
 		this.createTime = createTime;
 	}
@@ -74,6 +84,7 @@ public class Mnemonic implements java.io.Serializable, IObjectDateOperationHisto
 			.append("Id=").append(getId()).append(", ")
 					.append("Alias=").append(getAlias()).append(", ")
 					.append("Password=").append(getPassword()).append(", ")
+					.append("Status=").append(getStatus()).append(", ")
 					.append("CreateTime=").append(getCreateTime()).append(", ")
 					.append("ModifyTime=").append(getModifyTime())
 		.append("]").toString();

@@ -5,6 +5,9 @@ import com.sharingif.blockchain.api.crypto.entity.BIP44AddressIndexReq;
 import com.sharingif.blockchain.api.crypto.entity.BIP44AddressIndexRsp;
 import com.sharingif.blockchain.api.crypto.entity.BIP44ChangeReq;
 import com.sharingif.blockchain.api.crypto.entity.BIP44ChangeRsp;
+import com.sharingif.cube.core.handler.bind.annotation.RequestMapping;
+import com.sharingif.cube.core.handler.bind.annotation.RequestMethod;
+import org.springframework.stereotype.Service;
 
 /**
  * KeyService
@@ -14,6 +17,8 @@ import com.sharingif.blockchain.api.crypto.entity.BIP44ChangeRsp;
  * @since v1.0
  * 2018/7/3 下午12:38
  */
+@Service("bip44ApiService")
+@RequestMapping(value="bip44")
 public interface BIP44ApiService {
 
     /**
@@ -21,6 +26,7 @@ public interface BIP44ApiService {
      * @param req
      * @return
      */
+    @RequestMapping(value="change", method= RequestMethod.POST)
     BIP44ChangeRsp change(BIP44ChangeReq req);
 
     /**
@@ -28,6 +34,7 @@ public interface BIP44ApiService {
      * @param req
      * @return
      */
+    @RequestMapping(value="addressIndex", method= RequestMethod.POST)
     BIP44AddressIndexRsp addressIndex(BIP44AddressIndexReq req);
 
 }

@@ -1,11 +1,13 @@
 package com.sharingif.blockchain.account.model.entity;
 
 
-import javax.validation.constraints.*;
-import org.hibernate.validator.constraints.*;
+import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotNull;
 
 
-public class AccountJnl implements java.io.Serializable {
+public class AccountJnl implements java.io.Serializable, IObjectDateOperationHistory {
 	
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
 	//columns START

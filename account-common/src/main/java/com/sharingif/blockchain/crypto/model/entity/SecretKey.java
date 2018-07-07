@@ -1,10 +1,9 @@
 package com.sharingif.blockchain.crypto.model.entity;
 
 
-import javax.validation.constraints.*;
-
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
-import org.hibernate.validator.constraints.*;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 
 public class SecretKey implements java.io.Serializable, IObjectDateOperationHistory {

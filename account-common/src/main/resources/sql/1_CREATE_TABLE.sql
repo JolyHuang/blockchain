@@ -9,6 +9,7 @@ CREATE TABLE MNEMONIC
    ID                   CHAR(32) NOT NULL COMMENT 'id',
    ALIAS                VARCHAR(200) COMMENT '别名',
    PASSWORD             VARCHAR(500) NOT NULL COMMENT '密码',
+   STATUS               CHAR(2) NOT NULL COMMENT '状态(00:未启用、01:已启用)',
    CREATE_TIME          TIMESTAMP NULL COMMENT '创建时间',
    MODIFY_TIME          TIMESTAMP NULL COMMENT '修改时间',
    PRIMARY KEY (ID)

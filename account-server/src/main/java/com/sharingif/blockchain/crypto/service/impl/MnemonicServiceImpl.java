@@ -6,6 +6,7 @@ import com.sharingif.blockchain.api.crypto.service.MnemonicApiService;
 import com.sharingif.blockchain.crypto.dao.MnemonicDAO;
 import com.sharingif.blockchain.crypto.model.entity.Mnemonic;
 import com.sharingif.blockchain.crypto.service.MnemonicService;
+import com.sharingif.cube.security.confidentiality.encrypt.TextEncryptor;
 import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class MnemonicServiceImpl extends BaseServiceImpl<Mnemonic, String> imple
 
     private MnemonicDAO mnemonicDAO;
     private MnemonicApiService mnemonicApiService;
+    private TextEncryptor passwordTextEncryptor;
 
     @Resource
     public void setMnemonicDAO(MnemonicDAO mnemonicDAO) {
@@ -33,6 +35,10 @@ public class MnemonicServiceImpl extends BaseServiceImpl<Mnemonic, String> imple
     @Resource
     public void setMnemonicApiService(MnemonicApiService mnemonicApiService) {
         this.mnemonicApiService = mnemonicApiService;
+    }
+    @Resource
+    public void setPasswordTextEncryptor(TextEncryptor passwordTextEncryptor) {
+        this.passwordTextEncryptor = passwordTextEncryptor;
     }
 
     @Override
@@ -49,7 +55,7 @@ public class MnemonicServiceImpl extends BaseServiceImpl<Mnemonic, String> imple
         Mnemonic mnemonic = new Mnemonic();
         mnemonic.setId(apiRsp.getId());
         mnemonic.setAlias(req.getAlias());
-        mnemonic.setPassword(req.getPassword());
+        mnemonic.setPassword(passwordTextEncryptor.encrypt(req.getPassword()));
         mnemonicDAO.insert(mnemonic);
 
         // 返回助记词id、助记词
