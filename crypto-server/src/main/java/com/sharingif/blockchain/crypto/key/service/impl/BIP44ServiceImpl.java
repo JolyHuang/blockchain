@@ -117,10 +117,16 @@ public class BIP44ServiceImpl implements BIP44Service {
                 String filePath = new StringBuilder(directoryStr).append("/").append(fileName).toString();
 
                 bip44AddressIndexRsp.setFilePath(filePath);
+
+                return bip44AddressIndexRsp;
             } catch (IOException | CipherException e) {
                 logger.error("generate addressIndex key error", e);
                 throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
             }
+        }
+
+        if(BIP44GenerateReq.COIN_TYPE_BTC == req.getCoinType()) {
+            bip44AddressIndexRsp.setAddress(addressIndexDeterministicKey.toAddress(MainNetParams.get()).toBase58());
         }
 
         return bip44AddressIndexRsp;

@@ -11,22 +11,31 @@ package com.sharingif.blockchain.account.api.crypto.entity;
 public class BIP44AddressIndexReq {
 
     /**
-     * change扩展密钥文件名
+     * BTC
      */
-    private String changeExtendedKeyId;
+    public static final String COIN_TYPE_BTC = "BTC";
+    /**
+     * ETH
+     */
+    public static final String COIN_TYPE_ETH = "ETH";
 
-    public String getChangeExtendedKeyId() {
-        return changeExtendedKeyId;
+    /**
+     * 币种
+     */
+    private String coinType;
+
+    public String getCoinType() {
+        return coinType;
     }
 
-    public void setChangeExtendedKeyId(String changeExtendedKeyId) {
-        this.changeExtendedKeyId = changeExtendedKeyId;
+    public void setCoinType(String coinType) {
+        this.coinType = coinType;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("BIP44AddressIndexReq{");
-        sb.append("changeExtendedKeyId='").append(changeExtendedKeyId).append('\'');
+        sb.append("coinType='").append(coinType).append('\'');
         sb.append('}');
         return sb.toString();
     }

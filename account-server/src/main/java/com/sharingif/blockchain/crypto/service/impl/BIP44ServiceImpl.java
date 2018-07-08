@@ -4,6 +4,7 @@ import com.sharingif.blockchain.account.api.crypto.entity.BIP44AddressIndexReq;
 import com.sharingif.blockchain.account.api.crypto.entity.BIP44AddressIndexRsp;
 import com.sharingif.blockchain.account.api.crypto.entity.BIP44ChangeReq;
 import com.sharingif.blockchain.account.api.crypto.entity.BIP44ChangeRsp;
+import com.sharingif.blockchain.account.service.AccountSysPrmService;
 import com.sharingif.blockchain.api.crypto.service.BIP44ApiService;
 import com.sharingif.blockchain.crypto.dao.ExtendedKeyDAO;
 import com.sharingif.blockchain.crypto.dao.SecretKeyDAO;
@@ -13,7 +14,6 @@ import com.sharingif.blockchain.crypto.model.entity.Mnemonic;
 import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.service.BIP44Service;
 import com.sharingif.blockchain.crypto.service.MnemonicService;
-import com.sharingif.cube.core.exception.validation.ValidationCubeException;
 import com.sharingif.cube.security.confidentiality.encrypt.TextEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,7 @@ public class BIP44ServiceImpl implements BIP44Service {
     private SecretKeyDAO secretKeyDAO;
     private MnemonicService mnemonicService;
     private BIP44ApiService bip44ApiService;
+    private AccountSysPrmService accountSysPrmService;
     private TextEncryptor passwordTextEncryptor;
 
     @Resource
@@ -55,6 +56,10 @@ public class BIP44ServiceImpl implements BIP44Service {
     @Resource
     public void setBip44ApiService(BIP44ApiService bip44ApiService) {
         this.bip44ApiService = bip44ApiService;
+    }
+    @Resource
+    public void setAccountSysPrmService(AccountSysPrmService accountSysPrmService) {
+        this.accountSysPrmService = accountSysPrmService;
     }
     @Resource
     public void setPasswordTextEncryptor(TextEncryptor passwordTextEncryptor) {
@@ -99,8 +104,11 @@ public class BIP44ServiceImpl implements BIP44Service {
     @Override
     public BIP44AddressIndexRsp addressIndex(BIP44AddressIndexReq req) {
 
+        // 获取配置ExtendedKeyId
+        String changeExtendedKeyId = accountSysPrmService.extendedKey(req.getCoinType());
+
         // 获取change ExtendedKey信息
-        ExtendedKey extendedKey = extendedKeyDAO.queryById(req.getChangeExtendedKeyId());
+        ExtendedKey extendedKey = extendedKeyDAO.queryById(changeExtendedKeyId);
         String extendedKeyPassword = passwordTextEncryptor.decrypt(extendedKey.getPassword());
 
 
