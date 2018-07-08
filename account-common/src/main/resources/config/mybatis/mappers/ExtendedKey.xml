@@ -21,9 +21,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	<if test="null!=password">
     		and PASSWORD = #{password}
     	</if>
-    	<if test="null!=status">
-    		and STATUS = #{status}
-    	</if>
     	<if test="null!=createTime">
     		and CREATE_TIME = #{createTime}
     	</if>
@@ -45,9 +42,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    <if test="null!=password">
 		    PASSWORD = #{password},
 		    </if>
-		    <if test="null!=status">
-		    STATUS = #{status},
-		    </if>
 		    <if test="null!=createTime">
 		    CREATE_TIME = #{createTime},
 		    </if>
@@ -61,7 +55,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         <result property="mnemonicId" column="MNEMONIC_ID"/>
         <result property="extendedKeyPath" column="EXTENDED_KEY_PATH"/>
         <result property="password" column="PASSWORD"/>
-        <result property="status" column="STATUS"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="modifyTime" column="MODIFY_TIME"/>
 	</resultMap>
@@ -73,7 +66,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,MNEMONIC_ID
         	,EXTENDED_KEY_PATH
         	,PASSWORD
-        	,STATUS
         	,CREATE_TIME
         	,MODIFY_TIME
         ) VALUES (
@@ -81,7 +73,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,#{mnemonicId}
         	,#{extendedKeyPath}
         	,#{password}
-        	,#{status}
         	,#{createTime}
         	,#{modifyTime}
         )
@@ -118,7 +109,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,MNEMONIC_ID
 			,EXTENDED_KEY_PATH
 			,PASSWORD
-			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -133,7 +123,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,MNEMONIC_ID
 			,EXTENDED_KEY_PATH
 			,PASSWORD
-			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -151,7 +140,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,MNEMONIC_ID
 			,EXTENDED_KEY_PATH
 			,PASSWORD
-			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -176,7 +164,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,MNEMONIC_ID
 			,EXTENDED_KEY_PATH
 			,PASSWORD
-			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM

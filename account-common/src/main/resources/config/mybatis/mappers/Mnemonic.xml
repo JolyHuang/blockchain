@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
-"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+		PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
 
 
 <!-- 不使用namespace的话sql搜索定位会比较方便 -->
@@ -9,54 +9,47 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 
 	<!-- 用于select查询公用抽取的列 -->
 	<sql id="mnemonicColumns">
-    	<if test="null!=id">
-    		and ID = #{id}
-    	</if>
-    	<if test="null!=alias">
-    		and ALIAS = #{alias}
-    	</if>
-    	<if test="null!=password">
-    		and PASSWORD = #{password}
-    	</if>
-    	<if test="null!=status">
-    		and STATUS = #{status}
-    	</if>
-    	<if test="null!=createTime">
-    		and CREATE_TIME = #{createTime}
-    	</if>
-    	<if test="null!=modifyTime">
-    		and MODIFY_TIME = #{modifyTime}
-    	</if>
+		<if test="null!=id">
+			and ID = #{id}
+		</if>
+		<if test="null!=alias">
+			and ALIAS = #{alias}
+		</if>
+		<if test="null!=password">
+			and PASSWORD = #{password}
+		</if>
+		<if test="null!=createTime">
+			and CREATE_TIME = #{createTime}
+		</if>
+		<if test="null!=modifyTime">
+			and MODIFY_TIME = #{modifyTime}
+		</if>
 	</sql>
-	
+
 	<sql id="mnemonicSetColumns">
-		    <if test="null!=id">
-		    ID = #{id},
-		    </if>
-		    <if test="null!=alias">
-		    ALIAS = #{alias},
-		    </if>
-		    <if test="null!=password">
-		    PASSWORD = #{password},
-		    </if>
-		    <if test="null!=status">
-		    STATUS = #{status},
-		    </if>
-		    <if test="null!=createTime">
-		    CREATE_TIME = #{createTime},
-		    </if>
-		    <if test="null!=modifyTime">
-		    MODIFY_TIME = #{modifyTime},
-		    </if>
+		<if test="null!=id">
+			ID = #{id},
+		</if>
+		<if test="null!=alias">
+			ALIAS = #{alias},
+		</if>
+		<if test="null!=password">
+			PASSWORD = #{password},
+		</if>
+		<if test="null!=createTime">
+			CREATE_TIME = #{createTime},
+		</if>
+		<if test="null!=modifyTime">
+			MODIFY_TIME = #{modifyTime},
+		</if>
 	</sql>
 
 	<resultMap id="mnemonicResultMap" type="com.sharingif.blockchain.crypto.model.entity.Mnemonic">
-        <result property="id" column="ID"/>
-        <result property="alias" column="ALIAS"/>
-        <result property="password" column="PASSWORD"/>
-        <result property="status" column="STATUS"/>
-        <result property="createTime" column="CREATE_TIME"/>
-        <result property="modifyTime" column="MODIFY_TIME"/>
+		<result property="id" column="ID"/>
+		<result property="alias" column="ALIAS"/>
+		<result property="password" column="PASSWORD"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="modifyTime" column="MODIFY_TIME"/>
 	</resultMap>
 
 	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
@@ -65,115 +58,109 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	ID
         	,ALIAS
         	,PASSWORD
-        	,STATUS
         	,CREATE_TIME
         	,MODIFY_TIME
         ) VALUES (
         	#{id}
         	,#{alias}
         	,#{password}
-        	,#{status}
         	,#{createTime}
         	,#{modifyTime}
         )
 	</insert>
-	
+
 	<delete id="deleteById">
 	    DELETE FROM
-	    	MNEMONIC 
+	    	MNEMONIC
 	    WHERE
-	    ID = #{id} 
+	    ID = #{id}
     </delete>
-    
-    <delete id="deleteByCondition">
-	    DELETE FROM
-	    	MNEMONIC 
-	    WHERE
-	    	1=1
-		    <include refid="mnemonicColumns" />
-    </delete>
-    
+
+	<delete id="deleteByCondition">
+		DELETE FROM
+		MNEMONIC
+		WHERE
+		1=1
+		<include refid="mnemonicColumns" />
+	</delete>
+
 	<update id="updateById">
-	    UPDATE
-	    	MNEMONIC 
-        <set>
-	        <include refid="mnemonicSetColumns" />
+		UPDATE
+		MNEMONIC
+		<set>
+			<include refid="mnemonicSetColumns" />
 		</set>
-	    WHERE
-	    ID = #{id} 
+		WHERE
+		ID = #{id}
 	</update>
-	
-    <select id="queryById" resultMap="mnemonicResultMap">
+
+	<select id="queryById" resultMap="mnemonicResultMap">
 		SELECT
 			ID
 			,ALIAS
 			,PASSWORD
-			,STATUS
-			,CREATE_TIME
-			,MODIFY_TIME
-		FROM
-			MNEMONIC 
-		WHERE 
-			ID = #{id} 
-	</select>
-	
-	<select id="queryList" resultMap="mnemonicResultMap">
-		SELECT
-			ID
-			,ALIAS
-			,PASSWORD
-			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
 			MNEMONIC
 		WHERE
-			1=1
-			<include refid="mnemonicColumns" />
-		ORDER BY
-			ID
+			ID = #{id}
 	</select>
-	
+
+	<select id="queryList" resultMap="mnemonicResultMap">
+		SELECT
+		ID
+		,ALIAS
+		,PASSWORD
+		,CREATE_TIME
+		,MODIFY_TIME
+		FROM
+		MNEMONIC
+		WHERE
+		1=1
+		<include refid="mnemonicColumns" />
+		ORDER BY
+		ID
+	</select>
+
 	<select id="queryAll" resultMap="mnemonicResultMap">
 		SELECT
 			ID
 			,ALIAS
 			,PASSWORD
-			,STATUS
-			,CREATE_TIME
-			,MODIFY_TIME
-		FROM
-			MNEMONIC 
-		ORDER BY
-			ID
-	</select>
-	
-	<select id="queryPaginationListCount" resultType="Integer">
-		SELECT
-			COUNT(0)
-		FROM
-			MNEMONIC 
-		WHERE
-			1=1 
-			<include refid="mnemonicColumns" />
-	</select>
-	
-	<select id="queryPaginationList" parameterType="PaginationCondition" resultMap="mnemonicResultMap">
-		SELECT
-			ID
-			,ALIAS
-			,PASSWORD
-			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
 			MNEMONIC
-		WHERE
-			1=1
-			<include refid="mnemonicColumns" />
 		ORDER BY
 			ID
 	</select>
-	
+
+	<select id="queryPaginationListCount" resultType="Integer">
+		SELECT
+		COUNT(0)
+		FROM
+		MNEMONIC
+		WHERE
+		1=1
+		<include refid="mnemonicColumns" />
+	</select>
+
+	<select id="queryPaginationList" parameterType="PaginationCondition" resultMap="mnemonicResultMap">
+		SELECT
+		ID
+		,ALIAS
+		,PASSWORD
+		,CREATE_TIME
+		,MODIFY_TIME
+		FROM
+		MNEMONIC
+		WHERE
+		1=1
+		<include refid="mnemonicColumns" />
+		ORDER BY
+		ID
+	</select>
+
 </mapper>
 

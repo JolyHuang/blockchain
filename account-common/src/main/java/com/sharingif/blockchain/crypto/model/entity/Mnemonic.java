@@ -7,38 +7,33 @@ import org.hibernate.validator.constraints.NotBlank;
 
 
 public class Mnemonic implements java.io.Serializable, IObjectDateOperationHistory {
-	
+
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
 	//columns START
-    /**
-     * id			db_column: ID 
-     */	
+	/**
+	 * id			db_column: ID
+	 */
 	@Length(max=32)
 	private java.lang.String id;
-    /**
-     * 别名			db_column: ALIAS 
-     */	
+	/**
+	 * 别名			db_column: ALIAS
+	 */
 	@Length(max=200)
 	private java.lang.String alias;
-    /**
-     * 密码			db_column: PASSWORD 
-     */	
+	/**
+	 * 密码			db_column: PASSWORD
+	 */
 	@NotBlank @Length(max=500)
 	private java.lang.String password;
-    /**
-     * 状态(00:未启用、01:已启用)			db_column: STATUS 
-     */	
-	@NotBlank @Length(max=2)
-	private java.lang.String status;
-    /**
-     * 创建时间			db_column: CREATE_TIME 
-     */	
-	
+	/**
+	 * 创建时间			db_column: CREATE_TIME
+	 */
+
 	private java.util.Date createTime;
-    /**
-     * 修改时间			db_column: MODIFY_TIME 
-     */	
-	
+	/**
+	 * 修改时间			db_column: MODIFY_TIME
+	 */
+
 	private java.util.Date modifyTime;
 	//columns END
 
@@ -60,12 +55,6 @@ public class Mnemonic implements java.io.Serializable, IObjectDateOperationHisto
 	public java.lang.String getPassword() {
 		return this.password;
 	}
-	public void setStatus(java.lang.String status) {
-		this.status = status;
-	}
-	public java.lang.String getStatus() {
-		return this.status;
-	}
 	public void setCreateTime(java.util.Date createTime) {
 		this.createTime = createTime;
 	}
@@ -81,14 +70,12 @@ public class Mnemonic implements java.io.Serializable, IObjectDateOperationHisto
 
 	public String toString() {
 		return new StringBuilder("Mnemonic [")
-			.append("Id=").append(getId()).append(", ")
-					.append("Alias=").append(getAlias()).append(", ")
-					.append("Password=").append(getPassword()).append(", ")
-					.append("Status=").append(getStatus()).append(", ")
-					.append("CreateTime=").append(getCreateTime()).append(", ")
-					.append("ModifyTime=").append(getModifyTime())
-		.append("]").toString();
+				.append("Id=").append(getId()).append(", ")
+				.append("Alias=").append(getAlias()).append(", ")
+				.append("Password=").append(getPassword()).append(", ")
+				.append("CreateTime=").append(getCreateTime()).append(", ")
+				.append("ModifyTime=").append(getModifyTime())
+				.append("]").toString();
 	}
-	
-}
 
+}

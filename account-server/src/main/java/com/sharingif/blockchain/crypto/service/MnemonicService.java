@@ -22,5 +22,4 @@ public interface MnemonicService extends IBaseService<Mnemonic, String> {
      */
     MnemonicGenerateRsp generate(MnemonicGenerateReq req);
 
-
 }

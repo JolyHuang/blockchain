@@ -1,9 +1,10 @@
 package com.sharingif.blockchain.crypto.model.entity;
 
 
+import javax.validation.constraints.*;
+
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.*;
 
 
 public class ExtendedKey implements java.io.Serializable, IObjectDateOperationHistory {
@@ -30,11 +31,6 @@ public class ExtendedKey implements java.io.Serializable, IObjectDateOperationHi
      */	
 	@NotBlank @Length(max=500)
 	private java.lang.String password;
-    /**
-     * 状态(00:未启用、01:已启用)			db_column: STATUS 
-     */	
-	@NotBlank @Length(max=2)
-	private java.lang.String status;
     /**
      * 创建时间			db_column: CREATE_TIME 
      */	
@@ -71,12 +67,6 @@ public class ExtendedKey implements java.io.Serializable, IObjectDateOperationHi
 	public java.lang.String getPassword() {
 		return this.password;
 	}
-	public void setStatus(java.lang.String status) {
-		this.status = status;
-	}
-	public java.lang.String getStatus() {
-		return this.status;
-	}
 	public void setCreateTime(java.util.Date createTime) {
 		this.createTime = createTime;
 	}
@@ -96,7 +86,6 @@ public class ExtendedKey implements java.io.Serializable, IObjectDateOperationHi
 					.append("MnemonicId=").append(getMnemonicId()).append(", ")
 					.append("ExtendedKeyPath=").append(getExtendedKeyPath()).append(", ")
 					.append("Password=").append(getPassword()).append(", ")
-					.append("Status=").append(getStatus()).append(", ")
 					.append("CreateTime=").append(getCreateTime()).append(", ")
 					.append("ModifyTime=").append(getModifyTime())
 		.append("]").toString();
