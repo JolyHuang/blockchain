@@ -6,6 +6,8 @@ import com.sharingif.blockchain.account.api.crypto.entity.BIP44ChangeReq;
 import com.sharingif.blockchain.account.api.crypto.entity.BIP44ChangeRsp;
 import com.sharingif.blockchain.account.service.AccountSysPrmService;
 import com.sharingif.blockchain.api.crypto.service.BIP44ApiService;
+import com.sharingif.blockchain.api.transaction.entity.RegisterReq;
+import com.sharingif.blockchain.api.transaction.service.AddressRegisterApiService;
 import com.sharingif.blockchain.crypto.dao.ExtendedKeyDAO;
 import com.sharingif.blockchain.crypto.dao.SecretKeyDAO;
 import com.sharingif.blockchain.crypto.model.entity.ExtendedKey;
@@ -39,6 +41,7 @@ public class BIP44ServiceImpl implements BIP44Service {
     private MnemonicService mnemonicService;
     private BIP44ApiService bip44ApiService;
     private AccountSysPrmService accountSysPrmService;
+    private AddressRegisterApiService addressRegisterApiService;
     private TextEncryptor passwordTextEncryptor;
 
     @Resource
@@ -60,6 +63,10 @@ public class BIP44ServiceImpl implements BIP44Service {
     @Resource
     public void setAccountSysPrmService(AccountSysPrmService accountSysPrmService) {
         this.accountSysPrmService = accountSysPrmService;
+    }
+    @Resource
+    public void setAddressRegisterApiService(AddressRegisterApiService addressRegisterApiService) {
+        this.addressRegisterApiService = addressRegisterApiService;
     }
     @Resource
     public void setPasswordTextEncryptor(TextEncryptor passwordTextEncryptor) {
@@ -135,9 +142,22 @@ public class BIP44ServiceImpl implements BIP44Service {
         secretKey.setPassword(extendedKeyPassword);
         secretKeyDAO.insert(secretKey);
 
+        // 返回值
         BIP44AddressIndexRsp rsp = new BIP44AddressIndexRsp();
         rsp.setId(secretKey.getId());
         rsp.setAddress(secretKey.getAddress());
+
+        // 注册地址监听
+        RegisterReq registerReq = new RegisterReq();
+        registerReq.setCoinType(req.getCoinType());
+        registerReq.setAddress(rsp.getAddress());
+        addressRegisterApiService.register(registerReq);
+        if(BIP44AddressIndexReq.COIN_TYPE_ETH.equals(req.getCoinType())) {
+            registerReq = new RegisterReq();
+            registerReq.setCoinType("OLE");
+            registerReq.setAddress(rsp.getAddress());
+            addressRegisterApiService.register(registerReq);
+        }
 
         return rsp;
     }
