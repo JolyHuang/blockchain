@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="accountSysPrm">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="accountSysPrmColumns">
+    	<if test="null!=id">
+    		and ID = #{id}
+    	</if>
+    	<if test="null!=prmName">
+    		and PRM_NAME = #{prmName}
+    	</if>
+    	<if test="null!=prmValue">
+    		and PRM_VALUE = #{prmValue}
+    	</if>
+    	<if test="null!=prmDesc">
+    		and PRM_DESC = #{prmDesc}
+    	</if>
+    	<if test="null!=prmStatus">
+    		and PRM_STATUS = #{prmStatus}
+    	</if>
+    	<if test="null!=createTime">
+    		and CREATE_TIME = #{createTime}
+    	</if>
+    	<if test="null!=modifyTime">
+    		and MODIFY_TIME = #{modifyTime}
+    	</if>
+	</sql>
+	
+	<sql id="accountSysPrmSetColumns">
+		    <if test="null!=id">
+		    ID = #{id},
+		    </if>
+		    <if test="null!=prmName">
+		    PRM_NAME = #{prmName},
+		    </if>
+		    <if test="null!=prmValue">
+		    PRM_VALUE = #{prmValue},
+		    </if>
+		    <if test="null!=prmDesc">
+		    PRM_DESC = #{prmDesc},
+		    </if>
+		    <if test="null!=prmStatus">
+		    PRM_STATUS = #{prmStatus},
+		    </if>
+		    <if test="null!=createTime">
+		    CREATE_TIME = #{createTime},
+		    </if>
+		    <if test="null!=modifyTime">
+		    MODIFY_TIME = #{modifyTime},
+		    </if>
+	</sql>
+
+	<resultMap id="accountSysPrmResultMap" type="com.sharingif.blockchain.account.model.entity.AccountSysPrm">
+        <result property="id" column="ID"/>
+        <result property="prmName" column="PRM_NAME"/>
+        <result property="prmValue" column="PRM_VALUE"/>
+        <result property="prmDesc" column="PRM_DESC"/>
+        <result property="prmStatus" column="PRM_STATUS"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="modifyTime" column="MODIFY_TIME"/>
+	</resultMap>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="insert">
+        INSERT INTO ACCOUNT_SYS_PRM (
+        	ID
+        	,PRM_NAME
+        	,PRM_VALUE
+        	,PRM_DESC
+        	,PRM_STATUS
+        	,CREATE_TIME
+        	,MODIFY_TIME
+        ) VALUES (
+        	#{id}
+        	,#{prmName}
+        	,#{prmValue}
+        	,#{prmDesc}
+        	,#{prmStatus}
+        	,#{createTime}
+        	,#{modifyTime}
+        )
+	</insert>
+	
+	<delete id="deleteById">
+	    DELETE FROM
+	    	ACCOUNT_SYS_PRM 
+	    WHERE
+	    ID = #{id} 
+    </delete>
+    
+    <delete id="deleteByCondition">
+	    DELETE FROM
+	    	ACCOUNT_SYS_PRM 
+	    WHERE
+	    	1=1
+		    <include refid="accountSysPrmColumns" />
+    </delete>
+    
+	<update id="updateById">
+	    UPDATE
+	    	ACCOUNT_SYS_PRM 
+        <set>
+	        <include refid="accountSysPrmSetColumns" />
+		</set>
+	    WHERE
+	    ID = #{id} 
+	</update>
+	
+    <select id="queryById" resultMap="accountSysPrmResultMap">
+		SELECT
+			ID
+			,PRM_NAME
+			,PRM_VALUE
+			,PRM_DESC
+			,PRM_STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ACCOUNT_SYS_PRM 
+		WHERE 
+			ID = #{id} 
+	</select>
+	
+	<select id="queryList" resultMap="accountSysPrmResultMap">
+		SELECT
+			ID
+			,PRM_NAME
+			,PRM_VALUE
+			,PRM_DESC
+			,PRM_STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ACCOUNT_SYS_PRM
+		WHERE
+			1=1
+			<include refid="accountSysPrmColumns" />
+		ORDER BY
+			ID
+	</select>
+	
+	<select id="queryAll" resultMap="accountSysPrmResultMap">
+		SELECT
+			ID
+			,PRM_NAME
+			,PRM_VALUE
+			,PRM_DESC
+			,PRM_STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ACCOUNT_SYS_PRM 
+		ORDER BY
+			ID
+	</select>
+	
+	<select id="queryPaginationListCount" resultType="Integer">
+		SELECT
+			COUNT(0)
+		FROM
+			ACCOUNT_SYS_PRM 
+		WHERE
+			1=1 
+			<include refid="accountSysPrmColumns" />
+	</select>
+	
+	<select id="queryPaginationList" parameterType="PaginationCondition" resultMap="accountSysPrmResultMap">
+		SELECT
+			ID
+			,PRM_NAME
+			,PRM_VALUE
+			,PRM_DESC
+			,PRM_STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ACCOUNT_SYS_PRM
+		WHERE
+			1=1
+			<include refid="accountSysPrmColumns" />
+		ORDER BY
+			ID
+	</select>
+	
+</mapper>
+
