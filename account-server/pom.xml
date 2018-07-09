@@ -83,6 +83,7 @@
 	</dependencies>
 	
 	<build>
+        <finalName>account-server</finalName>
         <resources>
             <resource>
                 <directory>src\main\java</directory>

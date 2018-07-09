@@ -73,6 +73,7 @@
 	</dependencies>
 	
 	<build>
+        <finalName>account-api</finalName>
         <resources>
             <resource>
                 <directory>src\main\java</directory>
