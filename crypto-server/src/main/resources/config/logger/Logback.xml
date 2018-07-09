@@ -2,7 +2,15 @@
 <configuration scan="false" debug="false">
 
 	<property name="APP_NAME" value="crypto-server" />
-	<property name="LOG_HOME" value="/tmp/logs/${APP_NAME}" />
+	<springProfile name="DEV">
+		<property name="LOG_HOME" value="/tmp/logs/${APP_NAME}" />
+	</springProfile>
+	<springProfile name="TEST">
+		<property name="LOG_HOME" value="/home/blockchain/${APP_NAME}/logs" />
+	</springProfile>
+	<springProfile name="PROD">
+		<property name="LOG_HOME" value="/home/blockchain/${APP_NAME}/logs" />
+	</springProfile>
 
 	<contextName>${APP_NAME}</contextName>
 

@@ -1,5 +1,7 @@
 package com.sharingif.blockchain.account.api.crypto.entity;
 
+import java.util.List;
+
 /**
  * 生成addressIndex请求
  *
@@ -23,6 +25,10 @@ public class BIP44AddressIndexReq {
      * 币种
      */
     private String coinType;
+    /**
+     * 通知地址列表
+     */
+    private List<String> noticeList;
 
     public String getCoinType() {
         return coinType;
@@ -32,10 +38,19 @@ public class BIP44AddressIndexReq {
         this.coinType = coinType;
     }
 
+    public List<String> getNoticeList() {
+        return noticeList;
+    }
+
+    public void setNoticeList(List<String> noticeList) {
+        this.noticeList = noticeList;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("BIP44AddressIndexReq{");
         sb.append("coinType='").append(coinType).append('\'');
+        sb.append(", noticeList=").append(noticeList);
         sb.append('}');
         return sb.toString();
     }
