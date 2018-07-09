@@ -12,7 +12,6 @@ import com.sharingif.blockchain.crypto.model.entity.KeyPath;
 import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.service.BIP44Service;
 import com.sharingif.blockchain.crypto.service.MnemonicService;
-import jnr.ffi.annotations.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
