@@ -121,7 +121,7 @@
                 <configuration>
                     <fork>true</fork>
                     <jvmArguments>-Dfile.encoding=UTF-8</jvmArguments>
-                    <mainClass>com.sharingif.cube.coin.app.runtime.Bootstrap</mainClass>
+                    <mainClass>com.sharingif.blockchain.app.runtime.Bootstrap</mainClass>
                 </configuration>
                 <executions>
                     <execution>

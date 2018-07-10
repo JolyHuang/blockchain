@@ -24,5 +24,5 @@ public interface AddressRegisterService extends IBaseService<AddressRegister, ja
      * @return
      */
     UnregisterRsp unregister(UnregisterReq req);
-	
+
 }

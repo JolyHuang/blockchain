@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="addressNotice">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="addressNoticeColumns">
+    	<if test="null!=id">
+    		and ID = #{id}
+    	</if>
+    	<if test="null!=addressRegisterId">
+    		and ADDRESS_REGISTER_ID = #{addressRegisterId}
+    	</if>
+    	<if test="null!=noticeAddress">
+    		and NOTICE_ADDRESS = #{noticeAddress}
+    	</if>
+    	<if test="null!=createTime">
+    		and CREATE_TIME = #{createTime}
+    	</if>
+    	<if test="null!=modifyTime">
+    		and MODIFY_TIME = #{modifyTime}
+    	</if>
+	</sql>
+	
+	<sql id="addressNoticeSetColumns">
+		    <if test="null!=id">
+		    ID = #{id},
+		    </if>
+		    <if test="null!=addressRegisterId">
+		    ADDRESS_REGISTER_ID = #{addressRegisterId},
+		    </if>
+		    <if test="null!=noticeAddress">
+		    NOTICE_ADDRESS = #{noticeAddress},
+		    </if>
+		    <if test="null!=createTime">
+		    CREATE_TIME = #{createTime},
+		    </if>
+		    <if test="null!=modifyTime">
+		    MODIFY_TIME = #{modifyTime},
+		    </if>
+	</sql>
+
+	<resultMap id="addressNoticeResultMap" type="com.sharingif.blockchain.transaction.model.entity.AddressNotice">
+        <result property="id" column="ID"/>
+        <result property="addressRegisterId" column="ADDRESS_REGISTER_ID"/>
+        <result property="noticeAddress" column="NOTICE_ADDRESS"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="modifyTime" column="MODIFY_TIME"/>
+	</resultMap>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="insert">
+        INSERT INTO ADDRESS_NOTICE (
+        	ID
+        	,ADDRESS_REGISTER_ID
+        	,NOTICE_ADDRESS
+        	,CREATE_TIME
+        	,MODIFY_TIME
+        ) VALUES (
+        	#{id}
+        	,#{addressRegisterId}
+        	,#{noticeAddress}
+        	,#{createTime}
+        	,#{modifyTime}
+        )
+	</insert>
+	
+	<delete id="deleteById">
+	    DELETE FROM
+	    	ADDRESS_NOTICE 
+	    WHERE
+	    ID = #{id} 
+    </delete>
+    
+    <delete id="deleteByCondition">
+	    DELETE FROM
+	    	ADDRESS_NOTICE 
+	    WHERE
+	    	1=1
+		    <include refid="addressNoticeColumns" />
+    </delete>
+    
+	<update id="updateById">
+	    UPDATE
+	    	ADDRESS_NOTICE 
+        <set>
+	        <include refid="addressNoticeSetColumns" />
+		</set>
+	    WHERE
+	    ID = #{id} 
+	</update>
+	
+    <select id="queryById" resultMap="addressNoticeResultMap">
+		SELECT
+			ID
+			,ADDRESS_REGISTER_ID
+			,NOTICE_ADDRESS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ADDRESS_NOTICE 
+		WHERE 
+			ID = #{id} 
+	</select>
+	
+	<select id="queryList" resultMap="addressNoticeResultMap">
+		SELECT
+			ID
+			,ADDRESS_REGISTER_ID
+			,NOTICE_ADDRESS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ADDRESS_NOTICE
+		WHERE
+			1=1
+			<include refid="addressNoticeColumns" />
+		ORDER BY
+			ID
+	</select>
+	
+	<select id="queryAll" resultMap="addressNoticeResultMap">
+		SELECT
+			ID
+			,ADDRESS_REGISTER_ID
+			,NOTICE_ADDRESS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ADDRESS_NOTICE 
+		ORDER BY
+			ID
+	</select>
+	
+	<select id="queryPaginationListCount" resultType="Integer">
+		SELECT
+			COUNT(0)
+		FROM
+			ADDRESS_NOTICE 
+		WHERE
+			1=1 
+			<include refid="addressNoticeColumns" />
+	</select>
+	
+	<select id="queryPaginationList" parameterType="PaginationCondition" resultMap="addressNoticeResultMap">
+		SELECT
+			ID
+			,ADDRESS_REGISTER_ID
+			,NOTICE_ADDRESS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ADDRESS_NOTICE
+		WHERE
+			1=1
+			<include refid="addressNoticeColumns" />
+		ORDER BY
+			ID
+	</select>
+	
+</mapper>
+

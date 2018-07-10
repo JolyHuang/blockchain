@@ -9,6 +9,17 @@
 	<name>account-common</name>
 	<url>http://maven.apache.org</url>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>${snapshotsUrl}</url>
+        </snapshotRepository>
+        <repository>
+            <id>releases</id>
+            <url>${releasesUrl}</url>
+        </repository>
+    </distributionManagement>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.jdk.version>1.8</project.build.jdk.version>

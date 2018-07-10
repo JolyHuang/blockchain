@@ -9,6 +9,17 @@
 	<name>account-api</name>
 	<url>http://maven.apache.org</url>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>${snapshotsUrl}</url>
+        </snapshotRepository>
+        <repository>
+            <id>releases</id>
+            <url>${releasesUrl}</url>
+        </repository>
+    </distributionManagement>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.jdk.version>1.8</project.build.jdk.version>
@@ -28,48 +39,11 @@
         </dependency>
 
         <dependency>
-            <groupId>${maven.cube.boot.groupId}</groupId>
-            <artifactId>com.sharingif.cube.spring.boot.persistence.mybatis</artifactId>
-            <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
-        </dependency>
-        <dependency>
             <groupId>${maven.cube.groupId}</groupId>
-            <artifactId>com.sharingif.cube.communication.http.apache</artifactId>
+            <artifactId>com.sharingif.cube.core</artifactId>
             <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${maven.cube.boot.groupId}</groupId>
-            <artifactId>com.sharingif.cube.spring.boot.web.vert.x</artifactId>
-            <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${maven.cube.groupId}</groupId>
-            <artifactId>com.sharingif.cube.support</artifactId>
-            <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
-            <version>3.0.1-b10</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.30</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <version>8.5.14</version>
         </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>blockchain-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        
 	</dependencies>
 	
 	<build>

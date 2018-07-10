@@ -1,6 +1,0 @@
-#!/bin/sh
-
-ps -ef|grep java|grep ole-wallet-server|awk '{print $2}'|while read pid
-do
-   kill $pid
-done

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="false" debug="false">
 
-	<property name="APP_NAME" value="blockchain-server" />
+	<property name="APP_NAME" value="account-server" />
 	<springProfile name="DEV">
 		<property name="LOG_HOME" value="/tmp/blockchain/${APP_NAME}" />
 	</springProfile>

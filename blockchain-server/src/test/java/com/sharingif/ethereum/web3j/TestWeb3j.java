@@ -2,12 +2,10 @@ package com.sharingif.ethereum.web3j;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
+import com.sharingif.blockchain.app.components.erc20.ole.OleContract;
 import com.sharingif.cube.core.exception.CubeRuntimeException;
 import com.sharingif.cube.security.binary.HexCoder;
-import org.bitcoinj.core.Address;
-import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.core.Utils;
 import org.bitcoinj.crypto.*;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.DeterministicKeyChain;
@@ -15,30 +13,29 @@ import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.UnreadableWalletException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-
+import org.web3j.abi.*;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Event;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.MnemonicUtils;
 import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
-import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
-import org.web3j.tx.ClientTransactionManager;
-import org.web3j.tx.TransactionManager;
-import org.web3j.tx.Transfer;
 import org.web3j.utils.Convert;
 import rx.Subscription;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
-import static org.web3j.crypto.Hash.sha256;
 
 /**
  * TODO
@@ -50,7 +47,9 @@ import static org.web3j.crypto.Hash.sha256;
  */
 public class TestWeb3j {
 
-    Web3j web3j = Web3j.build(new HttpService("http://47.88.156.133:7236"));
+//    Web3j web3j = Web3j.build(new HttpService("http://47.88.156.133:7236"));
+//    Web3j web3j = Web3j.build(new HttpService("http://localhost:8545"));
+        Web3j web3j = Web3j.build(new HttpService("http://52.166.62.158:8545"));
 
     String address = "0x5b6695966503a4618b3cc8D1Ed7768BFb3757750";
 
@@ -75,11 +74,102 @@ public class TestWeb3j {
     }
 
     @Test
-    public void testGetTransactionByHash() throws IOException {
+    public void testGetTransactionByHash() throws Exception {
         EthTransaction ethTransaction = web3j.ethGetTransactionByHash("0x28d71467b2697ff1b7f628af231fd0992b25b5cf0c24060d54bb60306555f07b").send();
 
+//        String method = inputData.substring(0,10);
+//        System.out.println(method);
+//        String to = inputData.substring(10,74);
+//        String value = inputData.substring(74);
+//
+//        System.out.println();
+//
+//        Method refMethod = TypeDecoder.class.getDeclaredMethod("transfer",String.class,int.class,Class.class);
+//        refMethod.setAccessible(true);
+//        Address address = (Address)refMethod.invoke(null,to,0,Address.class);
+//        System.out.println(address.toString());
+//        Uint256 amount = (Uint256) refMethod.invoke(null,value,0,Uint256.class);
+//        System.out.println(amount.getValue());
+
+
         EthGetTransactionReceipt ethGetTransactionReceipt = web3j.ethGetTransactionReceipt(ethTransaction.getTransaction().get().getHash()).send();
+
+        List<Log> logs = ethGetTransactionReceipt.getTransactionReceipt().get().getLogs();
+        Log log = logs.get(0);
+        EventValues eventValues = OleContract.staticExtractEventParameters(OleContract.TRANSFER_EVENT, log);
+        System.out.println(eventValues);
+        BigInteger value = (BigInteger)eventValues.getNonIndexedValues().get(0).getValue();
+        System.out.println(Convert.fromWei(value.toString(), Convert.Unit.ETHER));
+
         System.out.println(ethGetTransactionReceipt.getTransactionReceipt().get().getStatus());
+    }
+
+    @Test
+    public void testInput() throws Exception {
+        String inputData = "0xa9059cbb0000000000000000000000005b6695966503a4618b3cc8d1ed7768bfb37577500000000000000000000000000000000000000000000000000de0b6b3a7640000";
+
+        Function function = new Function(
+                OleContract.FUNC_TRANSFER,
+                Arrays.<Type>asList(Address.DEFAULT, Uint256.DEFAULT),
+                Collections.<TypeReference<?>>emptyList());
+
+        String functionSignature = FunctionEncoder.encode(function);
+
+        String method = inputData.substring(0,10);
+
+        if(method.equals(functionSignature.substring(0,10))) {
+            System.out.println(method);
+            String to = inputData.substring(10,74);
+            String value = inputData.substring(74);
+
+            List<Type> results = FunctionReturnDecoder.decode(
+                    inputData.substring(10),
+                    Utils.convert(Arrays.<TypeReference<?>>asList(
+                            new TypeReference<Address>(){},
+                            new TypeReference<Uint256>(){})
+                    )
+            );
+
+        }
+
+    }
+
+    @Test
+    public void testEventFilter() throws Exception {
+        EthTransaction ethTransaction = web3j.ethGetTransactionByHash("0x66fa2faed8a111e8e982f2c73e7108346125605b79e5fb0b03d6ee479fb56e53").send();
+
+        EthGetTransactionReceipt ethGetTransactionReceipt = web3j.ethGetTransactionReceipt(ethTransaction.getTransaction().get().getHash()).send();
+
+        List<Log> logs = ethGetTransactionReceipt.getTransactionReceipt().get().getLogs();
+
+        Log log = logs.get(0);
+
+        List<String> topics = log.getTopics();
+
+//        Event event = new Event("approve",
+//                Arrays.<TypeReference<?>>asList(new TypeReference<org.web3j.abi.datatypes.Address>() {}, new TypeReference<org.web3j.abi.datatypes.Address>() {}),
+//                Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {})
+//        );
+        Event event = new Event("Approval",
+                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<org.web3j.abi.datatypes.Address>() {}),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {})
+        );
+        String encodedEventSignature = EventEncoder.encode(event);
+
+        if (topics.get(0).equals(encodedEventSignature)) {
+            System.out.println(encodedEventSignature);
+        }
+
+        List<Type> results = FunctionReturnDecoder.decode(log.getData(), event.getIndexedParameters());
+        List<Type> results2 = FunctionReturnDecoder.decode(log.getData(), event.getNonIndexedParameters());
+
+        System.out.println(results);
+        System.out.println(results2);
+    }
+
+    @Test
+    public void testSolidityFunctionWrapperGenerator() {
+
     }
 
     @Test

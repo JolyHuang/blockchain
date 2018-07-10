@@ -151,11 +151,10 @@ public class BIP44ServiceImpl implements BIP44Service {
         RegisterReq registerReq = new RegisterReq();
         registerReq.setCoinType(req.getCoinType());
         registerReq.setAddress(rsp.getAddress());
+        registerReq.setNoticeList(req.getNoticeList());
         addressRegisterApiService.register(registerReq);
         if(BIP44AddressIndexReq.COIN_TYPE_ETH.equals(req.getCoinType())) {
-            registerReq = new RegisterReq();
             registerReq.setCoinType("OLE");
-            registerReq.setAddress(rsp.getAddress());
             addressRegisterApiService.register(registerReq);
         }
 
