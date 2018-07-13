@@ -2,6 +2,7 @@ package com.sharingif.blockchain.eth.service.impl;
 
 import com.sharingif.blockchain.eth.service.Web3jService;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
@@ -17,7 +18,13 @@ import org.web3j.protocol.http.HttpService;
 @Service
 public class Web3jServiceImpl implements Web3jService, InitializingBean {
 
+    private String ethWeb3jAddress;
     private Web3j currentAvailableWeb3j;
+
+    @Value("${eth.web3j.address}")
+    public void setEthWeb3jAddress(String ethWeb3jAddress) {
+        this.ethWeb3jAddress = ethWeb3jAddress;
+    }
 
     @Override
     public Web3j getCurrentAvailableWeb3j() {
@@ -25,7 +32,7 @@ public class Web3jServiceImpl implements Web3jService, InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        currentAvailableWeb3j = Web3j.build(new HttpService("http://35.205.75.173:8545"));
+    public void afterPropertiesSet() {
+        currentAvailableWeb3j = Web3j.build(new HttpService(ethWeb3jAddress));
     }
 }

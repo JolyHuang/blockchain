@@ -1,9 +1,7 @@
-package com.sharingif.ethereum.web3j;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.sharingif.blockchain.app.components.erc20.ole.OleContract;
 import com.sharingif.cube.core.exception.CubeRuntimeException;
+import com.sharingif.cube.core.util.DateUtils;
 import com.sharingif.cube.security.binary.HexCoder;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.*;
@@ -13,10 +11,11 @@ import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.UnreadableWalletException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-import org.web3j.abi.*;
+import org.web3j.abi.EventEncoder;
+import org.web3j.abi.FunctionReturnDecoder;
+import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Event;
-import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
@@ -33,7 +32,6 @@ import rx.Subscription;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -49,10 +47,38 @@ public class TestWeb3j {
 
 //    Web3j web3j = Web3j.build(new HttpService("http://47.88.156.133:7236"));
 //    Web3j web3j = Web3j.build(new HttpService("http://localhost:8545"));
-        Web3j web3j = Web3j.build(new HttpService("http://52.166.62.158:8545"));
+        Web3j web3j = Web3j.build(new HttpService("http://159.203.171.169:8545"));
 
     String address = "0x5b6695966503a4618b3cc8D1Ed7768BFb3757750";
 
+
+    @Test
+    public void testConnection() throws IOException {
+        System.out.println(web3j.ethBlockNumber().send().getBlockNumber());
+    }
+
+    @Test
+    public void testBlockTimestamp() throws IOException {
+        System.out.println(web3j.ethBlockNumber().send().getBlockNumber());
+        Transaction transaction = web3j.ethGetTransactionByHash("0xad2c0db6794b53033e3937a5240e34b8f4996edfaabd9906bc06457b76a56b8b").send().getTransaction().get();
+        EthBlock.Block block = web3j.ethGetBlockByNumber(new DefaultBlockParameterNumber(transaction.getBlockNumber()), false).send().getBlock();
+
+        Date date = new Date(block.getTimestamp().multiply(new BigInteger("1000")).longValue());
+        System.out.println(DateUtils.getDate(date, DateUtils.DATETIME_MILLI_ISO_FORMAT));
+    }
+
+    @Test
+    public void testActualFee() throws IOException {
+        Transaction transaction = web3j.ethGetTransactionByHash("0xad2c0db6794b53033e3937a5240e34b8f4996edfaabd9906bc06457b76a56b8b").send().getTransaction().get();
+
+        TransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(transaction.getHash()).send().getTransactionReceipt().get();
+
+        System.out.println(transactionReceipt.getStatus());
+        System.out.println(transaction.getGas());
+        System.out.println(transactionReceipt.getGasUsed());
+        System.out.println(transaction.getGasPrice());
+        System.out.println(Convert.fromWei(transaction.getGas().multiply(transaction.getGasPrice()).toString(), Convert.Unit.ETHER));
+    }
 
     public BigInteger getBalance(String address) {
 
@@ -92,45 +118,45 @@ public class TestWeb3j {
 //        System.out.println(amount.getValue());
 
 
-        EthGetTransactionReceipt ethGetTransactionReceipt = web3j.ethGetTransactionReceipt(ethTransaction.getTransaction().get().getHash()).send();
-
-        List<Log> logs = ethGetTransactionReceipt.getTransactionReceipt().get().getLogs();
-        Log log = logs.get(0);
-        EventValues eventValues = OleContract.staticExtractEventParameters(OleContract.TRANSFER_EVENT, log);
-        System.out.println(eventValues);
-        BigInteger value = (BigInteger)eventValues.getNonIndexedValues().get(0).getValue();
-        System.out.println(Convert.fromWei(value.toString(), Convert.Unit.ETHER));
-
-        System.out.println(ethGetTransactionReceipt.getTransactionReceipt().get().getStatus());
+//        EthGetTransactionReceipt ethGetTransactionReceipt = web3j.ethGetTransactionReceipt(ethTransaction.getTransaction().get().getHash()).send();
+//
+//        List<Log> logs = ethGetTransactionReceipt.getTransactionReceipt().get().getLogs();
+//        Log log = logs.get(0);
+//        EventValues eventValues = OleContract.staticExtractEventParameters(OleContract.TRANSFER_EVENT, log);
+//        System.out.println(eventValues);
+//        BigInteger value = (BigInteger)eventValues.getNonIndexedValues().get(0).getValue();
+//        System.out.println(Convert.fromWei(value.toString(), Convert.Unit.ETHER));
+//
+//        System.out.println(ethGetTransactionReceipt.getTransactionReceipt().get().getStatus());
     }
 
     @Test
     public void testInput() throws Exception {
-        String inputData = "0xa9059cbb0000000000000000000000005b6695966503a4618b3cc8d1ed7768bfb37577500000000000000000000000000000000000000000000000000de0b6b3a7640000";
-
-        Function function = new Function(
-                OleContract.FUNC_TRANSFER,
-                Arrays.<Type>asList(Address.DEFAULT, Uint256.DEFAULT),
-                Collections.<TypeReference<?>>emptyList());
-
-        String functionSignature = FunctionEncoder.encode(function);
-
-        String method = inputData.substring(0,10);
-
-        if(method.equals(functionSignature.substring(0,10))) {
-            System.out.println(method);
-            String to = inputData.substring(10,74);
-            String value = inputData.substring(74);
-
-            List<Type> results = FunctionReturnDecoder.decode(
-                    inputData.substring(10),
-                    Utils.convert(Arrays.<TypeReference<?>>asList(
-                            new TypeReference<Address>(){},
-                            new TypeReference<Uint256>(){})
-                    )
-            );
-
-        }
+//        String inputData = "0xa9059cbb0000000000000000000000005b6695966503a4618b3cc8d1ed7768bfb37577500000000000000000000000000000000000000000000000000de0b6b3a7640000";
+//
+//        Function function = new Function(
+//                OleContract.FUNC_TRANSFER,
+//                Arrays.<Type>asList(Address.DEFAULT, Uint256.DEFAULT),
+//                Collections.<TypeReference<?>>emptyList());
+//
+//        String functionSignature = FunctionEncoder.encode(function);
+//
+//        String method = inputData.substring(0,10);
+//
+//        if(method.equals(functionSignature.substring(0,10))) {
+//            System.out.println(method);
+//            String to = inputData.substring(10,74);
+//            String value = inputData.substring(74);
+//
+//            List<Type> results = FunctionReturnDecoder.decode(
+//                    inputData.substring(10),
+//                    Utils.convert(Arrays.<TypeReference<?>>asList(
+//                            new TypeReference<Address>(){},
+//                            new TypeReference<Uint256>(){})
+//                    )
+//            );
+//
+//        }
 
     }
 
@@ -187,10 +213,9 @@ public class TestWeb3j {
         Subscription subscription = web3j.replayTransactionsObservable(
                 new DefaultBlockParameterNumber(new BigInteger("5662012")), new DefaultBlockParameterNumber(new BigInteger("5662154")))
         .subscribe(tx -> {
-            if(address.equals(tx.getFrom()) || address.equals(tx.getTo())) {
-                System.out.println("TxHash:"+tx.getHash()+" Block:"+tx.getBlockNumber()+" From:"+tx.getFrom()+" To:"+tx.getTo()+ " Value:"+tx.getValue());
-            }
         });
+
+        System.out.println("===============================");
     }
 
     @Test

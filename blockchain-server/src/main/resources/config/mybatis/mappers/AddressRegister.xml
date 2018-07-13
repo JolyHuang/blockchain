@@ -15,8 +15,14 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	<if test="null!=address">
     		and ADDRESS = #{address}
     	</if>
+    	<if test="null!=contractAddress">
+    		and CONTRACT_ADDRESS = #{contractAddress}
+    	</if>
     	<if test="null!=coinType">
     		and COIN_TYPE = #{coinType}
+    	</if>
+    	<if test="null!=subCoinType">
+    		and SUB_COIN_TYPE = #{subCoinType}
     	</if>
     	<if test="null!=createTime">
     		and CREATE_TIME = #{createTime}
@@ -33,8 +39,14 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    <if test="null!=address">
 		    ADDRESS = #{address},
 		    </if>
+		    <if test="null!=contractAddress">
+		    CONTRACT_ADDRESS = #{contractAddress},
+		    </if>
 		    <if test="null!=coinType">
 		    COIN_TYPE = #{coinType},
+		    </if>
+		    <if test="null!=subCoinType">
+		    SUB_COIN_TYPE = #{subCoinType},
 		    </if>
 		    <if test="null!=createTime">
 		    CREATE_TIME = #{createTime},
@@ -47,7 +59,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<resultMap id="addressRegisterResultMap" type="com.sharingif.blockchain.transaction.model.entity.AddressRegister">
         <result property="id" column="ID"/>
         <result property="address" column="ADDRESS"/>
+        <result property="contractAddress" column="CONTRACT_ADDRESS"/>
         <result property="coinType" column="COIN_TYPE"/>
+        <result property="subCoinType" column="SUB_COIN_TYPE"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="modifyTime" column="MODIFY_TIME"/>
 	</resultMap>
@@ -57,13 +71,17 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         INSERT INTO ADDRESS_REGISTER (
         	ID
         	,ADDRESS
+        	,CONTRACT_ADDRESS
         	,COIN_TYPE
+        	,SUB_COIN_TYPE
         	,CREATE_TIME
         	,MODIFY_TIME
         ) VALUES (
         	#{id}
         	,#{address}
+        	,#{contractAddress}
         	,#{coinType}
+        	,#{subCoinType}
         	,#{createTime}
         	,#{modifyTime}
         )
@@ -98,7 +116,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		SELECT
 			ID
 			,ADDRESS
+			,CONTRACT_ADDRESS
 			,COIN_TYPE
+			,SUB_COIN_TYPE
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -111,7 +131,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		SELECT
 			ID
 			,ADDRESS
+			,CONTRACT_ADDRESS
 			,COIN_TYPE
+			,SUB_COIN_TYPE
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -127,7 +149,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		SELECT
 			ID
 			,ADDRESS
+			,CONTRACT_ADDRESS
 			,COIN_TYPE
+			,SUB_COIN_TYPE
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -150,7 +174,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		SELECT
 			ID
 			,ADDRESS
+			,CONTRACT_ADDRESS
 			,COIN_TYPE
+			,SUB_COIN_TYPE
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM

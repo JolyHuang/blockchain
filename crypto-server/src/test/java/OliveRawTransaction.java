@@ -1,5 +1,3 @@
-package com.sharingif.ethereum.web3j;
-
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
@@ -16,12 +14,12 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
  * OliveRawTransaction
  *
+ * @author Joly
  * @author Joly
  * @version v1.0
  * @since v1.0
@@ -29,9 +27,9 @@ import java.util.concurrent.ExecutionException;
  */
 public class OliveRawTransaction {
 
-    static String contractAddress = "0x9d9223436ddd466fc247e9dbbd20207e640fef58";
-    static String fromAddress = "0x5b6695966503a4618b3cc8D1Ed7768BFb3757750";
-    static String toAddress = "0x5b6695966503a4618b3cc8D1Ed7768BFb3757750";
+    static String contractAddress = "0x9d9223436dDD466FC247e9dbbD20207e640fEf58";     //BTM
+    static String methodName = "transfer";
+    static String toAddress = "0x9d9223436dDD466FC247e9dbbD20207e640fEf58";
 
     static Credentials credentials = null;
 
@@ -48,32 +46,27 @@ public class OliveRawTransaction {
     }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
-        List<String> hostList = new ArrayList<String>();
-//        hostList.add("185.244.192.252");
-        hostList.add("52.166.62.158");
-        hostList.add("185.21.100.42");
-        hostList.add("52.77.202.112");
-        hostList.add("110.173.57.186");
-//        hostList.add("159.203.171.169");
-        hostList.add("110.173.57.187");
+        transaction("localhost", 8545);
 
+//        Web3j web3j = Web3j.build(new HttpService("http://47.52.42.78:8545"));
 
-        for(String host : hostList) {
-            transaction(host, 8545);
-        }
+//        System.out.println(web3j.ethBlockNumber().send().getBlockNumber());
 
     }
 
     private static void transaction(String host, int port) throws ExecutionException, InterruptedException, IOException {
-        Web3j web3j = Web3j.build(new HttpService("http://"+host+":"+port));
-        BigInteger amount = Convert.toWei("1", Convert.Unit.ETHER).toBigInteger();
+        Web3j web3j = Web3j.build(new HttpService("http://localhost:8545"));
+//        Web3j web3j = Web3j.build(new HttpService("http://52.187.147.199:8545"));
+        BigInteger amount = Convert.toWei("400000", Convert.Unit.ETHER).toBigInteger();
+
+        System.out.println(web3j.ethBlockNumber().send().getBlockNumber());
 
         EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(toAddress, DefaultBlockParameterName.LATEST).sendAsync().get();
 
-        BigInteger nonce = ethGetTransactionCount.getTransactionCount().add(new BigInteger("1"));
+        BigInteger nonce = ethGetTransactionCount.getTransactionCount().add(new BigInteger("14"));
 
         Function function = new Function(
-                "transfer"
+                methodName
                 ,Arrays.asList(new Address(toAddress), new Uint256(amount))
                 ,new ArrayList()
         );
@@ -82,8 +75,8 @@ public class OliveRawTransaction {
 
         RawTransaction rawTransaction  = RawTransaction.createTransaction(
                 nonce
-                ,Convert.toWei("0.000000008", Convert.Unit.ETHER).toBigInteger()
-                ,new BigInteger("43132")
+                ,Convert.toWei("0.000000012", Convert.Unit.ETHER).toBigInteger()
+                ,new BigInteger("83132")
                 ,contractAddress
                 ,encodedFunction
         );

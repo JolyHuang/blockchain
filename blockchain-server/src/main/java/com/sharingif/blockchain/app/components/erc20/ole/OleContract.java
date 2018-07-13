@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.web3j.abi.EventEncoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
@@ -38,6 +40,8 @@ import rx.functions.Func1;
  * <p>Generated with web3j version 3.4.0.
  */
 public class OleContract extends Contract {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public static final String FUNC_NAME = "name";
 
@@ -90,6 +94,9 @@ public class OleContract extends Contract {
     public static final String FUNC_BALANCEOFLOCKED = "balanceOfLocked";
 
     public static final String FUNC_TRANSFEROWNERSHIP = "transferOwnership";
+
+
+    private BigInteger decimals;
 
     public static final Event TRANSFER_EVENT = new Event("Transfer", 
             Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Address>() {}),
@@ -157,11 +164,23 @@ public class OleContract extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteCall<BigInteger> decimals() {
+    public BigInteger decimals() {
+        if(decimals != null) {
+            return decimals;
+        }
+
         final Function function = new Function(FUNC_DECIMALS, 
                 Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint8>() {}));
-        return executeRemoteCallSingleValueReturn(function, BigInteger.class);
+        RemoteCall<BigInteger> remoteCall = executeRemoteCallSingleValueReturn(function, BigInteger.class);
+
+        try {
+            decimals = remoteCall.send();
+        } catch (Exception e) {
+            logger.error("get decimals error", e);
+            throw new RuntimeException(e);
+        }
+        return decimals;
     }
 
     public RemoteCall<String> crowdsaleAddress() {
