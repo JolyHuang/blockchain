@@ -18,8 +18,17 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	<if test="null!=coinType">
     		and COIN_TYPE = #{coinType}
     	</if>
+    	<if test="null!=totalIn">
+    		and TOTAL_IN = #{totalIn}
+    	</if>
+    	<if test="null!=totalOut">
+    		and TOTAL_OUT = #{totalOut}
+    	</if>
     	<if test="null!=balance">
     		and BALANCE = #{balance}
+    	</if>
+    	<if test="null!=status">
+    		and STATUS = #{status}
     	</if>
     	<if test="null!=createTime">
     		and CREATE_TIME = #{createTime}
@@ -39,8 +48,17 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    <if test="null!=coinType">
 		    COIN_TYPE = #{coinType},
 		    </if>
+		    <if test="null!=totalIn">
+		    TOTAL_IN = #{totalIn},
+		    </if>
+		    <if test="null!=totalOut">
+		    TOTAL_OUT = #{totalOut},
+		    </if>
 		    <if test="null!=balance">
 		    BALANCE = #{balance},
+		    </if>
+		    <if test="null!=status">
+		    STATUS = #{status},
 		    </if>
 		    <if test="null!=createTime">
 		    CREATE_TIME = #{createTime},
@@ -54,7 +72,10 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         <result property="id" column="ID"/>
         <result property="address" column="ADDRESS"/>
         <result property="coinType" column="COIN_TYPE"/>
+        <result property="totalIn" column="TOTAL_IN"/>
+        <result property="totalOut" column="TOTAL_OUT"/>
         <result property="balance" column="BALANCE"/>
+        <result property="status" column="STATUS"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="modifyTime" column="MODIFY_TIME"/>
 	</resultMap>
@@ -65,14 +86,20 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	ID
         	,ADDRESS
         	,COIN_TYPE
+        	,TOTAL_IN
+        	,TOTAL_OUT
         	,BALANCE
+        	,STATUS
         	,CREATE_TIME
         	,MODIFY_TIME
         ) VALUES (
         	#{id}
         	,#{address}
         	,#{coinType}
+        	,#{totalIn}
+        	,#{totalOut}
         	,#{balance}
+        	,#{status}
         	,#{createTime}
         	,#{modifyTime}
         )
@@ -108,7 +135,10 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			ID
 			,ADDRESS
 			,COIN_TYPE
+			,TOTAL_IN
+			,TOTAL_OUT
 			,BALANCE
+			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -122,7 +152,10 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			ID
 			,ADDRESS
 			,COIN_TYPE
+			,TOTAL_IN
+			,TOTAL_OUT
 			,BALANCE
+			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -139,7 +172,10 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			ID
 			,ADDRESS
 			,COIN_TYPE
+			,TOTAL_IN
+			,TOTAL_OUT
 			,BALANCE
+			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -163,7 +199,10 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			ID
 			,ADDRESS
 			,COIN_TYPE
+			,TOTAL_IN
+			,TOTAL_OUT
 			,BALANCE
+			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM

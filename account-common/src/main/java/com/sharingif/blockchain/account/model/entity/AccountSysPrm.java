@@ -2,6 +2,7 @@ package com.sharingif.blockchain.account.model.entity;
 
 
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
+import com.sharingif.cube.components.sequence.Sequence;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -24,6 +25,7 @@ public class AccountSysPrm implements java.io.Serializable, IObjectDateOperation
      * id			db_column: ID 
      */	
 	@Length(max=32)
+	@Sequence(ref="uuidSequenceGenerator")
 	private java.lang.String id;
     /**
      * 参数名称			db_column: PRM_NAME 

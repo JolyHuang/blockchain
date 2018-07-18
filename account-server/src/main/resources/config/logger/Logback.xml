@@ -37,7 +37,7 @@
 	
 	<springProfile name="DEV">
 	<!-- 开发 -->
-	<root level="DEBUG">
+	<root level="INFO">
 		<appender-ref ref="CONSOLE" />
 	</root>
 	</springProfile>

@@ -28,6 +28,7 @@ import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 import rx.Subscription;
+import sun.applet.Main;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -227,10 +228,6 @@ public class TestWeb3j {
 
     @Test
     public void testPrivateKey() throws UnreadableWalletException {
-        HexCoder hexCoder = new HexCoder();
-
-        Credentials credentials = Credentials.create("aeaca182682165acdaf0763efa93d2ea9baf581ee3275a3408b773314855b4b2");
-        System.out.println(credentials.getAddress());
 //
 //        byte[] extendKey = hexCoder.decode("0488ade40537dc776e00000000fb328affb5ae06a64bb1ed7e3a0a91e29994714734b71677d06b3316c27cf04100aeaca182682165acdaf0763efa93d2ea9baf581ee3275a3408b773314855b4b296e5e886");
 //        byte[] privateKey = new byte[32];
@@ -242,36 +239,38 @@ public class TestWeb3j {
 //        Credentials credentials3 = Credentials.create(ECKeyPair.create(sha256(hexCoder.decode("0488ade40537dc776e00000000fb328affb5ae06a64bb1ed7e3a0a91e29994714734b71677d06b3316c27cf04100aeaca182682165acdaf0763efa93d2ea9baf581ee3275a3408b773314855b4b296e5e886"))));
 //        System.out.println(credentials3.getAddress());
 //
-        Credentials credentials4 = Credentials.create(ECKeyPair.create(hexCoder.decode("2a5fbc7791ee5631f30c86ca880ffe5465156aa92e5edd29c62187eac1719f4a")));
-        System.out.println(credentials4.getAddress());
 //
-        String seedCode = "tunnel maple valve card settle author cream vibrant beauty ocean mixed toe";
+        String seedCode = "";
 
-        // BitcoinJ
+        // BitcoinJ1H7Vqj2VutV9L67hwQgtPk5c8UJXg3FHdB
         DeterministicSeed seed = new DeterministicSeed(seedCode, null, "", 0l);
         DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
-        List<ChildNumber> keyPath = HDUtils.parsePath("M/44H/60H/0H/0");
+        List<ChildNumber> keyPath = HDUtils.parsePath("M/44H/0H/0H/0/0");
         DeterministicKey key = chain.getKeyByPath(keyPath, true);
-        BigInteger privKey = key.getPrivKey();
-
-        System.out.println("private:"+hexCoder.encode(key.getPrivKeyBytes()));
-        System.out.println("publicKey:"+Hex.toHexString(key.getPubKey()));
-        System.out.println("chainCode:"+hexCoder.encode(key.getChainCode()));
-        System.out.println("path:"+key.getPath());
-        System.out.println("childNumber:"+key.getChildNumber());
 
 
+        System.out.println(key.toAddress(MainNetParams.get()));
 
-        String serializePrivB58 = key.serializePrivB58(MainNetParams.get());
-        DeterministicKey deterministicKey = DeterministicKey.deserializeB58(serializePrivB58, MainNetParams.get());
-        deterministicKey = new DeterministicKey(HDUtils.append(HDUtils.parsePath("M/44H/60H/0H"), ChildNumber.ZERO), deterministicKey.getChainCode(), deterministicKey.getPrivKey(), deterministicKey);
-
-        deterministicKey = HDKeyDerivation.deriveChildKey(deterministicKey, new ChildNumber(0, false));
-        System.out.println("deterministicKey2:"+deterministicKey.getPath());
-        System.out.println("childDeterministicKey:"+deterministicKey.getPath());
-        // Web3j
-        Credentials credentials6 = Credentials.create(deterministicKey.getPrivKey().toString(16));
-        System.out.println(credentials6.getAddress());
+//        BigInteger privKey = key.getPrivKey();
+//
+//        System.out.println("private:"+hexCoder.encode(key.getPrivKeyBytes()));
+//        System.out.println("publicKey:"+Hex.toHexString(key.getPubKey()));
+//        System.out.println("chainCode:"+hexCoder.encode(key.getChainCode()));
+//        System.out.println("path:"+key.getPath());
+//        System.out.println("childNumber:"+key.getChildNumber());
+//
+//
+//
+//        String serializePrivB58 = key.serializePrivB58(MainNetParams.get());
+//        DeterministicKey deterministicKey = DeterministicKey.deserializeB58(serializePrivB58, MainNetParams.get());
+//        deterministicKey = new DeterministicKey(HDUtils.append(HDUtils.parsePath("M/44H/60H/0H"), ChildNumber.ZERO), deterministicKey.getChainCode(), deterministicKey.getPrivKey(), deterministicKey);
+//
+//        deterministicKey = HDKeyDerivation.deriveChildKey(deterministicKey, new ChildNumber(0, false));
+//        System.out.println("deterministicKey2:"+deterministicKey.getPath());
+//        System.out.println("childDeterministicKey:"+deterministicKey.getPath());
+//        // Web3j
+//        Credentials credentials6 = Credentials.create(deterministicKey.getPrivKey().toString(16));
+//        System.out.println(credentials6.getAddress());
 
     }
 

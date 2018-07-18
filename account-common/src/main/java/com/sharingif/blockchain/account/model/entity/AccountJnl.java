@@ -1,20 +1,33 @@
 package com.sharingif.blockchain.account.model.entity;
 
 
-import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.*;
 
-import javax.validation.constraints.NotNull;
+import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
+import com.sharingif.cube.components.sequence.Sequence;
+import org.hibernate.validator.constraints.*;
+
+import java.math.BigInteger;
 
 
 public class AccountJnl implements java.io.Serializable, IObjectDateOperationHistory {
+
+	/**
+	 * 类型(00:转入)
+	 */
+	public static final String TYPE_IN = "00";
+	/**
+	 * 类型(01:转出)
+	 */
+	public static final String TYPE_OUT = "01";
 	
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
 	//columns START
     /**
-     * ID			db_column: ID 
+     * id			db_column: ID 
      */	
 	@Length(max=32)
+	@Sequence(ref="uuidSequenceGenerator")
 	private java.lang.String id;
     /**
      * from地址			db_column: ACCOUNT_FROM 
@@ -35,7 +48,7 @@ public class AccountJnl implements java.io.Serializable, IObjectDateOperationHis
      * 金额			db_column: BALANCE 
      */	
 	@NotNull 
-	private Long balance;
+	private BigInteger balance;
     /**
      * 类型(00:转入、01:转出)			db_column: TYPE 
      */	
@@ -46,6 +59,11 @@ public class AccountJnl implements java.io.Serializable, IObjectDateOperationHis
      */	
 	@Length(max=200)
 	private java.lang.String txHash;
+    /**
+     * 交易时间			db_column: TRANS_TIME 
+     */	
+	
+	private java.util.Date transTime;
     /**
      * 创建时间			db_column: CREATE_TIME 
      */	
@@ -82,10 +100,10 @@ public class AccountJnl implements java.io.Serializable, IObjectDateOperationHis
 	public java.lang.String getCoinType() {
 		return this.coinType;
 	}
-	public void setBalance(Long balance) {
+	public void setBalance(BigInteger balance) {
 		this.balance = balance;
 	}
-	public Long getBalance() {
+	public BigInteger getBalance() {
 		return this.balance;
 	}
 	public void setType(java.lang.String type) {
@@ -99,6 +117,12 @@ public class AccountJnl implements java.io.Serializable, IObjectDateOperationHis
 	}
 	public java.lang.String getTxHash() {
 		return this.txHash;
+	}
+	public void setTransTime(java.util.Date transTime) {
+		this.transTime = transTime;
+	}
+	public java.util.Date getTransTime() {
+		return this.transTime;
 	}
 	public void setCreateTime(java.util.Date createTime) {
 		this.createTime = createTime;
@@ -122,6 +146,7 @@ public class AccountJnl implements java.io.Serializable, IObjectDateOperationHis
 					.append("Balance=").append(getBalance()).append(", ")
 					.append("Type=").append(getType()).append(", ")
 					.append("TxHash=").append(getTxHash()).append(", ")
+					.append("TransTime=").append(getTransTime()).append(", ")
 					.append("CreateTime=").append(getCreateTime()).append(", ")
 					.append("ModifyTime=").append(getModifyTime())
 		.append("]").toString();

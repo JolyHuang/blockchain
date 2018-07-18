@@ -30,6 +30,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	<if test="null!=txHash">
     		and TX_HASH = #{txHash}
     	</if>
+    	<if test="null!=transTime">
+    		and TRANS_TIME = #{transTime}
+    	</if>
     	<if test="null!=createTime">
     		and CREATE_TIME = #{createTime}
     	</if>
@@ -60,6 +63,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    <if test="null!=txHash">
 		    TX_HASH = #{txHash},
 		    </if>
+		    <if test="null!=transTime">
+		    TRANS_TIME = #{transTime},
+		    </if>
 		    <if test="null!=createTime">
 		    CREATE_TIME = #{createTime},
 		    </if>
@@ -76,6 +82,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         <result property="balance" column="BALANCE"/>
         <result property="type" column="TYPE"/>
         <result property="txHash" column="TX_HASH"/>
+        <result property="transTime" column="TRANS_TIME"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="modifyTime" column="MODIFY_TIME"/>
 	</resultMap>
@@ -90,6 +97,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,BALANCE
         	,TYPE
         	,TX_HASH
+        	,TRANS_TIME
         	,CREATE_TIME
         	,MODIFY_TIME
         ) VALUES (
@@ -100,6 +108,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,#{balance}
         	,#{type}
         	,#{txHash}
+        	,#{transTime}
         	,#{createTime}
         	,#{modifyTime}
         )
@@ -139,6 +148,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,BALANCE
 			,TYPE
 			,TX_HASH
+			,TRANS_TIME
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -156,6 +166,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,BALANCE
 			,TYPE
 			,TX_HASH
+			,TRANS_TIME
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -176,6 +187,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,BALANCE
 			,TYPE
 			,TX_HASH
+			,TRANS_TIME
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -203,6 +215,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,BALANCE
 			,TYPE
 			,TX_HASH
+			,TRANS_TIME
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
