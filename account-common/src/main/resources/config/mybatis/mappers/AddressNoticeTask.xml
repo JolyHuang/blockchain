@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="addressNoticeTask">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="addressNoticeTaskColumns">
+    	<if test="null!=id">
+    		and ID = #{id}
+    	</if>
+    	<if test="null!=addressNoticeId">
+    		and ADDRESS_NOTICE_ID = #{addressNoticeId}
+    	</if>
+    	<if test="null!=type">
+    		and TYPE = #{type}
+    	</if>
+    	<if test="null!=status">
+    		and STATUS = #{status}
+    	</if>
+    	<if test="null!=createTime">
+    		and CREATE_TIME = #{createTime}
+    	</if>
+    	<if test="null!=modifyTime">
+    		and MODIFY_TIME = #{modifyTime}
+    	</if>
+	</sql>
+	
+	<sql id="addressNoticeTaskSetColumns">
+		    <if test="null!=id">
+		    ID = #{id},
+		    </if>
+		    <if test="null!=addressNoticeId">
+		    ADDRESS_NOTICE_ID = #{addressNoticeId},
+		    </if>
+		    <if test="null!=type">
+		    TYPE = #{type},
+		    </if>
+		    <if test="null!=status">
+		    STATUS = #{status},
+		    </if>
+		    <if test="null!=createTime">
+		    CREATE_TIME = #{createTime},
+		    </if>
+		    <if test="null!=modifyTime">
+		    MODIFY_TIME = #{modifyTime},
+		    </if>
+	</sql>
+
+	<resultMap id="addressNoticeTaskResultMap" type="com.sharingif.blockchain.transaction.model.entity.AddressNoticeTask">
+        <result property="id" column="ID"/>
+        <result property="addressNoticeId" column="ADDRESS_NOTICE_ID"/>
+        <result property="type" column="TYPE"/>
+        <result property="status" column="STATUS"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="modifyTime" column="MODIFY_TIME"/>
+	</resultMap>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="insert">
+        INSERT INTO ADDRESS_NOTICE_TASK (
+        	ID
+        	,ADDRESS_NOTICE_ID
+        	,TYPE
+        	,STATUS
+        	,CREATE_TIME
+        	,MODIFY_TIME
+        ) VALUES (
+        	#{id}
+        	,#{addressNoticeId}
+        	,#{type}
+        	,#{status}
+        	,#{createTime}
+        	,#{modifyTime}
+        )
+	</insert>
+	
+	<delete id="deleteById">
+	    DELETE FROM
+	    	ADDRESS_NOTICE_TASK 
+	    WHERE
+	    ID = #{id} 
+    </delete>
+    
+    <delete id="deleteByCondition">
+	    DELETE FROM
+	    	ADDRESS_NOTICE_TASK 
+	    WHERE
+	    	1=1
+		    <include refid="addressNoticeTaskColumns" />
+    </delete>
+    
+	<update id="updateById">
+	    UPDATE
+	    	ADDRESS_NOTICE_TASK 
+        <set>
+	        <include refid="addressNoticeTaskSetColumns" />
+		</set>
+	    WHERE
+	    ID = #{id} 
+	</update>
+	
+    <select id="queryById" resultMap="addressNoticeTaskResultMap">
+		SELECT
+			ID
+			,ADDRESS_NOTICE_ID
+			,TYPE
+			,STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ADDRESS_NOTICE_TASK 
+		WHERE 
+			ID = #{id} 
+	</select>
+	
+	<select id="queryList" resultMap="addressNoticeTaskResultMap">
+		SELECT
+			ID
+			,ADDRESS_NOTICE_ID
+			,TYPE
+			,STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ADDRESS_NOTICE_TASK
+		WHERE
+			1=1
+			<include refid="addressNoticeTaskColumns" />
+		ORDER BY
+			ID
+	</select>
+	
+	<select id="queryAll" resultMap="addressNoticeTaskResultMap">
+		SELECT
+			ID
+			,ADDRESS_NOTICE_ID
+			,TYPE
+			,STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ADDRESS_NOTICE_TASK 
+		ORDER BY
+			ID
+	</select>
+	
+	<select id="queryPaginationListCount" resultType="Integer">
+		SELECT
+			COUNT(0)
+		FROM
+			ADDRESS_NOTICE_TASK 
+		WHERE
+			1=1 
+			<include refid="addressNoticeTaskColumns" />
+	</select>
+	
+	<select id="queryPaginationList" parameterType="PaginationCondition" resultMap="addressNoticeTaskResultMap">
+		SELECT
+			ID
+			,ADDRESS_NOTICE_ID
+			,TYPE
+			,STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ADDRESS_NOTICE_TASK
+		WHERE
+			1=1
+			<include refid="addressNoticeTaskColumns" />
+		ORDER BY
+			ID
+	</select>
+	
+</mapper>
+
