@@ -11,13 +11,21 @@ package com.sharingif.blockchain.crypto.api.mnemonic.entity;
 public class MnemonicGenerateRsp {
 
     /**
+     * id
+     */
+    private String id;
+    /**
      * 助记词
      */
     private String mnemonic;
-    /**
-     * 生成助记词存放文件路径
-     */
-    private String filePath;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getMnemonic() {
         return mnemonic;
@@ -27,19 +35,11 @@ public class MnemonicGenerateRsp {
         this.mnemonic = mnemonic;
     }
 
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("MnemonicGenerateRsp{");
-        sb.append("mnemonic='").append(mnemonic).append('\'');
-        sb.append(", filePath='").append(filePath).append('\'');
+        sb.append("id='").append(id).append('\'');
+        sb.append(", mnemonic='").append(mnemonic).append('\'');
         sb.append('}');
         return sb.toString();
     }

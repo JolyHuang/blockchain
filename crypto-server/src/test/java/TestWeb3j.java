@@ -9,30 +9,25 @@ import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.DeterministicKeyChain;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.UnreadableWalletException;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
-import org.web3j.abi.EventEncoder;
-import org.web3j.abi.FunctionReturnDecoder;
-import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.Address;
-import org.web3j.abi.datatypes.Event;
-import org.web3j.abi.datatypes.Type;
-import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.MnemonicUtils;
+import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.RawTransactionManager;
+import org.web3j.tx.TransactionManager;
+import org.web3j.tx.Transfer;
 import org.web3j.utils.Convert;
 import rx.Subscription;
-import sun.applet.Main;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -46,9 +41,9 @@ import java.util.List;
  */
 public class TestWeb3j {
 
-//    Web3j web3j = Web3j.build(new HttpService("http://47.88.156.133:7236"));
+    Web3j web3j = Web3j.build(new HttpService("http://47.88.156.133:7236"));
 //    Web3j web3j = Web3j.build(new HttpService("http://localhost:8545"));
-        Web3j web3j = Web3j.build(new HttpService("http://159.203.171.169:8545"));
+//        Web3j web3j = Web3j.build(new HttpService("http://159.203.171.169:8545"));
 
     String address = "0x5b6695966503a4618b3cc8D1Ed7768BFb3757750";
 
@@ -161,38 +156,6 @@ public class TestWeb3j {
 
     }
 
-    @Test
-    public void testEventFilter() throws Exception {
-        EthTransaction ethTransaction = web3j.ethGetTransactionByHash("0x66fa2faed8a111e8e982f2c73e7108346125605b79e5fb0b03d6ee479fb56e53").send();
-
-        EthGetTransactionReceipt ethGetTransactionReceipt = web3j.ethGetTransactionReceipt(ethTransaction.getTransaction().get().getHash()).send();
-
-        List<Log> logs = ethGetTransactionReceipt.getTransactionReceipt().get().getLogs();
-
-        Log log = logs.get(0);
-
-        List<String> topics = log.getTopics();
-
-//        Event event = new Event("approve",
-//                Arrays.<TypeReference<?>>asList(new TypeReference<org.web3j.abi.datatypes.Address>() {}, new TypeReference<org.web3j.abi.datatypes.Address>() {}),
-//                Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {})
-//        );
-        Event event = new Event("Approval",
-                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<org.web3j.abi.datatypes.Address>() {}),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {})
-        );
-        String encodedEventSignature = EventEncoder.encode(event);
-
-        if (topics.get(0).equals(encodedEventSignature)) {
-            System.out.println(encodedEventSignature);
-        }
-
-        List<Type> results = FunctionReturnDecoder.decode(log.getData(), event.getIndexedParameters());
-        List<Type> results2 = FunctionReturnDecoder.decode(log.getData(), event.getNonIndexedParameters());
-
-        System.out.println(results);
-        System.out.println(results2);
-    }
 
     @Test
     public void testSolidityFunctionWrapperGenerator() {
@@ -240,13 +203,16 @@ public class TestWeb3j {
 //        System.out.println(credentials3.getAddress());
 //
 //
-        String seedCode = "";
+        String seedCode = "wear position lyrics exit coach purchase various genre cushion oppose arctic nation";
 
         // BitcoinJ1H7Vqj2VutV9L67hwQgtPk5c8UJXg3FHdB
         DeterministicSeed seed = new DeterministicSeed(seedCode, null, "", 0l);
         DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
         List<ChildNumber> keyPath = HDUtils.parsePath("M/44H/0H/0H/0/0");
         DeterministicKey key = chain.getKeyByPath(keyPath, true);
+
+//        Credentials credentials6 = Credentials.create(key.getPrivKey().toString(16));
+//        System.out.println(credentials6.getAddress());
 
 
         System.out.println(key.toAddress(MainNetParams.get()));
@@ -345,6 +311,23 @@ public class TestWeb3j {
             }
 
         }
+    }
+
+    @Test
+    public void testSendETHError() throws Exception {
+
+        Credentials credentials = WalletUtils.loadCredentials(
+                        "1hjdsR4"
+                        ,"/keystore/934CAE294D204FE5876AE0DA18396100/m/44'/60'/0'/0/0/UTC--2018-07-19T10-39-40.140000000Z--705886b730022f2129b50c2baeffae1b9c29a470.json");
+
+        TransactionManager transactionManager = new RawTransactionManager(web3j, credentials);
+
+
+        TransactionReceipt transactionReceipt = Transfer.sendFunds(
+                web3j, credentials, "0x711b60a0266d763084ff9c29911a66e20b81ee8a",
+                new BigDecimal("0.1"), Convert.Unit.ETHER).send();
+
+        System.out.println(transactionReceipt.getTransactionHash());
     }
 
 }

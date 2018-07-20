@@ -47,6 +47,7 @@ public class MnemonicServiceImpl extends BaseServiceImpl<Mnemonic, String> imple
 
         // 保存助记词信息
         Mnemonic mnemonic = new Mnemonic();
+
         mnemonic.setFilePath(apiRsp.getFilePath());
         mnemonicDAO.insert(mnemonic);
 

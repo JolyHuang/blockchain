@@ -45,7 +45,7 @@ public class Bootstrap {
 
     @EnableAutoConfiguration
     @ComponentScan(
-            basePackages = "com.sharingif.blockchain.crypto.*.service,com.sharingif.blockchain.crypto.app.autoconfigure,com.sharingif.cube.spring.boot"
+            basePackages = "com.sharingif.blockchain.crypto.*.dao,com.sharingif.blockchain.crypto.*.service,com.sharingif.blockchain.crypto.app.autoconfigure,com.sharingif.cube.spring.boot"
             ,nameGenerator = ExtendedAnnotationBeanNameGenerator.class
             ,useDefaultFilters= false
             ,includeFilters={

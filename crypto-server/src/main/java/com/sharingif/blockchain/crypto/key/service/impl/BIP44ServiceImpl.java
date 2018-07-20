@@ -1,10 +1,16 @@
 package com.sharingif.blockchain.crypto.key.service.impl;
 
 import com.sharingif.blockchain.crypto.api.key.entity.*;
+import com.sharingif.blockchain.crypto.api.key.service.BIP44ApiService;
 import com.sharingif.blockchain.crypto.app.components.Keystore;
 import com.sharingif.blockchain.crypto.app.constants.ErrorConstants;
+import com.sharingif.blockchain.crypto.key.dao.ExtendedKeyDAO;
+import com.sharingif.blockchain.crypto.key.dao.SecretKeyDAO;
+import com.sharingif.blockchain.crypto.key.model.entity.ExtendedKey;
 import com.sharingif.blockchain.crypto.key.model.entity.KeyPath;
+import com.sharingif.blockchain.crypto.key.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.key.service.BIP44Service;
+import com.sharingif.blockchain.crypto.mnemonic.service.MnemonicService;
 import com.sharingif.cube.core.exception.validation.ValidationCubeException;
 import com.sharingif.cube.security.confidentiality.encrypt.digest.SHA256Encryptor;
 import org.bitcoinj.crypto.*;
@@ -40,6 +46,9 @@ public class BIP44ServiceImpl implements BIP44Service {
 
     private Keystore keystore;
     private SHA256Encryptor sha256Encryptor;
+    private ExtendedKeyDAO extendedKeyDAO;
+    private SecretKeyDAO secretKeyDAO;
+    private MnemonicService mnemonicService;
 
     @Resource
     public void setKeystore(Keystore keystore) {
@@ -50,6 +59,18 @@ public class BIP44ServiceImpl implements BIP44Service {
     public void setSha256Encryptor(SHA256Encryptor sha256Encryptor) {
         this.sha256Encryptor = sha256Encryptor;
     }
+    @Resource
+    public void setExtendedKeyDAO(ExtendedKeyDAO extendedKeyDAO) {
+        this.extendedKeyDAO = extendedKeyDAO;
+    }
+    @Resource
+    public void setSecretKeyDAO(SecretKeyDAO secretKeyDAO) {
+        this.secretKeyDAO = secretKeyDAO;
+    }
+    @Resource
+    public void setMnemonicService(MnemonicService mnemonicService) {
+        this.mnemonicService = mnemonicService;
+    }
 
     @Override
     public BIP44GenerateRsp generate(BIP44GenerateReq req) {
@@ -59,8 +80,14 @@ public class BIP44ServiceImpl implements BIP44Service {
 
     @Override
     public BIP44ChangeRsp change(BIP44ChangeReq req) {
-        String mnemonic = keystore.load(req.getMnemonicFilePath(), req.getMnemonicPassword());
+
+        // BIP44路径
         KeyPath keyPath = new KeyPath(req);
+
+        // 获取助记词文件路径
+        String mnemonicFilePath = mnemonicService.getFilePath(req.getMnemonicId());
+
+        String mnemonic = keystore.load(mnemonicFilePath, req.getMnemonicPassword());
 
         DeterministicSeed seed;
         try {
@@ -75,61 +102,108 @@ public class BIP44ServiceImpl implements BIP44Service {
 
         String fileName = sha256Encryptor.encrypt(deterministicKeyStr);
 
-        String filePath = keystore.persistenceExtendedKey(req.getMnemonicId(), keyPath.getPath(), fileName, deterministicKeyStr, req.getPassword());
+        String mnemonicPath = mnemonicFilePath.split("/")[0];
+        String filePath = keystore.persistenceExtendedKey(mnemonicPath, keyPath.getPath(), fileName, deterministicKeyStr, req.getPassword());
 
-        BIP44ChangeRsp bip44ChangeRsp = new BIP44ChangeRsp();
-        bip44ChangeRsp.setFilePath(filePath);
+        // 保存助记词信息
+        ExtendedKey extendedKey = new ExtendedKey();
+        extendedKey.setMnemonicId(req.getMnemonicId());
+        extendedKey.setExtendedKeyPath(keyPath.getPath());
+        extendedKey.setFilePath(filePath);
+        extendedKeyDAO.insert(extendedKey);
 
-        return bip44ChangeRsp;
+        // 返回助记词id
+        BIP44ChangeRsp rsp = new BIP44ChangeRsp();
+        rsp.setId(extendedKey.getId());
+
+        return rsp;
+    }
+
+    protected SecretKey addressIndexETH(DeterministicKey addressIndexDeterministicKey, ExtendedKey extendedKey, KeyPath keyPath, String password) {
+        SecretKey secretKey = new SecretKey();
+
+        ECKeyPair ecKeyPair = ECKeyPair.create(addressIndexDeterministicKey.getPrivKey());
+        Credentials credentials = Credentials.create(ecKeyPair);
+        try {
+            String mnemonicPath = extendedKey.getFilePath().split("/")[0];
+            String directoryStr = new StringBuilder(keystore.getKeyRootPath())
+                    .append("/").append(mnemonicPath)
+                    .append("/").append(keyPath.getPath())
+                    .toString();
+
+            File directory = new File(directoryStr);
+
+            if(!(directory.mkdirs())) {
+                logger.error("create directory error, path:{}", directoryStr);
+                throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
+            }
+
+            String fileName = WalletUtils.generateWalletFile(password, ecKeyPair, directory, true);
+
+            String filePath = new StringBuilder(directoryStr).append("/").append(fileName).toString();
+
+            secretKey.setAddress(credentials.getAddress());
+            secretKey.setFilePath(filePath);
+
+            return secretKey;
+        } catch (IOException | CipherException e) {
+            logger.error("generate addressIndex key error", e);
+            throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
+        }
+    }
+
+    protected SecretKey addressIndexBTC(DeterministicKey addressIndexDeterministicKey) {
+        SecretKey secretKey = new SecretKey();
+
+        secretKey.setAddress(addressIndexDeterministicKey.toAddress(MainNetParams.get()).toBase58());
+
+        return secretKey;
     }
 
     @Override
     public BIP44AddressIndexRsp addressIndex(BIP44AddressIndexReq req) {
-        KeyPath keyPath = new KeyPath(req);
+        // 获取change ExtendedKey信息
+        ExtendedKey extendedKey = extendedKeyDAO.queryById(req.getChangeExtendedKeyId());
+        Integer addressIndex = extendedKey.getCurrentIndexNumber();
+        if(addressIndex == null) {
+            addressIndex = 0;
+        } else {
+            ++addressIndex;
+        }
+        ExtendedKey updateExtendedKey = new ExtendedKey();
+        updateExtendedKey.setId(extendedKey.getId());
+        updateExtendedKey.setCurrentIndexNumber(addressIndex);
+        extendedKeyDAO.updateById(updateExtendedKey);
 
-        String changeDeterministicKeyBase58 = keystore.load(req.getChangeExtendedKeyFilePath(), req.getChangeExtendedKeyPassword());
+        // BIP44路径
+        KeyPath keyPath = new KeyPath(req, addressIndex);
+
+        String changeDeterministicKeyBase58 = keystore.load(extendedKey.getFilePath(), req.getChangeExtendedKeyPassword());
         DeterministicKey changeDeterministicKey = DeterministicKey.deserializeB58(changeDeterministicKeyBase58, MainNetParams.get());
         changeDeterministicKey = new DeterministicKey(HDUtils.append(HDUtils.parsePath(keyPath.getBitcoinjParentPath()), ChildNumber.ZERO), changeDeterministicKey.getChainCode(), changeDeterministicKey.getPrivKey(), changeDeterministicKey);
 
-        DeterministicKey addressIndexDeterministicKey = HDKeyDerivation.deriveChildKey(changeDeterministicKey, new ChildNumber(req.getAddressIndex(), false));
+        DeterministicKey addressIndexDeterministicKey = HDKeyDerivation.deriveChildKey(changeDeterministicKey, new ChildNumber(addressIndex, false));
 
-        BIP44AddressIndexRsp bip44AddressIndexRsp = new BIP44AddressIndexRsp();
+        SecretKey secretKey = null;
         if(BIP44GenerateReq.COIN_TYPE_ETH == req.getCoinType()) {
-            ECKeyPair ecKeyPair = ECKeyPair.create(addressIndexDeterministicKey.getPrivKey());
-            Credentials credentials = Credentials.create(ecKeyPair);
-            bip44AddressIndexRsp.setAddress(credentials.getAddress());
-
-            try {
-                String directoryStr = new StringBuilder(keystore.getKeyRootPath())
-                        .append("/").append(req.getMnemonicId())
-                        .append("/").append(keyPath.getPath())
-                        .toString();
-
-                File directory = new File(directoryStr);
-
-                if(!(directory.mkdirs())) {
-                    logger.error("create directory error, path:{}", directoryStr);
-                    throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
-                }
-
-                String fileName = WalletUtils.generateWalletFile(req.getPassword(), ecKeyPair, directory, true);
-
-                String filePath = new StringBuilder(directoryStr).append("/").append(fileName).toString();
-
-                bip44AddressIndexRsp.setFilePath(filePath);
-
-                return bip44AddressIndexRsp;
-            } catch (IOException | CipherException e) {
-                logger.error("generate addressIndex key error", e);
-                throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
-            }
+            secretKey = addressIndexETH(addressIndexDeterministicKey, extendedKey, keyPath, req.getPassword());
         }
 
         if(BIP44GenerateReq.COIN_TYPE_BTC == req.getCoinType()) {
-            bip44AddressIndexRsp.setAddress(addressIndexDeterministicKey.toAddress(MainNetParams.get()).toBase58());
+            secretKey = addressIndexBTC(addressIndexDeterministicKey);
         }
 
-        return bip44AddressIndexRsp;
+        // 保存key信息
+        secretKey.setMnemonicId(req.getMnemonicId());
+        secretKey.setExtendedKeyId(extendedKey.getId());
+        secretKey.setKeyPath(keyPath.getPath());
+        secretKeyDAO.insert(secretKey);
+
+        BIP44AddressIndexRsp rsp = new BIP44AddressIndexRsp();
+        rsp.setId(secretKey.getId());
+        rsp.setAddress(secretKey.getAddress());
+
+        return rsp;
     }
 
 }

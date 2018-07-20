@@ -1,8 +1,8 @@
 package com.sharingif.blockchain.transaction.controller;
 
 
-import com.sharingif.blockchain.api.transaction.entity.RegisterReq;
-import com.sharingif.blockchain.api.transaction.entity.UnregisterReq;
+import com.sharingif.blockchain.account.api.transaction.entity.RegisterReq;
+import com.sharingif.blockchain.account.api.transaction.entity.UnregisterReq;
 import com.sharingif.blockchain.transaction.service.AddressRegisterService;
 import com.sharingif.cube.core.handler.bind.annotation.RequestMapping;
 import com.sharingif.cube.core.handler.bind.annotation.RequestMethod;

@@ -2,7 +2,7 @@ package com.sharingif.blockchain.crypto.service.impl;
 
 import com.sharingif.blockchain.account.api.crypto.entity.MnemonicGenerateReq;
 import com.sharingif.blockchain.account.api.crypto.entity.MnemonicGenerateRsp;
-import com.sharingif.blockchain.api.crypto.service.MnemonicApiService;
+import com.sharingif.blockchain.crypto.api.mnemonic.service.MnemonicApiService;
 import com.sharingif.blockchain.crypto.dao.MnemonicDAO;
 import com.sharingif.blockchain.crypto.model.entity.Mnemonic;
 import com.sharingif.blockchain.crypto.service.MnemonicService;
@@ -45,11 +45,11 @@ public class MnemonicServiceImpl extends BaseServiceImpl<Mnemonic, String> imple
     public MnemonicGenerateRsp generate(MnemonicGenerateReq req) {
 
         // 调用crypto-api生成助记词
-        com.sharingif.blockchain.api.crypto.entity.MnemonicGenerateReq apiReq = new com.sharingif.blockchain.api.crypto.entity.MnemonicGenerateReq();
+        com.sharingif.blockchain.crypto.api.mnemonic.entity.MnemonicGenerateReq apiReq = new com.sharingif.blockchain.crypto.api.mnemonic.entity.MnemonicGenerateReq();
         apiReq.setLocale(req.getLocale());
         apiReq.setLength(req.getLength());
         apiReq.setPassword(req.getPassword());
-        com.sharingif.blockchain.api.crypto.entity.MnemonicGenerateRsp apiRsp = mnemonicApiService.generate(apiReq);
+        com.sharingif.blockchain.crypto.api.mnemonic.entity.MnemonicGenerateRsp apiRsp = mnemonicApiService.generate(apiReq);
 
         // 保存助记词信息
         Mnemonic mnemonic = new Mnemonic();

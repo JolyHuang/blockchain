@@ -1,8 +1,12 @@
 package com.sharingif.blockchain.account.service.impl;
 
+import com.sharingif.blockchain.account.api.account.entity.AccountSysSetChangeExtendedKeyReq;
 import com.sharingif.blockchain.account.dao.AccountSysPrmDAO;
 import com.sharingif.blockchain.account.model.entity.AccountSysPrm;
 import com.sharingif.blockchain.account.service.AccountSysPrmService;
+import com.sharingif.blockchain.crypto.model.entity.ExtendedKey;
+import com.sharingif.blockchain.crypto.model.entity.KeyPath;
+import com.sharingif.blockchain.crypto.service.ExtendedKeyService;
 import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -19,22 +23,45 @@ import javax.annotation.Resource;
 @Service
 public class AccountSysPrmServiceImpl extends BaseServiceImpl<AccountSysPrm, String> implements AccountSysPrmService {
 
+    private static final String CHANGE_EXTENDED_KEY_PREFIX = "ExtendedKey_";
+
     private AccountSysPrmDAO accountSysPrmDAO;
+    private ExtendedKeyService extendedKeyService;
 
     @Resource
     public void setAccountSysPrmDAO(AccountSysPrmDAO accountSysPrmDAO) {
         super.setBaseDAO(accountSysPrmDAO);
         this.accountSysPrmDAO = accountSysPrmDAO;
     }
+    @Resource
+    public void setExtendedKeyService(ExtendedKeyService extendedKeyService) {
+        this.extendedKeyService = extendedKeyService;
+    }
 
     @Override
-    public String extendedKey(String coinType) {
+    public String extendedKey(int coinType) {
         AccountSysPrm accountSysPrm = new AccountSysPrm();
-        accountSysPrm.setPrmName("ExtendedKey_"+coinType);
+        accountSysPrm.setPrmName(CHANGE_EXTENDED_KEY_PREFIX+coinType);
         accountSysPrm.setPrmStatus(AccountSysPrm.PRM_STATUS_VALID);
+
         accountSysPrm = accountSysPrmDAO.query(accountSysPrm);
 
         return accountSysPrm.getPrmValue();
+    }
+
+    @Override
+    public void setChangeExtendedKey(AccountSysSetChangeExtendedKeyReq req) {
+        ExtendedKey extendedKey = extendedKeyService.getById(req.getChangeExtendedKeyId());
+
+        KeyPath keyPath = new KeyPath(extendedKey.getExtendedKeyPath());
+
+        AccountSysPrm accountSysPrm = new AccountSysPrm();
+        accountSysPrm.setPrmName(CHANGE_EXTENDED_KEY_PREFIX+keyPath.getCoinType());
+        accountSysPrm.setPrmValue(req.getChangeExtendedKeyId());
+        accountSysPrm.setPrmDesc(accountSysPrm.getPrmName());
+        accountSysPrm.setPrmStatus(AccountSysPrm.PRM_STATUS_VALID);
+
+        accountSysPrmDAO.insert(accountSysPrm);
     }
 
 }

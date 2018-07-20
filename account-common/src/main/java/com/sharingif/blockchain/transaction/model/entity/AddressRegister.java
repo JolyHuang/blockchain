@@ -2,6 +2,7 @@ package com.sharingif.blockchain.transaction.model.entity;
 
 
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
+import com.sharingif.cube.components.sequence.Sequence;
 import org.hibernate.validator.constraints.Length;
 
 
@@ -22,6 +23,7 @@ public class AddressRegister implements java.io.Serializable, IObjectDateOperati
      * id			db_column: ID 
      */	
 	@Length(max=32)
+	@Sequence(ref="uuidSequenceGenerator")
 	private java.lang.String id;
     /**
      * 地址			db_column: ADDRESS 

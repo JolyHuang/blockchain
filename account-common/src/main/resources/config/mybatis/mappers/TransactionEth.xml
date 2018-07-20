@@ -369,6 +369,58 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		ORDER BY
 			TX_HASH
 	</select>
+
+	<select id="queryPaginationTxStatusInListCount" resultType="Integer">
+		SELECT
+		COUNT(0)
+		FROM
+		TRANSACTION_ETH
+		WHERE
+		1=1
+		AND
+		TX_STATUS IN
+		<foreach collection="txStatusArray" item="txStatus" index="index"
+				 open="(" close=")" separator=",">
+			#{txStatus}
+		</foreach>
+	</select>
+
+	<select id="queryPaginationTxStatusInList" parameterType="PaginationCondition" resultMap="transactionEthResultMap">
+		SELECT
+			TX_HASH
+			,BLOCK_NUMBER
+			,TX_FROM
+			,TX_TO
+			,CONTRACT_ADDRESS
+			,COIN_TYPE
+			,TX_INPUT
+			,TX_VALUE
+			,TX_INDEX
+			,GAS_LIMIT
+			,GAS_USED
+			,GAS_PRICE
+			,ACTUAL_FEE
+			,NONCE
+			,TX_RECEIPT_STATUS
+			,TX_TIME
+			,CONFIRM_BLOCK_NUMBER
+			,TX_STATUS
+			,TX_TYPE
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			TRANSACTION_ETH
+		WHERE
+			1=1
+			AND
+			TX_STATUS IN
+			<foreach collection="txStatusArray" item="txStatus" index="index"
+					 open="(" close=")" separator=",">
+				#{txStatus}
+			</foreach>
+		ORDER BY
+			CREATE_TIME
+	</select>
 	
 </mapper>
 

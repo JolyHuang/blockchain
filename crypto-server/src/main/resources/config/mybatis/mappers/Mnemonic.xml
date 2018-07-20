@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="mnemonic">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="mnemonicColumns">
+    	<if test="null!=id">
+    		and ID = #{id}
+    	</if>
+    	<if test="null!=filePath">
+    		and FILE_PATH = #{filePath}
+    	</if>
+    	<if test="null!=createTime">
+    		and CREATE_TIME = #{createTime}
+    	</if>
+    	<if test="null!=modifyTime">
+    		and MODIFY_TIME = #{modifyTime}
+    	</if>
+	</sql>
+	
+	<sql id="mnemonicSetColumns">
+		    <if test="null!=id">
+		    ID = #{id},
+		    </if>
+		    <if test="null!=filePath">
+		    FILE_PATH = #{filePath},
+		    </if>
+		    <if test="null!=createTime">
+		    CREATE_TIME = #{createTime},
+		    </if>
+		    <if test="null!=modifyTime">
+		    MODIFY_TIME = #{modifyTime},
+		    </if>
+	</sql>
+
+	<resultMap id="mnemonicResultMap" type="com.sharingif.blockchain.crypto.mnemonic.entity.Mnemonic">
+        <result property="id" column="ID"/>
+        <result property="filePath" column="FILE_PATH"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="modifyTime" column="MODIFY_TIME"/>
+	</resultMap>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="insert">
+        INSERT INTO MNEMONIC (
+        	ID
+        	,FILE_PATH
+        	,CREATE_TIME
+        	,MODIFY_TIME
+        ) VALUES (
+        	#{id}
+        	,#{filePath}
+        	,#{createTime}
+        	,#{modifyTime}
+        )
+	</insert>
+	
+	<delete id="deleteById">
+	    DELETE FROM
+	    	MNEMONIC 
+	    WHERE
+	    ID = #{id} 
+    </delete>
+    
+    <delete id="deleteByCondition">
+	    DELETE FROM
+	    	MNEMONIC 
+	    WHERE
+	    	1=1
+		    <include refid="mnemonicColumns" />
+    </delete>
+    
+	<update id="updateById">
+	    UPDATE
+	    	MNEMONIC 
+        <set>
+	        <include refid="mnemonicSetColumns" />
+		</set>
+	    WHERE
+	    ID = #{id} 
+	</update>
+	
+    <select id="queryById" resultMap="mnemonicResultMap">
+		SELECT
+			ID
+			,FILE_PATH
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			MNEMONIC 
+		WHERE 
+			ID = #{id} 
+	</select>
+	
+	<select id="queryList" resultMap="mnemonicResultMap">
+		SELECT
+			ID
+			,FILE_PATH
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			MNEMONIC
+		WHERE
+			1=1
+			<include refid="mnemonicColumns" />
+		ORDER BY
+			ID
+	</select>
+	
+	<select id="queryAll" resultMap="mnemonicResultMap">
+		SELECT
+			ID
+			,FILE_PATH
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			MNEMONIC 
+		ORDER BY
+			ID
+	</select>
+	
+	<select id="queryPaginationListCount" resultType="Integer">
+		SELECT
+			COUNT(0)
+		FROM
+			MNEMONIC 
+		WHERE
+			1=1 
+			<include refid="mnemonicColumns" />
+	</select>
+	
+	<select id="queryPaginationList" parameterType="PaginationCondition" resultMap="mnemonicResultMap">
+		SELECT
+			ID
+			,FILE_PATH
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			MNEMONIC
+		WHERE
+			1=1
+			<include refid="mnemonicColumns" />
+		ORDER BY
+			ID
+	</select>
+	
+</mapper>
+

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="extendedKey">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="extendedKeyColumns">
+    	<if test="null!=id">
+    		and ID = #{id}
+    	</if>
+    	<if test="null!=mnemonicId">
+    		and MNEMONIC_ID = #{mnemonicId}
+    	</if>
+    	<if test="null!=extendedKeyPath">
+    		and EXTENDED_KEY_PATH = #{extendedKeyPath}
+    	</if>
+    	<if test="null!=filePath">
+    		and FILE_PATH = #{filePath}
+    	</if>
+    	<if test="null!=currentIndexNumber">
+    		and CURRENT_INDEX_NUMBER = #{currentIndexNumber}
+    	</if>
+    	<if test="null!=createTime">
+    		and CREATE_TIME = #{createTime}
+    	</if>
+    	<if test="null!=modifyTime">
+    		and MODIFY_TIME = #{modifyTime}
+    	</if>
+	</sql>
+	
+	<sql id="extendedKeySetColumns">
+		    <if test="null!=id">
+		    ID = #{id},
+		    </if>
+		    <if test="null!=mnemonicId">
+		    MNEMONIC_ID = #{mnemonicId},
+		    </if>
+		    <if test="null!=extendedKeyPath">
+		    EXTENDED_KEY_PATH = #{extendedKeyPath},
+		    </if>
+		    <if test="null!=filePath">
+		    FILE_PATH = #{filePath},
+		    </if>
+		    <if test="null!=currentIndexNumber">
+		    CURRENT_INDEX_NUMBER = #{currentIndexNumber},
+		    </if>
+		    <if test="null!=createTime">
+		    CREATE_TIME = #{createTime},
+		    </if>
+		    <if test="null!=modifyTime">
+		    MODIFY_TIME = #{modifyTime},
+		    </if>
+	</sql>
+
+	<resultMap id="extendedKeyResultMap" type="com.sharingif.blockchain.crypto.key.model.entity.ExtendedKey">
+        <result property="id" column="ID"/>
+        <result property="mnemonicId" column="MNEMONIC_ID"/>
+        <result property="extendedKeyPath" column="EXTENDED_KEY_PATH"/>
+        <result property="filePath" column="FILE_PATH"/>
+        <result property="currentIndexNumber" column="CURRENT_INDEX_NUMBER"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="modifyTime" column="MODIFY_TIME"/>
+	</resultMap>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="insert">
+        INSERT INTO EXTENDED_KEY (
+        	ID
+        	,MNEMONIC_ID
+        	,EXTENDED_KEY_PATH
+        	,FILE_PATH
+        	,CURRENT_INDEX_NUMBER
+        	,CREATE_TIME
+        	,MODIFY_TIME
+        ) VALUES (
+        	#{id}
+        	,#{mnemonicId}
+        	,#{extendedKeyPath}
+        	,#{filePath}
+        	,#{currentIndexNumber}
+        	,#{createTime}
+        	,#{modifyTime}
+        )
+	</insert>
+	
+	<delete id="deleteById">
+	    DELETE FROM
+	    	EXTENDED_KEY 
+	    WHERE
+	    ID = #{id} 
+    </delete>
+    
+    <delete id="deleteByCondition">
+	    DELETE FROM
+	    	EXTENDED_KEY 
+	    WHERE
+	    	1=1
+		    <include refid="extendedKeyColumns" />
+    </delete>
+    
+	<update id="updateById">
+	    UPDATE
+	    	EXTENDED_KEY 
+        <set>
+	        <include refid="extendedKeySetColumns" />
+		</set>
+	    WHERE
+	    ID = #{id} 
+	</update>
+	
+    <select id="queryById" resultMap="extendedKeyResultMap">
+		SELECT
+			ID
+			,MNEMONIC_ID
+			,EXTENDED_KEY_PATH
+			,FILE_PATH
+			,CURRENT_INDEX_NUMBER
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			EXTENDED_KEY 
+		WHERE 
+			ID = #{id} 
+	</select>
+	
+	<select id="queryList" resultMap="extendedKeyResultMap">
+		SELECT
+			ID
+			,MNEMONIC_ID
+			,EXTENDED_KEY_PATH
+			,FILE_PATH
+			,CURRENT_INDEX_NUMBER
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			EXTENDED_KEY
+		WHERE
+			1=1
+			<include refid="extendedKeyColumns" />
+		ORDER BY
+			ID
+	</select>
+	
+	<select id="queryAll" resultMap="extendedKeyResultMap">
+		SELECT
+			ID
+			,MNEMONIC_ID
+			,EXTENDED_KEY_PATH
+			,FILE_PATH
+			,CURRENT_INDEX_NUMBER
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			EXTENDED_KEY 
+		ORDER BY
+			ID
+	</select>
+	
+	<select id="queryPaginationListCount" resultType="Integer">
+		SELECT
+			COUNT(0)
+		FROM
+			EXTENDED_KEY 
+		WHERE
+			1=1 
+			<include refid="extendedKeyColumns" />
+	</select>
+	
+	<select id="queryPaginationList" parameterType="PaginationCondition" resultMap="extendedKeyResultMap">
+		SELECT
+			ID
+			,MNEMONIC_ID
+			,EXTENDED_KEY_PATH
+			,FILE_PATH
+			,CURRENT_INDEX_NUMBER
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			EXTENDED_KEY
+		WHERE
+			1=1
+			<include refid="extendedKeyColumns" />
+		ORDER BY
+			ID
+	</select>
+	
+</mapper>
+

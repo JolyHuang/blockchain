@@ -66,16 +66,6 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>blockchain-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>account-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>account-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>

@@ -27,17 +27,13 @@ public class BIP44AddressIndexReq {
      */
     private Integer change;
     /**
-     * 地址索引
+     * change扩展密钥文件名
      */
-    private Integer addressIndex;
+    private String changeExtendedKeyId;
     /**
      * change扩展密钥密码
      */
     private String changeExtendedKeyPassword;
-    /**
-     * change扩展密钥文件名
-     */
-    private String changeExtendedKeyFilePath;
     /**
      * 密码
      */
@@ -75,12 +71,12 @@ public class BIP44AddressIndexReq {
         this.change = change;
     }
 
-    public Integer getAddressIndex() {
-        return addressIndex;
+    public String getChangeExtendedKeyId() {
+        return changeExtendedKeyId;
     }
 
-    public void setAddressIndex(Integer addressIndex) {
-        this.addressIndex = addressIndex;
+    public void setChangeExtendedKeyId(String changeExtendedKeyId) {
+        this.changeExtendedKeyId = changeExtendedKeyId;
     }
 
     public String getChangeExtendedKeyPassword() {
@@ -89,14 +85,6 @@ public class BIP44AddressIndexReq {
 
     public void setChangeExtendedKeyPassword(String changeExtendedKeyPassword) {
         this.changeExtendedKeyPassword = changeExtendedKeyPassword;
-    }
-
-    public String getChangeExtendedKeyFilePath() {
-        return changeExtendedKeyFilePath;
-    }
-
-    public void setChangeExtendedKeyFilePath(String changeExtendedKeyFilePath) {
-        this.changeExtendedKeyFilePath = changeExtendedKeyFilePath;
     }
 
     public String getPassword() {
@@ -114,9 +102,8 @@ public class BIP44AddressIndexReq {
         sb.append(", coinType=").append(coinType);
         sb.append(", account=").append(account);
         sb.append(", change=").append(change);
-        sb.append(", addressIndex=").append(addressIndex);
+        sb.append(", changeExtendedKeyId='").append(changeExtendedKeyId).append('\'');
         sb.append(", changeExtendedKeyPassword='").append(changeExtendedKeyPassword).append('\'');
-        sb.append(", changeExtendedKeyFilePath='").append(changeExtendedKeyFilePath).append('\'');
         sb.append(", password='").append(password).append('\'');
         sb.append('}');
         return sb.toString();

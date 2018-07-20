@@ -12,9 +12,9 @@ public interface AddressNoticeService extends IBaseService<AddressNotice, String
     /**
      * 注册通知地址
      * @param addressRegisterId
-     * @param noticeList
+     * @param noticeAddress
      */
-    void registerAddressNotice(String addressRegisterId, List<String> noticeList);
+    void registerDepositAddressNotice(String addressRegisterId, String noticeAddress, String address, String coinType);
 
     /**
      * 解除注册通知地址

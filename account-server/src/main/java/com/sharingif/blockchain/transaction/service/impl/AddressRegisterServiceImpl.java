@@ -1,17 +1,19 @@
 package com.sharingif.blockchain.transaction.service.impl;
 
 
-import com.sharingif.blockchain.api.transaction.entity.RegisterReq;
-import com.sharingif.blockchain.api.transaction.entity.RegisterRsp;
-import com.sharingif.blockchain.api.transaction.entity.UnregisterReq;
-import com.sharingif.blockchain.api.transaction.entity.UnregisterRsp;
+import com.sharingif.blockchain.account.api.transaction.entity.RegisterReq;
+import com.sharingif.blockchain.account.api.transaction.entity.RegisterRsp;
+import com.sharingif.blockchain.account.api.transaction.entity.UnregisterReq;
+import com.sharingif.blockchain.account.api.transaction.entity.UnregisterRsp;
 import com.sharingif.blockchain.transaction.dao.AddressRegisterDAO;
 import com.sharingif.blockchain.transaction.model.entity.AddressRegister;
 import com.sharingif.blockchain.transaction.model.entity.ETHAddressRegister;
 import com.sharingif.blockchain.transaction.service.AddressNoticeService;
 import com.sharingif.blockchain.transaction.service.AddressRegisterService;
+import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -36,6 +38,7 @@ public class AddressRegisterServiceImpl extends BaseServiceImpl<AddressRegister,
 	}
 
 	@Override
+	@Transactional
 	public RegisterRsp register(RegisterReq req) {
 
 		RegisterRsp rsp = new RegisterRsp();
@@ -44,6 +47,7 @@ public class AddressRegisterServiceImpl extends BaseServiceImpl<AddressRegister,
 		AddressRegister queryAddressRegister = new AddressRegister();
 		queryAddressRegister.setAddress(req.getAddress());
 		queryAddressRegister.setCoinType(req.getCoinType());
+		queryAddressRegister.setSubCoinType(req.getSubCoinType());
 		queryAddressRegister= addressRegisterDAO.query(queryAddressRegister);
 		if(queryAddressRegister != null && queryAddressRegister.getId() != null) {
 			return rsp;
@@ -52,12 +56,16 @@ public class AddressRegisterServiceImpl extends BaseServiceImpl<AddressRegister,
 		AddressRegister addressRegister = new AddressRegister();
 		addressRegister.setAddress(req.getAddress());
 		addressRegister.setCoinType(req.getCoinType());
+		addressRegister.setSubCoinType(req.getSubCoinType());
+		addressRegister.setContractAddress(req.getContractAddress());
 
 		// 注册地址
 		addressRegisterDAO.insert(addressRegister);
 
 		// 注册通知地址
-		addressNoticeService.registerAddressNotice(addressRegister.getId(), req.getNoticeList());
+		if(StringUtils.isTrimEmpty(req.getSubCoinType())) {
+			addressNoticeService.registerDepositAddressNotice(addressRegister.getId(), req.getNoticeAddress(), addressRegister.getAddress(), addressRegister.getCoinType());
+		}
 
 		return rsp;
 	}

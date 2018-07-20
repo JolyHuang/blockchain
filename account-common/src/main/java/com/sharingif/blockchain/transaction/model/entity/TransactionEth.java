@@ -2,10 +2,12 @@ package com.sharingif.blockchain.transaction.model.entity;
 
 
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
+import com.sharingif.cube.core.util.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.math.BigInteger;
+import java.util.List;
 
 
 public class TransactionEth implements java.io.Serializable, IObjectDateOperationHistory {
@@ -40,11 +42,11 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	/**
 	 * 交易是否有效(YEWQR:余额未确认)
 	 */
-	public static final String TX_STATUS_BALANCE_UNCONFIRM = "QKQRSCLZ";
+	public static final String TX_STATUS_BALANCE_UNCONFIRM = "YEWQR";
 	/**
 	 * 交易是否有效(YEQRYC:余额确认异常)
 	 */
-	public static final String TX_STATUS_BALANCE_ERROR = "QKQRSCLZ";
+	public static final String TX_STATUS_BALANCE_ERROR = "YEQRYC";
 	/**
 	 * 交易是否有效(WX:无效)
 	 */
@@ -168,9 +170,11 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
     /**
      * 修改时间			db_column: MODIFY_TIME 
      */	
-	
+
 	private java.util.Date modifyTime;
 	//columns END
+
+	private List<String> txStatusArray;
 
 	public void setTxHash(java.lang.String txHash) {
 		this.txHash = txHash;
@@ -185,13 +189,17 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 		return this.blockNumber;
 	}
 	public void setTxFrom(java.lang.String txFrom) {
-		this.txFrom = txFrom;
+		if(!StringUtils.isTrimEmpty(txFrom)) {
+			this.txFrom = txFrom.toLowerCase();
+		}
 	}
 	public java.lang.String getTxFrom() {
 		return this.txFrom;
 	}
 	public void setTxTo(java.lang.String txTo) {
-		this.txTo = txTo;
+		if(!StringUtils.isTrimEmpty(txTo)) {
+			this.txTo = txTo.toLowerCase();
+		}
 	}
 	public java.lang.String getTxTo() {
 		return this.txTo;
@@ -297,6 +305,14 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	}
 	public java.util.Date getModifyTime() {
 		return this.modifyTime;
+	}
+
+	public List<String> getTxStatusArray() {
+		return txStatusArray;
+	}
+
+	public void setTxStatusArray(List<String> txStatusArray) {
+		this.txStatusArray = txStatusArray;
 	}
 
 	public static String convertTxReceiptStatus(String status) {

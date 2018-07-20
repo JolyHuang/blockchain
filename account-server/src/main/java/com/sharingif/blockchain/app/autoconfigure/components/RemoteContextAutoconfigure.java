@@ -1,6 +1,5 @@
 package com.sharingif.blockchain.app.autoconfigure.components;
 
-import com.sharingif.blockchain.api.transaction.service.AddressRegisterApiService;
 import com.sharingif.cube.communication.JsonModel;
 import com.sharingif.cube.communication.exception.JsonModelBusinessCommunicationExceptionHandler;
 import com.sharingif.cube.communication.http.apache.transport.HttpJsonConnection;
@@ -64,11 +63,8 @@ public class RemoteContextAutoconfigure {
     ) {
         List<String> services = new ArrayList<String>();
 
-        services.add("com.sharingif.blockchain.api.crypto.service.MnemonicApiService");
-        services.add("com.sharingif.blockchain.api.crypto.service.BIP44ApiService");
-
-        services.add("com.sharingif.blockchain.api.transaction.service.AddressRegisterApiService");
-
+        services.add("com.sharingif.blockchain.crypto.api.mnemonic.service.MnemonicApiService");
+        services.add("com.sharingif.blockchain.crypto.api.key.service.BIP44ApiService");
 
         RemoteServices remoteServices = new RemoteServices();
         remoteServices.setRequestContextResolver(handlerMethodCommunicationTransportRequestContextResolver);

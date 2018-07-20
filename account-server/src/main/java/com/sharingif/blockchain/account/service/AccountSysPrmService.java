@@ -1,5 +1,6 @@
 package com.sharingif.blockchain.account.service;
 
+import com.sharingif.blockchain.account.api.account.entity.AccountSysSetChangeExtendedKeyReq;
 import com.sharingif.blockchain.account.model.entity.AccountSysPrm;
 import com.sharingif.cube.support.service.base.IBaseService;
 
@@ -18,6 +19,12 @@ public interface AccountSysPrmService extends IBaseService<AccountSysPrm, String
      * @param coinType
      * @return
      */
-    String extendedKey(String coinType);
+    String extendedKey(int coinType);
+
+    /**
+     * 设置当前change ExtendedKey
+     * @param req
+     */
+    void setChangeExtendedKey(AccountSysSetChangeExtendedKeyReq req);
 
 }

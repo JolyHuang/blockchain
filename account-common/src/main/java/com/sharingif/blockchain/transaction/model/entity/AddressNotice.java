@@ -8,6 +8,11 @@ import org.hibernate.validator.constraints.NotBlank;
 
 
 public class AddressNotice implements java.io.Serializable, IObjectDateOperationHistory {
+
+	/**
+	 * 通知类型(deposit:充值)
+	 */
+	public static final String NOTICE_TYPE_DEPOSIT = "deposit";
 	
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
 	//columns START
@@ -23,10 +28,25 @@ public class AddressNotice implements java.io.Serializable, IObjectDateOperation
 	@NotBlank @Length(max=32)
 	private java.lang.String addressRegisterId;
     /**
+     * 地址			db_column: ADDRESS 
+     */	
+	@NotBlank @Length(max=100)
+	private java.lang.String address;
+    /**
+     * 币种			db_column: COIN_TYPE 
+     */	
+	@NotBlank @Length(max=20)
+	private java.lang.String coinType;
+    /**
      * 通知地址			db_column: NOTICE_ADDRESS 
      */	
-	@Length(max=2000)
+	@NotBlank @Length(max=2000)
 	private java.lang.String noticeAddress;
+    /**
+     * 通知类型(deposit:充值)			db_column: NOTICE_TYPE 
+     */	
+	@NotBlank @Length(max=20)
+	private java.lang.String noticeType;
     /**
      * 创建时间			db_column: CREATE_TIME 
      */	
@@ -51,11 +71,29 @@ public class AddressNotice implements java.io.Serializable, IObjectDateOperation
 	public java.lang.String getAddressRegisterId() {
 		return this.addressRegisterId;
 	}
+	public void setAddress(java.lang.String address) {
+		this.address = address;
+	}
+	public java.lang.String getAddress() {
+		return this.address;
+	}
+	public void setCoinType(java.lang.String coinType) {
+		this.coinType = coinType;
+	}
+	public java.lang.String getCoinType() {
+		return this.coinType;
+	}
 	public void setNoticeAddress(java.lang.String noticeAddress) {
 		this.noticeAddress = noticeAddress;
 	}
 	public java.lang.String getNoticeAddress() {
 		return this.noticeAddress;
+	}
+	public void setNoticeType(java.lang.String noticeType) {
+		this.noticeType = noticeType;
+	}
+	public java.lang.String getNoticeType() {
+		return this.noticeType;
 	}
 	public void setCreateTime(java.util.Date createTime) {
 		this.createTime = createTime;
@@ -74,7 +112,10 @@ public class AddressNotice implements java.io.Serializable, IObjectDateOperation
 		return new StringBuilder("AddressNotice [")
 			.append("Id=").append(getId()).append(", ")
 					.append("AddressRegisterId=").append(getAddressRegisterId()).append(", ")
+					.append("Address=").append(getAddress()).append(", ")
+					.append("CoinType=").append(getCoinType()).append(", ")
 					.append("NoticeAddress=").append(getNoticeAddress()).append(", ")
+					.append("NoticeType=").append(getNoticeType()).append(", ")
 					.append("CreateTime=").append(getCreateTime()).append(", ")
 					.append("ModifyTime=").append(getModifyTime())
 		.append("]").toString();

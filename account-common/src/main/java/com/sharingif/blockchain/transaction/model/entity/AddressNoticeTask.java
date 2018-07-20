@@ -1,14 +1,48 @@
 package com.sharingif.blockchain.transaction.model.entity;
 
 
-import javax.validation.constraints.*;
-
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
 import com.sharingif.cube.components.sequence.Sequence;
-import org.hibernate.validator.constraints.*;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 
 public class AddressNoticeTask implements java.io.Serializable, IObjectDateOperationHistory {
+
+	/**
+	 * 类型(ETH_CZCLZ:充值处理中)
+	 */
+	public static final String TYPE_ETH_CZCLZ = "ETH_CZCLZ";
+	/**
+	 * 类型(ETH_CZQKQRZ:充值区块确认中)
+	 */
+	public static final String TYPE_ETH_CZQKQRZ = "ETH_CZQKQRZ";
+	/**
+	 * 类型(ETH_CZCG:充值成功)
+	 */
+	public static final String TYPE_ETH_CZCG = "ETH_CZCG";
+	/**
+	 * 类型(CZSB:充值失败)
+	 */
+	public static final String TYPE_CZSB = "CZSB";
+
+
+	/**
+	 * 处理状态(WCL:未处理)
+	 */
+	public static final String STATUS_UNTREATED = "WCL";
+	/**
+	 * 处理状态(CLZ:处理中)
+	 */
+	public static final String STATUS_PROCESSING = "CLZ";
+	/**
+	 * 处理状态(SUCCESS:处理成功)
+	 */
+	public static final String STATUS_SUCCESS = "SUCCESS";
+	/**
+	 * 处理状态(FAIL:处理失败)
+	 */
+	public static final String STATUS_FAIL = "FAIL";
 	
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
 	//columns START
@@ -24,7 +58,7 @@ public class AddressNoticeTask implements java.io.Serializable, IObjectDateOpera
 	@NotBlank @Length(max=32)
 	private java.lang.String addressNoticeId;
     /**
-     * 类型(CZCLZ:充值处理中、CZQKQRZ:充值区块确认中、CZCG:充值成功)			db_column: TYPE 
+     * 类型(ETH_CZCLZ:充值处理中、ETH_CZQKQRZ:充值区块确认中、ETH_CZCG:充值成功、CZSB:充值失败)			db_column: TYPE
      */	
 	@NotBlank @Length(max=20)
 	private java.lang.String type;

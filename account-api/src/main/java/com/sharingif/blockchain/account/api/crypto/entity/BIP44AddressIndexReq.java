@@ -15,42 +15,42 @@ public class BIP44AddressIndexReq {
     /**
      * BTC
      */
-    public static final String COIN_TYPE_BTC = "BTC";
+    public static final int COIN_TYPE_BTC = 0;
     /**
      * ETH
      */
-    public static final String COIN_TYPE_ETH = "ETH";
+    public static final int COIN_TYPE_ETH = 60;
 
     /**
      * 币种
      */
-    private String coinType;
+    private int coinType;
     /**
-     * 通知地址列表
+     * 通知地址
      */
-    private List<String> noticeList;
+    private String noticeAddress;
 
-    public String getCoinType() {
+    public int getCoinType() {
         return coinType;
     }
 
-    public void setCoinType(String coinType) {
+    public void setCoinType(int coinType) {
         this.coinType = coinType;
     }
 
-    public List<String> getNoticeList() {
-        return noticeList;
+    public String getNoticeAddress() {
+        return noticeAddress;
     }
 
-    public void setNoticeList(List<String> noticeList) {
-        this.noticeList = noticeList;
+    public void setNoticeAddress(String noticeAddress) {
+        this.noticeAddress = noticeAddress;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("BIP44AddressIndexReq{");
-        sb.append("coinType='").append(coinType).append('\'');
-        sb.append(", noticeList=").append(noticeList);
+        sb.append("coinType=").append(coinType);
+        sb.append(", noticeAddress='").append(noticeAddress).append('\'');
         sb.append('}');
         return sb.toString();
     }

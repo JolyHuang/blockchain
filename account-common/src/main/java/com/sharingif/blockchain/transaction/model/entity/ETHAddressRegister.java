@@ -21,12 +21,12 @@ public class ETHAddressRegister {
 
     public ETHAddressRegister(List<AddressRegister> addressRegisterList) {
         for(AddressRegister addressRegister : addressRegisterList) {
-            String address = addressRegister.getAddress().toUpperCase();
+            String address = addressRegister.getAddress().toLowerCase();
 
             if(StringUtils.isTrimEmpty(addressRegister.getSubCoinType())) {
                 ethMap.put(address, addressRegister.getCoinType());
             } else {
-                String contractAddress = addressRegister.getContractAddress().toUpperCase();
+                String contractAddress = addressRegister.getContractAddress().toLowerCase();
 
                 Map<String, String> subCoinTypeMap = contractAddressMap.get(contractAddress);
                 if(subCoinTypeMap == null) {
@@ -55,19 +55,19 @@ public class ETHAddressRegister {
     }
 
     public Map<String, String> getSubCoinTypeMap(String address) {
-        return contractAddressMap.get(address.toUpperCase());
+        return contractAddressMap.get(address.toLowerCase());
     }
 
     public boolean isETHRegisterAddress(String address) {
-        return ethMap.get(address.toUpperCase()) == null ? false : true;
+        return ethMap.get(address.toLowerCase()) == null ? false : true;
     }
 
     public boolean isContractRegisterAddress(String address) {
-        return contractAddressMap.get(address.toUpperCase()) == null ? false : true;
+        return contractAddressMap.get(address.toLowerCase()) == null ? false : true;
     }
 
     public boolean isSubCoinType(Map<String, String> subCoinTypeMap, String address) {
-        return subCoinTypeMap.get(address.toUpperCase()) == null ? false : true;
+        return subCoinTypeMap.get(address.toLowerCase()) == null ? false : true;
     }
 
 }

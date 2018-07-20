@@ -19,23 +19,23 @@ public class KeyPath {
     private String bitcoinjParentPath;
     private String bitcoinjPath;
 
+    public KeyPath(BIP44AddressIndexReq req, int addressIndex) {
+        BIP44GenerateReq bip44GenerateReq = new BIP44GenerateReq();
+        bip44GenerateReq.setMnemonicId(req.getMnemonicId());
+        bip44GenerateReq.setCoinType(req.getCoinType());
+        bip44GenerateReq.setAccount(req.getAccount());
+        bip44GenerateReq.setChange(req.getChange());
+        bip44GenerateReq.setAddressIndex(addressIndex);
+
+        setAllPath(bip44GenerateReq);
+    }
+
     public KeyPath(BIP44ChangeReq req) {
         BIP44GenerateReq bip44GenerateReq = new BIP44GenerateReq();
         bip44GenerateReq.setMnemonicId(req.getMnemonicId());
         bip44GenerateReq.setCoinType(req.getCoinType());
         bip44GenerateReq.setAccount(req.getAccount());
         bip44GenerateReq.setChange(req.getChange());
-
-        setAllPath(bip44GenerateReq);
-    }
-
-    public KeyPath(BIP44AddressIndexReq req) {
-        BIP44GenerateReq bip44GenerateReq = new BIP44GenerateReq();
-        bip44GenerateReq.setMnemonicId(req.getMnemonicId());
-        bip44GenerateReq.setCoinType(req.getCoinType());
-        bip44GenerateReq.setAccount(req.getAccount());
-        bip44GenerateReq.setChange(req.getChange());
-        bip44GenerateReq.setAddressIndex(req.getAddressIndex());
 
         setAllPath(bip44GenerateReq);
     }

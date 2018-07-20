@@ -32,7 +32,17 @@
 
         <dependency>
             <groupId>${maven.cube.boot.groupId}</groupId>
+            <artifactId>com.sharingif.cube.spring.boot.persistence.mybatis</artifactId>
+            <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${maven.cube.boot.groupId}</groupId>
             <artifactId>com.sharingif.cube.spring.boot.web.vert.x</artifactId>
+            <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${maven.cube.groupId}</groupId>
+            <artifactId>com.sharingif.cube.support</artifactId>
             <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
         </dependency>
 
@@ -40,6 +50,22 @@
             <groupId>com.sharingif.bips</groupId>
             <artifactId>com.sharingif.bips.bip0039</artifactId>
             <version>1.0.0-RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>3.0.1-b10</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.30</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+            <version>8.5.14</version>
         </dependency>
 
         <dependency>
