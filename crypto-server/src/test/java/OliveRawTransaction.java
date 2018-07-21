@@ -27,17 +27,17 @@ import java.util.concurrent.ExecutionException;
  */
 public class OliveRawTransaction {
 
-    static String contractAddress = "0x9d9223436dDD466FC247e9dbbD20207e640fEf58";     //BTM
-    static String methodName = "transfer";
-    static String toAddress = "0x9d9223436dDD466FC247e9dbbD20207e640fEf58";
+    static String contractAddress = "";
+    static String methodName = "";
+    static String toAddress = "";
 
     static Credentials credentials = null;
 
     static {
         try {
             credentials = WalletUtils.loadCredentials(
-                    "11111111"
-                    ,"/Users/Joly/Library/Ethereum/keystore/UTC--2018-03-16T11-34-59.694949000Z--5b6695966503a4618b3cc8d1ed7768bfb3757750");
+                    ""
+                    ,"");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CipherException e) {
@@ -56,7 +56,6 @@ public class OliveRawTransaction {
 
     private static void transaction(String host, int port) throws ExecutionException, InterruptedException, IOException {
         Web3j web3j = Web3j.build(new HttpService("http://localhost:8545"));
-//        Web3j web3j = Web3j.build(new HttpService("http://52.187.147.199:8545"));
         BigInteger amount = Convert.toWei("400000", Convert.Unit.ETHER).toBigInteger();
 
         System.out.println(web3j.ethBlockNumber().send().getBlockNumber());
