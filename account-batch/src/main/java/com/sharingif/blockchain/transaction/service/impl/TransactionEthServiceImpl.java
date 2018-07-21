@@ -28,9 +28,16 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
+    public PaginationRepertory<TransactionEth> getUntreated(PaginationCondition<TransactionEth> paginationCondition) {
+        paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_UNTREATED);
+
+        return getPagination(paginationCondition);
+    }
+
+    @Override
     public PaginationRepertory<TransactionEth> getUnconfirmedBlockNumber(PaginationCondition<TransactionEth> paginationCondition) {
 
-        paginationCondition.getCondition().setTxStatusArray(Arrays.asList(TransactionEth.TX_STATUS_UNTREATED, TransactionEth.TX_STATUS_BLOCK_CONFIRMING));
+        paginationCondition.getCondition().setTxStatusArray(Arrays.asList(TransactionEth.TX_STATUS_DEPOSIT_PROCESSING_NOTIFIED, TransactionEth.TX_STATUS_BLOCK_CONFIRMING));
 
         return transactionEthDAO.queryPaginationTxStatusInList(paginationCondition);
     }
@@ -44,19 +51,24 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public void updateTxStatusToInvalid(String txHash) {
-        TransactionEth transactionEth = new TransactionEth();
-        transactionEth.setTxHash(txHash);
-        transactionEth.setTxStatus(TransactionEth.TX_STATUS_INVALID);
+    public PaginationRepertory<TransactionEth> getInvalid(PaginationCondition<TransactionEth> paginationCondition) {
+        paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_INVALID);
 
-        updateById(transactionEth);
+        return getPagination(paginationCondition);
     }
 
     @Override
-    public void updateTxStatusToValid(String txHash) {
+    public PaginationRepertory<TransactionEth> getValid(PaginationCondition<TransactionEth> paginationCondition) {
+        paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_VALID);
+
+        return getPagination(paginationCondition);
+    }
+
+    @Override
+    public void updateTxStatusToDepositProcessingNotified(String txHash) {
         TransactionEth transactionEth = new TransactionEth();
         transactionEth.setTxHash(txHash);
-        transactionEth.setTxStatus(TransactionEth.TX_STATUS_VALID);
+        transactionEth.setTxStatus(TransactionEth.TX_STATUS_DEPOSIT_PROCESSING_NOTIFIED);
 
         updateById(transactionEth);
     }
@@ -86,6 +98,42 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
         transactionEth.setTxHash(txHash);
         transactionEth.setConfirmBlockNumber(confirmBlockNumber);
         transactionEth.setTxStatus(TransactionEth.TX_STATUS_BLOCK_CONFIRMING);
+
+        updateById(transactionEth);
+    }
+
+    @Override
+    public void updateTxStatusToInvalid(String txHash) {
+        TransactionEth transactionEth = new TransactionEth();
+        transactionEth.setTxHash(txHash);
+        transactionEth.setTxStatus(TransactionEth.TX_STATUS_INVALID);
+
+        updateById(transactionEth);
+    }
+
+    @Override
+    public void updateTxStatusToValid(String txHash) {
+        TransactionEth transactionEth = new TransactionEth();
+        transactionEth.setTxHash(txHash);
+        transactionEth.setTxStatus(TransactionEth.TX_STATUS_VALID);
+
+        updateById(transactionEth);
+    }
+
+    @Override
+    public void updateTxStatusToDepositSuccessNotified(String txHash) {
+        TransactionEth transactionEth = new TransactionEth();
+        transactionEth.setTxHash(txHash);
+        transactionEth.setTxStatus(TransactionEth.TX_STATUS_DEPOSIT_SUCCESS_NOTIFIED);
+
+        updateById(transactionEth);
+    }
+
+    @Override
+    public void updateTxStatusToDepositFailNotified(String txHash) {
+        TransactionEth transactionEth = new TransactionEth();
+        transactionEth.setTxHash(txHash);
+        transactionEth.setTxStatus(TransactionEth.TX_STATUS_DEPOSIT_FAIL_NOTIFIED);
 
         updateById(transactionEth);
     }

@@ -46,6 +46,19 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
         this.ethereumService = ethereumService;
     }
 
+    protected boolean validateTransaction(TransactionEth transactionEth, Transaction transaction) {
+        if(!transactionEth.getTxFrom().equals(transaction.getFrom())) {
+            return false;
+        }
+        if(!transactionEth.getTxIndex().equals(transaction.getTransactionIndex())) {
+            return false;
+        }
+        if(!transactionEth.getTxInput().equals(transaction.getInput())) {
+            return false;
+        }
+
+        return true;
+    }
 
     protected void confirmTransactionEthBlockNumber(BigInteger currentBlockNumber, PaginationRepertory<TransactionEth> paginationRepertory) {
         if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
@@ -68,17 +81,11 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
                 logger.error("validate transaction confirm block number error", e);
                 transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
             }
-            if(!transactionEth.getTxFrom().equals(transaction.getFrom())) {
+
+            boolean validateTransactionStatus = validateTransaction(transactionEth, transaction);
+            if(!validateTransactionStatus) {
                 transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
-                continue;
-            }
-            if(!transactionEth.getTxIndex().equals(transaction.getTransactionIndex())) {
-                transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
-                continue;
-            }
-            if(!transactionEth.getTxInput().equals(transaction.getInput())) {
-                transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
-                continue;
+                return;
             }
 
             if(currentBlockNumber.compareTo(blockNumber.add(new BigInteger(String.valueOf(validBlockNumber)))) > 0) {

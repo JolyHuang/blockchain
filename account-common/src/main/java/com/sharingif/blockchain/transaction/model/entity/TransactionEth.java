@@ -31,30 +31,41 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	public static final String TX_RECEIPT_STATUS_FAIL = "F";
 
 	/**
-	 * 交易是否有效(WCL:未处理)
+	 * 交易状态(WCL:未处理)
 	 */
 	public static final String TX_STATUS_UNTREATED = "WCL";
-
 	/**
-	 * 交易是否有效(QKQRSCLZ:区块确认数处理中)
+	 * 交易状态(CZCLZYTZ:充值处理中已通知)
+	 */
+	public static final String TX_STATUS_DEPOSIT_PROCESSING_NOTIFIED = "CZCLZYTZ";
+	/**
+	 * 交易状态(QKQRSCLZ:区块确认数处理中)
 	 */
 	public static final String TX_STATUS_BLOCK_CONFIRMING = "QKQRSCLZ";
 	/**
-	 * 交易是否有效(YEWQR:余额未确认)
+	 * 交易状态(YEWQR:余额未确认)
 	 */
 	public static final String TX_STATUS_BALANCE_UNCONFIRM = "YEWQR";
 	/**
-	 * 交易是否有效(YEQRYC:余额确认异常)
+	 * 交易状态(YEQRYC:余额确认异常)
 	 */
 	public static final String TX_STATUS_BALANCE_ERROR = "YEQRYC";
 	/**
-	 * 交易是否有效(WX:无效)
+	 * 交易状态(WX:无效)
 	 */
 	public static final String TX_STATUS_INVALID = "WX";
 	/**
-	 * 交易是否有效(YX:有效)
+	 * 交易状态(YX:有效)
 	 */
 	public static final String TX_STATUS_VALID = "YX";
+	/**
+	 * 交易状态(CZCGYTZ:充值成功已通知)
+	 */
+	public static final String TX_STATUS_DEPOSIT_SUCCESS_NOTIFIED= "CZCGYTZ";
+	/**
+	 * 交易状态(CZSBYTZ:充值失败已通知)
+	 */
+	public static final String TX_STATUS_DEPOSIT_FAIL_NOTIFIED= "CZSBYTZ";
 
 	/**
 	 * 交易类型(0:转入)
@@ -67,109 +78,114 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
 	//columns START
-    /**
-     * 交易hash			db_column: TX_HASH 
-     */	
+	/**
+	 * 交易hash			db_column: TX_HASH
+	 */
 	@Length(max=100)
 	private java.lang.String txHash;
-    /**
-     * 区块号			db_column: BLOCK_NUMBER 
-     */	
-	
+	/**
+	 * 区块号			db_column: BLOCK_NUMBER
+	 */
+
 	private BigInteger blockNumber;
-    /**
-     * FORM地址			db_column: TX_FROM 
-     */	
+	/**
+	 * FORM地址			db_column: TX_FROM
+	 */
 	@Length(max=100)
 	private java.lang.String txFrom;
-    /**
-     * TO地址			db_column: TX_TO 
-     */	
+	/**
+	 * TO地址			db_column: TX_TO
+	 */
 	@Length(max=100)
 	private java.lang.String txTo;
-    /**
-     * 合约地址			db_column: CONTRACT_ADDRESS 
-     */	
+	/**
+	 * 合约地址			db_column: CONTRACT_ADDRESS
+	 */
 	@Length(max=100)
 	private java.lang.String contractAddress;
-    /**
-     * 币种			db_column: COIN_TYPE 
-     */	
+	/**
+	 * 币种			db_column: COIN_TYPE
+	 */
 	@Length(max=20)
 	private java.lang.String coinType;
-    /**
-     * input			db_column: TX_INPUT 
-     */	
+	/**
+	 * input			db_column: TX_INPUT
+	 */
 	@Length(max=2000)
 	private java.lang.String txInput;
-    /**
-     * 交易值			db_column: TX_VALUE 
-     */	
-	
+	/**
+	 * 交易值			db_column: TX_VALUE
+	 */
+
 	private BigInteger txValue;
-    /**
-     * tx index			db_column: TX_INDEX 
-     */	
-	
+	/**
+	 * tx index			db_column: TX_INDEX
+	 */
+
 	private BigInteger txIndex;
-    /**
-     * gas limit			db_column: GAS_LIMIT 
-     */	
-	
+	/**
+	 * gas limit			db_column: GAS_LIMIT
+	 */
+
 	private BigInteger gasLimit;
-    /**
-     * gas used			db_column: GAS_USED 
-     */	
-	
+	/**
+	 * gas used			db_column: GAS_USED
+	 */
+
 	private BigInteger gasUsed;
-    /**
-     * gas price			db_column: GAS_PRICE 
-     */	
-	
+	/**
+	 * gas price			db_column: GAS_PRICE
+	 */
+
 	private BigInteger gasPrice;
-    /**
-     * actual fee			db_column: ACTUAL_FEE 
-     */	
-	
+	/**
+	 * actual fee			db_column: ACTUAL_FEE
+	 */
+
 	private BigInteger actualFee;
-    /**
-     * nonce			db_column: NONCE 
-     */	
-	
+	/**
+	 * nonce			db_column: NONCE
+	 */
+
 	private BigInteger nonce;
-    /**
-     * 交易状态(S:成功、F:失败、P:处理中)			db_column: TX_RECEIPT_STATUS 
-     */	
+	/**
+	 * 交易状态(S:成功、F:失败、P:处理中)			db_column: TX_RECEIPT_STATUS
+	 */
 	@NotBlank @Length(max=1)
 	private java.lang.String txReceiptStatus;
-    /**
-     * 交易时间			db_column: TX_TIME 
-     */	
-	
+	/**
+	 * 交易时间			db_column: TX_TIME
+	 */
+
 	private java.util.Date txTime;
-    /**
-     * 确认区块数			db_column: CONFIRM_BLOCK_NUMBER 
-     */	
-	
+	/**
+	 * 确认区块数			db_column: CONFIRM_BLOCK_NUMBER
+	 */
+
 	private java.lang.Integer confirmBlockNumber;
-    /**
-     * 交易是否有效(WCL:未处理、QKQRSCLZ:区块确认数处理中、YEWQR:余额未确认、YEQRYC:余额确认异常、YX:有效、WX:无效)			db_column: TX_STATUS 
-     */	
+	/**
+	 * 交易状态(WCL:未处理、CZCLZYTZ:充值处理中已通知、QKQRSCLZ:区块确认数处理中、YEWQR:余额未确认、YEQRYC:余额确认异常、YX:有效、WX:无效)			db_column: TX_STATUS
+	 */
 	@NotBlank @Length(max=10)
 	private java.lang.String txStatus;
-    /**
-     * 交易类型(0:转入、1:转出)			db_column: TX_TYPE 
-     */	
+	/**
+	 * 交易类型(0:转入、1:转出)			db_column: TX_TYPE
+	 */
 	@NotBlank @Length(max=1)
 	private java.lang.String txType;
-    /**
-     * 创建时间			db_column: CREATE_TIME 
-     */	
-	
+	/**
+	 * 处理状态(WCL:未处理、CLZ:处理中、SUCCESS:处理成功、FAIL:处理失败)			db_column: TASK_STATUS
+	 */
+	@NotBlank @Length(max=20)
+	private java.lang.String taskStatus;
+	/**
+	 * 创建时间			db_column: CREATE_TIME
+	 */
+
 	private java.util.Date createTime;
-    /**
-     * 修改时间			db_column: MODIFY_TIME 
-     */	
+	/**
+	 * 修改时间			db_column: MODIFY_TIME
+	 */
 
 	private java.util.Date modifyTime;
 	//columns END
@@ -282,17 +298,23 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	public java.lang.Integer getConfirmBlockNumber() {
 		return this.confirmBlockNumber;
 	}
+	public void setTxType(java.lang.String txType) {
+		this.txType = txType;
+	}
+	public java.lang.String getTxType() {
+		return this.txType;
+	}
 	public void setTxStatus(java.lang.String txStatus) {
 		this.txStatus = txStatus;
 	}
 	public java.lang.String getTxStatus() {
 		return this.txStatus;
 	}
-	public void setTxType(java.lang.String txType) {
-		this.txType = txType;
+	public void setTaskStatus(java.lang.String taskStatus) {
+		this.taskStatus = taskStatus;
 	}
-	public java.lang.String getTxType() {
-		return this.txType;
+	public java.lang.String getTaskStatus() {
+		return this.taskStatus;
 	}
 	public void setCreateTime(java.util.Date createTime) {
 		this.createTime = createTime;
@@ -338,8 +360,9 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 					.append("TxReceiptStatus=").append(getTxReceiptStatus()).append(", ")
 					.append("TxTime=").append(getTxTime()).append(", ")
 					.append("ConfirmBlockNumber=").append(getConfirmBlockNumber()).append(", ")
-					.append("TxStatus=").append(getTxStatus()).append(", ")
 					.append("TxType=").append(getTxType()).append(", ")
+					.append("TxStatus=").append(getTxStatus()).append(", ")
+					.append("TaskStatus=").append(getTaskStatus()).append(", ")
 					.append("CreateTime=").append(getCreateTime()).append(", ")
 					.append("ModifyTime=").append(getModifyTime())
 		.append("]").toString();

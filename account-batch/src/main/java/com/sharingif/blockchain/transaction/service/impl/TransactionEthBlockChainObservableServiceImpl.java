@@ -9,7 +9,6 @@ import com.sharingif.blockchain.transaction.model.entity.BlockChainSync;
 import com.sharingif.blockchain.transaction.model.entity.CurrentBlockNumber;
 import com.sharingif.blockchain.transaction.model.entity.ETHAddressRegister;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
-import com.sharingif.blockchain.transaction.service.AddressNoticeTaskService;
 import com.sharingif.blockchain.transaction.service.AddressRegisterService;
 import com.sharingif.blockchain.transaction.service.BlockChainSyncService;
 import org.slf4j.Logger;
@@ -45,7 +44,6 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
     private TransactionEthDAO transactionEthDAO;
     private BlockChainSyncService blockChainSyncService;
     private AddressRegisterService addressRegisterService;
-    private AddressNoticeTaskService addressNoticeTaskService;
     private EthereumService ethereumService;
     private OleContract oleContract;
 
@@ -60,10 +58,6 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
     @Resource
     public void setTransactionEthDAO(TransactionEthDAO transactionEthDAO) {
         this.transactionEthDAO = transactionEthDAO;
-    }
-    @Resource
-    public void setAddressNoticeTaskService(AddressNoticeTaskService addressNoticeTaskService) {
-        this.addressNoticeTaskService = addressNoticeTaskService;
     }
     @Resource
     public void setEthereumService(EthereumService ethereumService) {
@@ -218,11 +212,6 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
     @Transactional
     protected void persistenceAndNoticeTransactionEth(TransactionEth transactionEth) {
         transactionEthDAO.insert(transactionEth);
-
-        // 充值通知
-        if(TransactionEth.TX_TYPE_IN.equals(transactionEth.getTxType())) {
-            addressNoticeTaskService.depositProcessing(transactionEth.getTxTo(), CoinType.ETH.name());
-        }
     }
 
     public void ethTransactionsObservable() {

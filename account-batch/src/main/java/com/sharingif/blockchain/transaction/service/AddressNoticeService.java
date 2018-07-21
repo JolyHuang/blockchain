@@ -26,7 +26,6 @@ public interface AddressNoticeService extends IBaseService<AddressNotice, String
      * 查询通知信息
      * @param address
      * @param coinType
-     * @param noticeType
      * @return
      */
     AddressNotice getDepositNoticeAddress(String address, String coinType);

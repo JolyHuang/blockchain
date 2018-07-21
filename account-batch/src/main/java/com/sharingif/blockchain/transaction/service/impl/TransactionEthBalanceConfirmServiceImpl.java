@@ -84,6 +84,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
                     ,txBalance
             );
             transactionEthService.updateTxStatusToValid(transactionEth.getTxHash());
+
         } else {
             transactionEthService.updateTxStatusToBalanceError(transactionEth.getTxHash());
         }
@@ -108,6 +109,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
                     ,txBalance
                     ,actualFee
             );
+
         } else {
             transactionEthService.updateTxStatusToBalanceError(transactionEth.getTxHash());
         }
@@ -141,6 +143,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
                     ,txBalance
                     ,actualFee
             );
+
         } else {
             transactionEthService.updateTxStatusToBalanceError(transactionEth.getTxHash());
         }
@@ -163,6 +166,18 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         } else {
             contractOut(address, account, transactionEth);
         }
+
+    }
+
+    @Transactional
+    protected void confirmTransactionEthBalance(TransactionEth transactionEth) {
+        String txType = transactionEth.getTxType();
+        if(TransactionEth.TX_TYPE_IN.equals(txType)) {
+            in(transactionEth);
+        } else {
+            out(transactionEth);
+        }
+
     }
 
     protected void confirmTransactionEthBalance(PaginationRepertory<TransactionEth> paginationRepertory) {
@@ -171,13 +186,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         }
 
         for(TransactionEth transactionEth : paginationRepertory.getPageItems()) {
-            String txType = transactionEth.getTxType();
-            if(TransactionEth.TX_TYPE_IN.equals(txType)) {
-                in(transactionEth);
-            } else {
-                out(transactionEth);
-            }
-
+            confirmTransactionEthBalance(transactionEth);
         }
     }
 

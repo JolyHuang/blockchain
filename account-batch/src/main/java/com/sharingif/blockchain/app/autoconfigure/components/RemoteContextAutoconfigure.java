@@ -1,5 +1,6 @@
 package com.sharingif.blockchain.app.autoconfigure.components;
 
+import com.sharingif.blockchain.app.components.UrlBodyTransportRequestContextResolver;
 import com.sharingif.cube.communication.JsonModel;
 import com.sharingif.cube.communication.exception.JsonModelBusinessCommunicationExceptionHandler;
 import com.sharingif.cube.communication.http.apache.transport.HttpJsonConnection;
@@ -56,9 +57,14 @@ public class RemoteContextAutoconfigure {
         return httpJsonRemoteHandlerMethodTransportFactory;
     }
 
+    @Bean(name = "urlBodyTransportRequestContextResolver")
+    public UrlBodyTransportRequestContextResolver createUrlBodyTransportRequestContextResolver() {
+        return new UrlBodyTransportRequestContextResolver();
+    }
+
     @Bean(name = "remoteServices")
     public RemoteServices createOpayRemoteServices(
-            HandlerMethodCommunicationTransportRequestContextResolver handlerMethodCommunicationTransportRequestContextResolver
+            UrlBodyTransportRequestContextResolver urlBodyTransportRequestContextResolver
             ,ProxyInterfaceHandlerMethodCommunicationTransportFactory<String,String,JsonModel<Object>> httpJsonRemoteHandlerMethodTransportFactory
     ) {
         List<String> services = new ArrayList<String>();
@@ -66,7 +72,7 @@ public class RemoteContextAutoconfigure {
         services.add("co.olivecoin.wallet.api.blockchain.service.TransactionEthApiService");
 
         RemoteServices remoteServices = new RemoteServices();
-        remoteServices.setRequestContextResolver(handlerMethodCommunicationTransportRequestContextResolver);
+        remoteServices.setRequestContextResolver(urlBodyTransportRequestContextResolver);
         remoteServices.setHandlerMethodCommunicationTransportFactory(httpJsonRemoteHandlerMethodTransportFactory);
         remoteServices.setServices(services);
 

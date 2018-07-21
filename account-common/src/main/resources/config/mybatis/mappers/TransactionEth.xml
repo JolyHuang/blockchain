@@ -60,11 +60,14 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	<if test="null!=confirmBlockNumber">
     		and CONFIRM_BLOCK_NUMBER = #{confirmBlockNumber}
     	</if>
+    	<if test="null!=txType">
+    		and TX_TYPE = #{txType}
+    	</if>
     	<if test="null!=txStatus">
     		and TX_STATUS = #{txStatus}
     	</if>
-    	<if test="null!=txType">
-    		and TX_TYPE = #{txType}
+    	<if test="null!=taskStatus">
+    		and TASK_STATUS = #{taskStatus}
     	</if>
     	<if test="null!=createTime">
     		and CREATE_TIME = #{createTime}
@@ -126,11 +129,14 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    <if test="null!=confirmBlockNumber">
 		    CONFIRM_BLOCK_NUMBER = #{confirmBlockNumber},
 		    </if>
+		    <if test="null!=txType">
+		    TX_TYPE = #{txType},
+		    </if>
 		    <if test="null!=txStatus">
 		    TX_STATUS = #{txStatus},
 		    </if>
-		    <if test="null!=txType">
-		    TX_TYPE = #{txType},
+		    <if test="null!=taskStatus">
+		    TASK_STATUS = #{taskStatus},
 		    </if>
 		    <if test="null!=createTime">
 		    CREATE_TIME = #{createTime},
@@ -158,8 +164,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         <result property="txReceiptStatus" column="TX_RECEIPT_STATUS"/>
         <result property="txTime" column="TX_TIME"/>
         <result property="confirmBlockNumber" column="CONFIRM_BLOCK_NUMBER"/>
-        <result property="txStatus" column="TX_STATUS"/>
         <result property="txType" column="TX_TYPE"/>
+        <result property="txStatus" column="TX_STATUS"/>
+        <result property="taskStatus" column="TASK_STATUS"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="modifyTime" column="MODIFY_TIME"/>
 	</resultMap>
@@ -184,8 +191,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,TX_RECEIPT_STATUS
         	,TX_TIME
         	,CONFIRM_BLOCK_NUMBER
-        	,TX_STATUS
         	,TX_TYPE
+        	,TX_STATUS
+        	,TASK_STATUS
         	,CREATE_TIME
         	,MODIFY_TIME
         ) VALUES (
@@ -206,8 +214,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,#{txReceiptStatus}
         	,#{txTime}
         	,#{confirmBlockNumber}
-        	,#{txStatus}
         	,#{txType}
+        	,#{txStatus}
+        	,#{taskStatus}
         	,#{createTime}
         	,#{modifyTime}
         )
@@ -257,8 +266,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TX_RECEIPT_STATUS
 			,TX_TIME
 			,CONFIRM_BLOCK_NUMBER
-			,TX_STATUS
 			,TX_TYPE
+			,TX_STATUS
+			,TASK_STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -286,8 +296,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TX_RECEIPT_STATUS
 			,TX_TIME
 			,CONFIRM_BLOCK_NUMBER
-			,TX_STATUS
 			,TX_TYPE
+			,TX_STATUS
+			,TASK_STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -318,8 +329,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TX_RECEIPT_STATUS
 			,TX_TIME
 			,CONFIRM_BLOCK_NUMBER
-			,TX_STATUS
 			,TX_TYPE
+			,TX_STATUS
+			,TASK_STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -357,8 +369,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TX_RECEIPT_STATUS
 			,TX_TIME
 			,CONFIRM_BLOCK_NUMBER
-			,TX_STATUS
 			,TX_TYPE
+			,TX_STATUS
+			,TASK_STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
@@ -368,58 +381,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			<include refid="transactionEthColumns" />
 		ORDER BY
 			TX_HASH
-	</select>
-
-	<select id="queryPaginationTxStatusInListCount" resultType="Integer">
-		SELECT
-		COUNT(0)
-		FROM
-		TRANSACTION_ETH
-		WHERE
-		1=1
-		AND
-		TX_STATUS IN
-		<foreach collection="txStatusArray" item="txStatus" index="index"
-				 open="(" close=")" separator=",">
-			#{txStatus}
-		</foreach>
-	</select>
-
-	<select id="queryPaginationTxStatusInList" parameterType="PaginationCondition" resultMap="transactionEthResultMap">
-		SELECT
-			TX_HASH
-			,BLOCK_NUMBER
-			,TX_FROM
-			,TX_TO
-			,CONTRACT_ADDRESS
-			,COIN_TYPE
-			,TX_INPUT
-			,TX_VALUE
-			,TX_INDEX
-			,GAS_LIMIT
-			,GAS_USED
-			,GAS_PRICE
-			,ACTUAL_FEE
-			,NONCE
-			,TX_RECEIPT_STATUS
-			,TX_TIME
-			,CONFIRM_BLOCK_NUMBER
-			,TX_STATUS
-			,TX_TYPE
-			,CREATE_TIME
-			,MODIFY_TIME
-		FROM
-			TRANSACTION_ETH
-		WHERE
-			1=1
-			AND
-			TX_STATUS IN
-			<foreach collection="txStatusArray" item="txStatus" index="index"
-					 open="(" close=")" separator=",">
-				#{txStatus}
-			</foreach>
-		ORDER BY
-			CREATE_TIME
 	</select>
 	
 </mapper>
