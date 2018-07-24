@@ -68,6 +68,23 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	public static final String TX_STATUS_DEPOSIT_FAIL_NOTIFIED= "CZSBYTZ";
 
 	/**
+	 * 处理状态(WCL:未处理)
+	 */
+	public static final String TASK_STATUS_UNTREATED = "WCL";
+	/**
+	 * 处理状态(CLZ:处理中)
+	 */
+	public static final String TASK_STATUS_PROCESSING = "CLZ";
+	/**
+	 * 处理状态(SUCCESS:处理成功)
+	 */
+	public static final String TASK_STATUS_SUCCESS = "SUCCESS";
+	/**
+	 * 处理状态(FAIL:处理失败)
+	 */
+	public static final String TASK_STATUS_FAIL = "FAIL";
+
+	/**
 	 * 交易类型(0:转入)
 	 */
 	public static final String TX_TYPE_IN = "0";

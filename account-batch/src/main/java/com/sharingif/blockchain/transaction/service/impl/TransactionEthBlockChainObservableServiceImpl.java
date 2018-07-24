@@ -21,12 +21,14 @@ import org.web3j.protocol.core.DefaultBlockParameterNumber;
 import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.Transaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import rx.functions.Action0;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * TransactionEthBlockChainObservableServiceImpl
@@ -46,6 +48,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
     private AddressRegisterService addressRegisterService;
     private EthereumService ethereumService;
     private OleContract oleContract;
+    private Boolean ethTransactionsObservableIsfinsh;
 
     @Resource
     public void setBlockChainSyncService(BlockChainSyncService blockChainSyncService) {
@@ -201,6 +204,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         transactionEth.setTxTime(timestamp);
         transactionEth.setConfirmBlockNumber(0);
         transactionEth.setTxStatus(TransactionEth.TX_STATUS_UNTREATED);
+        transactionEth.setTaskStatus(TransactionEth.TASK_STATUS_UNTREATED);
         transactionEth.setActualFee(transactionEth.getGasUsed().multiply(transactionEth.getGasPrice()));
 
         return transactionEth;
@@ -234,28 +238,34 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
 
         // 监听地址k
         ethereumService.getWeb3j().replayTransactionsObservable(new DefaultBlockParameterNumber(startBlockNumber), DefaultBlockParameterName.LATEST)
-            .subscribe(tx -> {
+            .doOnCompleted(new Action0() {
+                @Override
+                public void call() {
+                    ethTransactionsObservableIsfinsh = true;
+                }
+            }).subscribe(tx -> {
+            try {
 
-                try {
-                    if(startBlockNumber.compareTo(tx.getBlockNumber()) ==0 && isDuplicationData(tx.getHash())) {
-                        return;
-                    }
-
-                    handleCurrentBlockNumber(tx, currentBlockNumber);
-
-                    logger.info("subscribe BlockNumber:{},tx hash:{}", currentBlockNumber.getCurrentBlockNumber(), tx.getHash());
-
-                    TransactionEth transactionEth = convertBlockDateToTransactionEth(tx, currentBlockNumber, ethAddressRegister);
-
-                    if(transactionEth != null) {
-                        persistenceAndNoticeTransactionEth(transactionEth);
-                    }
-                } catch (Exception e) {
-                    logger.error("subscribe error", e);
-                    throw e;
+                if(startBlockNumber.compareTo(tx.getBlockNumber()) ==0 && isDuplicationData(tx.getHash())) {
+                    return;
                 }
 
-            });
+                handleCurrentBlockNumber(tx, currentBlockNumber);
+
+                logger.info("subscribe BlockNumber:{},tx hash:{}", currentBlockNumber.getCurrentBlockNumber(), tx.getHash());
+
+                TransactionEth transactionEth = convertBlockDateToTransactionEth(tx, currentBlockNumber, ethAddressRegister);
+
+                if(transactionEth != null) {
+                    persistenceAndNoticeTransactionEth(transactionEth);
+                }
+
+
+            } catch (Throwable e) {
+                logger.error("subscribe error", e);
+                throw e;
+            }
+        });
     }
 
     @Override
@@ -264,7 +274,18 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
             @Override
             public void run() {
 
-                ethTransactionsObservable();
+                while (true) {
+                    if (ethTransactionsObservableIsfinsh == null || ethTransactionsObservableIsfinsh) {
+                        ethTransactionsObservableIsfinsh = false;
+                        ethTransactionsObservable();
+                    }
+
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        logger.error("ethTransactionsObservable error", e);
+                    }
+                }
 
             }
         }).start();

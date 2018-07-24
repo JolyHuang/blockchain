@@ -24,12 +24,14 @@ import org.web3j.tx.TransactionManager;
 import org.web3j.tx.Transfer;
 import org.web3j.utils.Convert;
 import rx.Subscription;
+import rx.functions.Action0;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * TODO
@@ -172,14 +174,13 @@ public class TestWeb3j {
 
     }
 
+
     @Test
     public void test() {
-        Subscription subscription = web3j.replayTransactionsObservable(
-                new DefaultBlockParameterNumber(new BigInteger("5662012")), new DefaultBlockParameterNumber(new BigInteger("5662154")))
-        .subscribe(tx -> {
-        });
 
-        System.out.println("===============================");
+
+
+
     }
 
     @Test
@@ -318,14 +319,14 @@ public class TestWeb3j {
 
         Credentials credentials = WalletUtils.loadCredentials(
                         "1hjdsR4"
-                        ,"/keystore/934CAE294D204FE5876AE0DA18396100/m/44'/60'/0'/0/0/UTC--2018-07-19T10-39-40.140000000Z--705886b730022f2129b50c2baeffae1b9c29a470.json");
+                        ,"/keystore/2B9824D5822240AB8C1ED88B38012CD0/m/44'/60'/0'/0/0/UTC--2018-07-23T02-29-30.381000000Z--f49b8bc27067935ed2852691f78a6cc37d24a819.json");
 
         TransactionManager transactionManager = new RawTransactionManager(web3j, credentials);
 
 
         TransactionReceipt transactionReceipt = Transfer.sendFunds(
-                web3j, credentials, "0x711b60a0266d763084ff9c29911a66e20b81ee8a",
-                new BigDecimal("0.1"), Convert.Unit.ETHER).send();
+                web3j, credentials, "0x113227618ad8226df25e41cfa751e4096068388e",
+                new BigDecimal("1"), Convert.Unit.ETHER).send();
 
         System.out.println(transactionReceipt.getTransactionHash());
     }

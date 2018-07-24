@@ -34,6 +34,16 @@
         </dependency>
         <dependency>
             <groupId>${maven.cube.groupId}</groupId>
+            <artifactId>com.sharingif.cube.security</artifactId>
+            <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${maven.cube.boot.groupId}</groupId>
+            <artifactId>com.sharingif.cube.spring.boot.communication.http</artifactId>
+            <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${maven.cube.groupId}</groupId>
             <artifactId>com.sharingif.cube.communication.http.apache</artifactId>
             <version>${maven.project.com.sharingif.cube.spring.boot.version}</version>
         </dependency>

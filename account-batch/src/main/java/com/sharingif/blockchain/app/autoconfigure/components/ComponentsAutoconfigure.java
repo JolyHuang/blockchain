@@ -16,9 +16,15 @@ import java.math.BigInteger;
 @Configuration
 public class ComponentsAutoconfigure {
 
-    @Bean("passwordTextEncryptor")
-    public TextEncryptor createPasswordTextEncryptor(@Value("${password.key}") String key) {
+    @Bean(name="base64Coder")
+    public Base64Coder createBase64Coder() {
         Base64Coder base64Coder = new Base64Coder();
+
+        return base64Coder;
+    }
+
+    @Bean("passwordTextEncryptor")
+    public TextEncryptor createPasswordTextEncryptor(@Value("${password.key}") String key, Base64Coder base64Coder) {
         byte[] keysByte = base64Coder.decode(key);
         AESECBEncryptor encryptor = new AESECBEncryptor(keysByte, base64Coder);
 

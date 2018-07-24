@@ -60,12 +60,13 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
         return true;
     }
 
-    protected void confirmTransactionEthBlockNumber(BigInteger currentBlockNumber, PaginationRepertory<TransactionEth> paginationRepertory) {
+    protected void confirmTransactionEthBlockNumber(PaginationRepertory<TransactionEth> paginationRepertory) {
         if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
             return;
         }
 
         for(TransactionEth transactionEth : paginationRepertory.getPageItems()) {
+            BigInteger currentBlockNumber = ethereumService.getBlockNumber();
             BigInteger blockNumber = transactionEth.getBlockNumber();
             int confirmBlockNumber = transactionEth.getConfirmBlockNumber();
             BigInteger txConfirmBlockNumber = blockNumber.add(new BigInteger(String.valueOf(confirmBlockNumber)));
@@ -99,8 +100,6 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
 
     protected void confirmTransactionEthBlockNumber() {
 
-        BigInteger currentBlockNumber = ethereumService.getBlockNumber();
-
         PaginationCondition<TransactionEth> paginationCondition = new PaginationCondition<TransactionEth>();
         TransactionEth queryTransactionEth = new TransactionEth();
         paginationCondition.setCurrentPage(1);
@@ -118,7 +117,7 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
                 }
             }
 
-            confirmTransactionEthBlockNumber(currentBlockNumber, paginationRepertory);
+            confirmTransactionEthBlockNumber(paginationRepertory);
 
             if(paginationRepertory.getTotalCount() < (paginationRepertory.getCurrentIndex()+paginationCondition.getPageSize())) {
                 paginationCondition.setCurrentPage(1);

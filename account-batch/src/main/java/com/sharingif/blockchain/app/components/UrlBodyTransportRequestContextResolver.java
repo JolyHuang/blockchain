@@ -1,5 +1,6 @@
 package com.sharingif.blockchain.app.components;
 
+import co.olivecoin.wallet.api.http.HttpRequestHeaders;
 import com.sharingif.cube.communication.MediaType;
 import com.sharingif.cube.core.handler.bind.annotation.RequestMethod;
 import com.sharingif.cube.core.request.RequestContext;
@@ -19,13 +20,22 @@ public class UrlBodyTransportRequestContextResolver implements RequestContextRes
 
     @Override
     public RequestContext<Object[]> resolveRequest(Object[] request) {
-        UrlBody urlBody = (UrlBody) request[1];
+        Object[] args = (Object[]) request[1];
+        UrlBody urlBody = (UrlBody) args[0];
+
+        co.olivecoin.wallet.api.http.HttpRequest<Object> httpRequest = new co.olivecoin.wallet.api.http.HttpRequest<Object>();
+        co.olivecoin.wallet.api.http.HttpRequestHeaders headers = new co.olivecoin.wallet.api.http.HttpRequestHeaders();
+        headers.setDeviceId("000101");
+        headers.setDeviceType("IOS");
+        headers.setAppVersion("1.0.0");
+        httpRequest.setHeaders(headers);
+        httpRequest.setBody(urlBody.getBody());
 
         RequestContext<Object[]> requestContext = new RequestContext<Object[]>(
                 MediaType.APPLICATION_JSON.toString()
                 ,urlBody.getUrl(), Locale.getDefault()
                 ,RequestMethod.POST.name()
-                ,new Object[]{urlBody.getBody()}
+                ,new Object[]{httpRequest}
                 );
 
         return requestContext;
