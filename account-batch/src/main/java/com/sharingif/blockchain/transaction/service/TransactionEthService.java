@@ -10,11 +10,18 @@ import com.sharingif.cube.support.service.base.IBaseService;
 public interface TransactionEthService extends IBaseService<TransactionEth, String> {
 
     /**
-     * 获取未处理交易数据
+     * 获取充值未处理交易数据
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getUntreated(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getInUntreated(PaginationCondition<TransactionEth> paginationCondition);
+
+    /**
+     * 获取取现未处理交易数据
+     * @param paginationCondition
+     * @return
+     */
+    PaginationRepertory<TransactionEth> getOutUntreated(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 获取未确认交易数据
@@ -24,31 +31,37 @@ public interface TransactionEthService extends IBaseService<TransactionEth, Stri
     PaginationRepertory<TransactionEth> getUnconfirmedBlockNumber(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
-     * 获取未确认余额数据
+     * 获取充值未确认余额数据
      * @param paginationCondition
      * @return
      */
     PaginationRepertory<TransactionEth> getUnconfirmedBalance(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
-     * 获取无效交易
+     * 获取充值充值无效交易
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getInvalid(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getInInvalid(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
-     * 获取确认余额数据
+     * 获取充值确认余额数据
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getValid(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getInValid(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 修改交易状态充值处理中已通知
      * @param txHash
      */
     void updateTxStatusToDepositProcessingNotified(String txHash);
+
+    /**
+     * 修改交易状态充值处理中已通知
+     * @param txHash
+     */
+    void updateTxStatusToWithdrawalProcessingNotified(String txHash);
 
     /**
      * 修改交易状态为余额未确认、确认区块数

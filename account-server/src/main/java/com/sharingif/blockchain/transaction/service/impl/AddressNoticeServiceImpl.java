@@ -4,6 +4,7 @@ package com.sharingif.blockchain.transaction.service.impl;
 import com.sharingif.blockchain.transaction.dao.AddressNoticeDAO;
 import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.service.AddressNoticeService;
+import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,19 @@ public class AddressNoticeServiceImpl extends BaseServiceImpl<AddressNotice, Str
 		addressNotice.setNoticeType(AddressNotice.NOTICE_TYPE_DEPOSIT);
 
 		addressNoticeDAO.insert(addressNotice);
+	}
+
+	@Override
+	public void registerWithdrawalAddressNotice(String addressRegisterId, String noticeAddress, String address, String coinType) {
+		AddressNotice addressNotice = new AddressNotice();
+		addressNotice.setAddressRegisterId(addressRegisterId);
+		addressNotice.setNoticeAddress(noticeAddress);
+		addressNotice.setAddress(address);
+		addressNotice.setCoinType(coinType);
+		addressNotice.setNoticeType(AddressNotice.NOTICE_TYPE_WITHDRAWAL);
+
+		addressNoticeDAO.insert(addressNotice);
+
 	}
 
 	@Override

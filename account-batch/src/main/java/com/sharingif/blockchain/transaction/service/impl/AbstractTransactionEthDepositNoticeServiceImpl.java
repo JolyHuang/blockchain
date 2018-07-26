@@ -34,99 +34,9 @@ import java.util.concurrent.TimeUnit;
  * 2018/7/20 下午6:28
  */
 @Service
-public abstract class AbstractTransactionEthDepositNoticeServiceImpl implements InitializingBean {
+public abstract class AbstractTransactionEthDepositNoticeServiceImpl extends AbstractTransactionEthNoticeServiceImpl {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-    private AddressNoticeService addressNoticeService;
-    private TransactionEthService transactionEthService;
-    private TransactionEthApiService transactionEthApiService;
-    private Signature signature;
-    private Base64Coder base64Coder;
-
-    @Resource
-    public void setAddressNoticeService(AddressNoticeService addressNoticeService) {
-        this.addressNoticeService = addressNoticeService;
-    }
-    public TransactionEthService getTransactionEthService() {
-        return transactionEthService;
-    }
-    @Resource
-    public void setTransactionEthService(TransactionEthService transactionEthService) {
-        this.transactionEthService = transactionEthService;
-    }
-    @Resource
-    public void setTransactionEthApiService(TransactionEthApiService transactionEthApiService) {
-        this.transactionEthApiService = transactionEthApiService;
-    }
-    @Resource
-    public void setBase64Coder(Base64Coder base64Coder) {
-        this.base64Coder = base64Coder;
-    }
-    @Value("${deposit.callback.private}")
-    public void setDepositCallbackPrivate(String depositCallbackPrivate) {
-        try {
-            RSAPrivateKey rsaPrivateKey = RSAPrivateCrtKeyImpl.newKey(base64Coder.decode(depositCallbackPrivate));
-
-            PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(rsaPrivateKey.getEncoded());
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
-            signature = Signature.getInstance("MD5withRSA");
-            signature.initSign(privateKey);
-        } catch (Exception e) {
-            logger.error("invalid key exception", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected String sign(TransactionEthApiReq transactionEthApiReq) {
-        try {
-            signature.update(transactionEthApiReq.getSignData());
-            byte[] result = signature.sign();
-            return base64Coder.encode(result);
-        } catch (SignatureException e) {
-            logger.error("signature exception", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Transactional
-    protected void doTransactionEth(TransactionEth transactionEth) {
-
-        if(TransactionEth.TX_TYPE_OUT.equals(transactionEth.getTxType())) {
-            // 非充值交易，交易状态直接状态
-            updateTxStatus(transactionEth.getTxHash());
-            return;
-        }
-
-        if(TransactionEth.TX_TYPE_IN.equals(transactionEth.getTxType())) {
-            // 获取通知地址
-            AddressNotice addressNotice = addressNoticeService.getDepositNoticeAddress(transactionEth.getTxTo(), transactionEth.getCoinType());
-            String noticeAddress = addressNotice.getNoticeAddress();
-
-            // 发送通知
-            TransactionEthApiReq transactionEthApiReq = convertTransactionEthToTransactionEthApiReq(transactionEth);
-            transactionEthApiReq.setSign(sign(transactionEthApiReq));
-            UrlBody<TransactionEthApiReq> transactionEthApiReqUrlBody = new UrlBody<TransactionEthApiReq>();
-            transactionEthApiReqUrlBody.setUrl(noticeAddress);
-            transactionEthApiReqUrlBody.setBody(transactionEthApiReq);
-            transactionEthApiService.eth(transactionEthApiReqUrlBody);
-
-            // 修改交易状态
-            updateTxStatus(transactionEth.getTxHash());
-        }
-    }
-
-    protected void doPaginationRepertory(PaginationRepertory<TransactionEth> paginationRepertory) {
-        if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
-            return;
-        }
-
-        for (TransactionEth transactionEth : paginationRepertory.getPageItems()) {
-            doTransactionEth(transactionEth);
-        }
-    }
-
-    public TransactionEthApiReq convertTransactionEthToTransactionEthApiReq(TransactionEth transactionEth) {
+    protected TransactionEthApiReq convertTransactionEthToTransactionEthApiReq(TransactionEth transactionEth) {
         TransactionEthApiReq transactionEthApiReq = new TransactionEthApiReq();
         transactionEthApiReq.setTxHash(transactionEth.getTxHash());
         transactionEthApiReq.setBlockNumber(transactionEth.getBlockNumber());
@@ -151,48 +61,19 @@ public abstract class AbstractTransactionEthDepositNoticeServiceImpl implements 
         return transactionEthApiReq;
     }
 
-    protected void depositNotice() {
-        PaginationCondition<TransactionEth> paginationCondition = new PaginationCondition<TransactionEth>();
-        TransactionEth queryTransactionEth = new TransactionEth();
-        paginationCondition.setCurrentPage(1);
-        paginationCondition.setPageSize(100);
-        paginationCondition.setCondition(queryTransactionEth);
-
-        while (true){
-            PaginationRepertory<TransactionEth> paginationRepertory = getPaginationRepertory(paginationCondition);
-
-            if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    logger.error("get transaction error", e);
-                }
-            }
-
-            doPaginationRepertory(paginationRepertory);
-
-            if(paginationRepertory.getTotalCount() < (paginationRepertory.getCurrentIndex()+paginationCondition.getPageSize())) {
-                paginationCondition.setCurrentPage(1);
-            } else {
-                paginationCondition.setCurrentPage(paginationCondition.getCurrentPage()+1);
-            }
+    protected void sendNotice(TransactionEth transactionEth) {
+        // 获取通知地址
+        AddressNotice addressNotice = getAddressNoticeService().getDepositNoticeAddress(transactionEth.getTxTo(), transactionEth.getCoinType());
+        if(addressNotice != null) {
+            String noticeAddress = addressNotice.getNoticeAddress();
+            // 发送通知
+            TransactionEthApiReq transactionEthApiReq = convertTransactionEthToTransactionEthApiReq(transactionEth);
+            transactionEthApiReq.setSign(sign(transactionEthApiReq.getSignData()));
+            UrlBody<TransactionEthApiReq> transactionEthApiReqUrlBody = new UrlBody<TransactionEthApiReq>();
+            transactionEthApiReqUrlBody.setUrl(noticeAddress);
+            transactionEthApiReqUrlBody.setBody(transactionEthApiReq);
+            getTransactionEthApiService().eth(transactionEthApiReqUrlBody);
         }
-    }
-
-    abstract PaginationRepertory<TransactionEth> getPaginationRepertory(PaginationCondition<TransactionEth> paginationCondition);
-
-    abstract void updateTxStatus(String txHash);
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                depositNotice();
-
-            }
-        }).start();
     }
 
 }

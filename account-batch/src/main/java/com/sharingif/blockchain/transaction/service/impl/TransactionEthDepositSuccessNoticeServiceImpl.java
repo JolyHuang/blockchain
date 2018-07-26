@@ -18,7 +18,7 @@ public class TransactionEthDepositSuccessNoticeServiceImpl extends AbstractTrans
 
     @Override
     PaginationRepertory<TransactionEth> getPaginationRepertory(PaginationCondition<TransactionEth> paginationCondition) {
-        return getTransactionEthService().getValid(paginationCondition);
+        return getTransactionEthService().getInValid(paginationCondition);
     }
 
     @Override

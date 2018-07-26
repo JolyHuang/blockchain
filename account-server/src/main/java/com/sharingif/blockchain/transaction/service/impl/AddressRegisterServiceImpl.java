@@ -63,7 +63,7 @@ public class AddressRegisterServiceImpl extends BaseServiceImpl<AddressRegister,
 		addressRegisterDAO.insert(addressRegister);
 
 		// 注册通知地址
-		if(StringUtils.isTrimEmpty(req.getSubCoinType())) {
+		if(StringUtils.isTrimEmpty(req.getSubCoinType()) && !(StringUtils.isTrimEmpty(req.getNoticeAddress()))) {
 			addressNoticeService.registerDepositAddressNotice(addressRegister.getId(), req.getNoticeAddress(), addressRegister.getAddress(), addressRegister.getCoinType());
 		}
 

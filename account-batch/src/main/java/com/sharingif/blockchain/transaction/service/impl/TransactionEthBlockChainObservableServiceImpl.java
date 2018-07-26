@@ -1,7 +1,7 @@
 package com.sharingif.blockchain.transaction.service.impl;
 
-import com.sharingif.blockchain.app.ole.OleContract;
-import com.sharingif.blockchain.app.ole.TransferEventResponse;
+import com.sharingif.blockchain.common.components.ole.OleContract;
+import com.sharingif.blockchain.common.components.ole.TransferEventResponse;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.eth.service.EthereumService;
 import com.sharingif.blockchain.transaction.dao.TransactionEthDAO;
@@ -91,6 +91,9 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
     protected void handleCurrentBlockNumber(Transaction tx, CurrentBlockNumber currentBlockNumber) {
         BigInteger txBlockNumber = tx.getBlockNumber();
         if(currentBlockNumber.getCurrentBlockNumber() == null || currentBlockNumber.getCurrentBlockNumber().compareTo(txBlockNumber) != 0) {
+
+            logger.info("observable current block number,blockNumber:{}",txBlockNumber);
+
             currentBlockNumber.setCurrentBlockNumber(txBlockNumber);
 
             EthBlock.Block block = ethereumService.getBlock(txBlockNumber, false);
@@ -251,8 +254,6 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
                 }
 
                 handleCurrentBlockNumber(tx, currentBlockNumber);
-
-                logger.info("subscribe BlockNumber:{},tx hash:{}", currentBlockNumber.getCurrentBlockNumber(), tx.getHash());
 
                 TransactionEth transactionEth = convertBlockDateToTransactionEth(tx, currentBlockNumber, ethAddressRegister);
 

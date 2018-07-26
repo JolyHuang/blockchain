@@ -27,42 +27,34 @@ import java.util.concurrent.ExecutionException;
  */
 public class OliveRawTransaction {
 
-    static String contractAddress = "";
-    static String methodName = "";
-    static String toAddress = "";
+    static String contractAddress = "0xe49a2Faa1081C177721e2F579b55371Fea5b3019";
+    static String methodName = "transfer";
+    static String toAddress = "0x111d45f5e86f6170a791237ea1c74200ced8e165";
+    static String fromAddress = "0xf49b8bC27067935eD2852691F78a6Cc37D24A819";
 
     static Credentials credentials = null;
 
     static {
         try {
-            credentials = WalletUtils.loadCredentials(
-                    ""
-                    ,"");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (CipherException e) {
+            credentials = Credentials.create("96997592b950b811ab843861cbb59df22f66decef9f79b7028b3bf09ec3e08e9");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
-        transaction("localhost", 8545);
-
-//        Web3j web3j = Web3j.build(new HttpService("http://47.52.42.78:8545"));
-
-//        System.out.println(web3j.ethBlockNumber().send().getBlockNumber());
-
+        transaction();
     }
 
-    private static void transaction(String host, int port) throws ExecutionException, InterruptedException, IOException {
-        Web3j web3j = Web3j.build(new HttpService("http://localhost:8545"));
-        BigInteger amount = Convert.toWei("400000", Convert.Unit.ETHER).toBigInteger();
+    private static void transaction() throws ExecutionException, InterruptedException, IOException {
+        Web3j web3j = Web3j.build(new HttpService("http://47.88.156.133:7236"));
+        BigInteger amount = Convert.toWei("100", Convert.Unit.ETHER).toBigInteger();
 
         System.out.println(web3j.ethBlockNumber().send().getBlockNumber());
 
-        EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(toAddress, DefaultBlockParameterName.LATEST).sendAsync().get();
+        EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(fromAddress, DefaultBlockParameterName.LATEST).sendAsync().get();
 
-        BigInteger nonce = ethGetTransactionCount.getTransactionCount().add(new BigInteger("14"));
+        BigInteger nonce = ethGetTransactionCount.getTransactionCount();
 
         Function function = new Function(
                 methodName
@@ -75,7 +67,7 @@ public class OliveRawTransaction {
         RawTransaction rawTransaction  = RawTransaction.createTransaction(
                 nonce
                 ,Convert.toWei("0.000000012", Convert.Unit.ETHER).toBigInteger()
-                ,new BigInteger("83132")
+                ,new BigInteger("1000000")
                 ,contractAddress
                 ,encodedFunction
         );

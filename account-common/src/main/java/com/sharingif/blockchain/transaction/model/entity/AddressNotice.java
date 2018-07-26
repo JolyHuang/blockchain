@@ -13,6 +13,10 @@ public class AddressNotice implements java.io.Serializable, IObjectDateOperation
 	 * 通知类型(deposit:充值)
 	 */
 	public static final String NOTICE_TYPE_DEPOSIT = "deposit";
+	/**
+	 * 通知类型(withdrawal:提现)
+	 */
+	public static final String NOTICE_TYPE_WITHDRAWAL = "withdrawal";
 	
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
 	//columns START

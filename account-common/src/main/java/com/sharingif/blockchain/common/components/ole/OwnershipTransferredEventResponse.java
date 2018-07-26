@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.app.ole;
+package com.sharingif.blockchain.common.components.ole;
 
 import org.web3j.protocol.core.methods.response.Log;
 

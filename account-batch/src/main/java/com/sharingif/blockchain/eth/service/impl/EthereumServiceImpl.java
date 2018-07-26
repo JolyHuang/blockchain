@@ -16,6 +16,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Ethereum 服务
@@ -86,6 +87,26 @@ public class EthereumServiceImpl implements EthereumService {
             return web3j.ethGetTransactionByHash(txHash).send().getTransaction().get();
         } catch (IOException e) {
             logger.error("get transaction error", e);
+            throw new CubeRuntimeException(e);
+        }
+    }
+
+    @Override
+    public BigInteger getGasPrice() {
+        try {
+            return web3j.ethGasPrice().send().getGasPrice();
+        } catch (IOException e) {
+            logger.error("get gas price error", e);
+            throw new CubeRuntimeException(e);
+        }
+    }
+
+    @Override
+    public String ethSendRawTransaction(String hexValue) {
+        try {
+            return web3j.ethSendRawTransaction(hexValue).sendAsync().get().getTransactionHash();
+        } catch (Exception e) {
+            logger.error("eth sendRawTransaction error", e);
             throw new CubeRuntimeException(e);
         }
     }

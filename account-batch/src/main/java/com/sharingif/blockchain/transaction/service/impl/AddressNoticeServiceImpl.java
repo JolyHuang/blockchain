@@ -25,25 +25,6 @@ public class AddressNoticeServiceImpl extends BaseServiceImpl<AddressNotice, Str
 	}
 
 	@Override
-	public void registerAddressNotice(String addressRegisterId, List<String> noticeList) {
-		for(String notice : noticeList) {
-			AddressNotice addressNotice = new AddressNotice();
-			addressNotice.setAddressRegisterId(addressRegisterId);
-			addressNotice.setNoticeAddress(notice);
-
-			addressNoticeDAO.insert(addressNotice);
-		}
-	}
-
-	@Override
-	public void unregisterAddressNotice(String addressRegisterId) {
-		AddressNotice addressNotice = new AddressNotice();
-		addressNotice.setAddressRegisterId(addressRegisterId);
-
-		addressNoticeDAO.deleteByCondition(addressNotice);
-	}
-
-	@Override
 	public AddressNotice getDepositNoticeAddress(String address, String coinType) {
 		AddressNotice addressNotice = new AddressNotice();
 		addressNotice.setAddress(address);

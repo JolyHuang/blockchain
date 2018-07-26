@@ -7,7 +7,7 @@ import com.sharingif.blockchain.account.api.crypto.entity.BIP44ChangeRsp;
 import com.sharingif.blockchain.account.service.AccountService;
 import com.sharingif.blockchain.account.service.AccountSysPrmService;
 import com.sharingif.blockchain.account.api.transaction.entity.RegisterReq;
-import com.sharingif.blockchain.app.ole.OleContract;
+import com.sharingif.blockchain.common.components.ole.OleContract;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.common.constants.CoinTypeConvert;
 import com.sharingif.blockchain.crypto.api.key.service.BIP44ApiService;
@@ -20,6 +20,7 @@ import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.service.BIP44Service;
 import com.sharingif.blockchain.crypto.service.MnemonicService;
 import com.sharingif.blockchain.transaction.service.AddressRegisterService;
+import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.security.confidentiality.encrypt.TextEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,8 +126,11 @@ public class BIP44ServiceImpl implements BIP44Service {
     @Override
     public BIP44AddressIndexRsp addressIndex(BIP44AddressIndexReq req) {
 
-        // 获取配置ExtendedKeyId
-        String changeExtendedKeyId = accountSysPrmService.extendedKey(req.getCoinType());
+        // 获取配置ExtendedKeyId，如果请求中没有就取数据库中配置的默认值
+        String changeExtendedKeyId = req.getChangeExtendedKeyId();
+        if(StringUtils.isTrimEmpty(changeExtendedKeyId)) {
+            changeExtendedKeyId = accountSysPrmService.extendedKey(req.getCoinType());
+        }
 
         // 获取change ExtendedKey信息
         ExtendedKey extendedKey = extendedKeyDAO.queryById(changeExtendedKeyId);

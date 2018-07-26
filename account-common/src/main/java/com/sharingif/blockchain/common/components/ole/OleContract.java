@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.app.ole;
+package com.sharingif.blockchain.common.components.ole;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +94,7 @@ public class OleContract extends Contract {
     private BigInteger decimals;
     private String symbol;
 
-    public static final Event TRANSFER_EVENT = new Event("Transfer", 
+    public static final Event TRANSFER_EVENT = new Event("Transfer",
             Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Address>() {}),
             Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
     ;
@@ -128,7 +128,7 @@ public class OleContract extends Contract {
     }
 
     public RemoteCall<String> name() {
-        final Function function = new Function(FUNC_NAME, 
+        final Function function = new Function(FUNC_NAME,
                 Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);

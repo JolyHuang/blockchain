@@ -2,7 +2,7 @@ package com.sharingif.blockchain.transaction.service.impl;
 
 import com.sharingif.blockchain.account.model.entity.Account;
 import com.sharingif.blockchain.account.service.AccountService;
-import com.sharingif.blockchain.app.ole.OleContract;
+import com.sharingif.blockchain.common.components.ole.OleContract;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.eth.service.EthereumService;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;

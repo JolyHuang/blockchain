@@ -60,4 +60,16 @@ public interface EthereumService {
      */
     Transaction getTransactionByHash(String txHash);
 
+    /**
+     * 获得gas价格
+     * @return
+     */
+    BigInteger getGasPrice();
+
+    /***
+     * 发送raw交易
+     * @param hexValue
+     */
+    String ethSendRawTransaction(String hexValue);
+
 }

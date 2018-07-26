@@ -317,15 +317,13 @@ public class TestWeb3j {
     @Test
     public void testSendETHError() throws Exception {
 
-        Credentials credentials = WalletUtils.loadCredentials(
-                        "1hjdsR4"
-                        ,"/keystore/2B9824D5822240AB8C1ED88B38012CD0/m/44'/60'/0'/0/0/UTC--2018-07-23T02-29-30.381000000Z--f49b8bc27067935ed2852691f78a6cc37d24a819.json");
+        Credentials credentials = credentials = Credentials.create("96997592b950b811ab843861cbb59df22f66decef9f79b7028b3bf09ec3e08e9");
 
         TransactionManager transactionManager = new RawTransactionManager(web3j, credentials);
 
 
         TransactionReceipt transactionReceipt = Transfer.sendFunds(
-                web3j, credentials, "0x113227618ad8226df25e41cfa751e4096068388e",
+                web3j, credentials, "0xd8bbc16219a5b0b79074f1b7777af9ac4b6dce51",
                 new BigDecimal("1"), Convert.Unit.ETHER).send();
 
         System.out.println(transactionReceipt.getTransactionHash());

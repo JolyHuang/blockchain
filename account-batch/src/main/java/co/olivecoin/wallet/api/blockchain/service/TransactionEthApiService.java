@@ -1,6 +1,7 @@
 package co.olivecoin.wallet.api.blockchain.service;
 
 import co.olivecoin.wallet.api.blockchain.entity.TransactionEthApiReq;
+import co.olivecoin.wallet.api.blockchain.entity.TransactionEthWithdrawalApiReq;
 import com.sharingif.blockchain.app.components.UrlBody;
 
 /**
@@ -18,5 +19,7 @@ public interface TransactionEthApiService {
      * @param req
      */
     void eth(UrlBody<TransactionEthApiReq> req);
+
+    void withdrawal(UrlBody<TransactionEthWithdrawalApiReq> req);
 
 }

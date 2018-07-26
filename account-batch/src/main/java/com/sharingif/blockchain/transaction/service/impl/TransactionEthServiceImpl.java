@@ -28,8 +28,17 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getUntreated(PaginationCondition<TransactionEth> paginationCondition) {
+    public PaginationRepertory<TransactionEth> getInUntreated(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_UNTREATED);
+        paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_IN);
+
+        return getPagination(paginationCondition);
+    }
+
+    @Override
+    public PaginationRepertory<TransactionEth> getOutUntreated(PaginationCondition<TransactionEth> paginationCondition) {
+        paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_UNTREATED);
+        paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_OUT);
 
         return getPagination(paginationCondition);
     }
@@ -37,7 +46,11 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     @Override
     public PaginationRepertory<TransactionEth> getUnconfirmedBlockNumber(PaginationCondition<TransactionEth> paginationCondition) {
 
-        paginationCondition.getCondition().setTxStatusArray(Arrays.asList(TransactionEth.TX_STATUS_DEPOSIT_PROCESSING_NOTIFIED, TransactionEth.TX_STATUS_BLOCK_CONFIRMING));
+        paginationCondition.getCondition().setTxStatusArray(Arrays.asList(
+                TransactionEth.TX_STATUS_DEPOSIT_PROCESSING_NOTIFIED
+                ,TransactionEth.TX_STATUS_WITHDRAWAL_PROCESSING_NOTIFIED
+                ,TransactionEth.TX_STATUS_BLOCK_CONFIRMING
+        ));
 
         return transactionEthDAO.queryPaginationTxStatusInList(paginationCondition);
     }
@@ -51,15 +64,17 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getInvalid(PaginationCondition<TransactionEth> paginationCondition) {
+    public PaginationRepertory<TransactionEth> getInInvalid(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_INVALID);
+        paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_IN);
 
         return getPagination(paginationCondition);
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getValid(PaginationCondition<TransactionEth> paginationCondition) {
+    public PaginationRepertory<TransactionEth> getInValid(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_VALID);
+        paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_IN);
 
         return getPagination(paginationCondition);
     }
@@ -69,6 +84,15 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
         TransactionEth transactionEth = new TransactionEth();
         transactionEth.setTxHash(txHash);
         transactionEth.setTxStatus(TransactionEth.TX_STATUS_DEPOSIT_PROCESSING_NOTIFIED);
+
+        updateById(transactionEth);
+    }
+
+    @Override
+    public void updateTxStatusToWithdrawalProcessingNotified(String txHash) {
+        TransactionEth transactionEth = new TransactionEth();
+        transactionEth.setTxHash(txHash);
+        transactionEth.setTxStatus(TransactionEth.TX_STATUS_WITHDRAWAL_PROCESSING_NOTIFIED);
 
         updateById(transactionEth);
     }

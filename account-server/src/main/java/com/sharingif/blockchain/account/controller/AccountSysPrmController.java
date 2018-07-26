@@ -3,6 +3,7 @@ package com.sharingif.blockchain.account.controller;
 
 import com.sharingif.blockchain.account.api.account.entity.AccountSysSetChangeExtendedKeyReq;
 import com.sharingif.blockchain.account.api.account.entity.AccountSysSetChangeExtendedKeyRsp;
+import com.sharingif.blockchain.account.api.account.entity.AccountSysSetWithdrawalReq;
 import com.sharingif.blockchain.account.api.crypto.entity.BIP44ChangeReq;
 import com.sharingif.blockchain.account.api.crypto.entity.BIP44ChangeRsp;
 import com.sharingif.blockchain.account.service.AccountSysPrmService;
@@ -26,11 +27,18 @@ public class AccountSysPrmController {
 
 	/**
 	 * 设置当前change ExtendedKey
-	 * @return
 	 */
 	@RequestMapping(value="setChangeExtendedKey", method= RequestMethod.POST)
 	public void setChangeExtendedKey(AccountSysSetChangeExtendedKeyReq req) {
 		accountSysPrmService.setChangeExtendedKey(req);
+	}
+
+	/**
+	 * 设置取现地址
+	 */
+	@RequestMapping(value="setWithdrawalAccount", method= RequestMethod.POST)
+	public void setWithdrawalAccount(AccountSysSetWithdrawalReq req) {
+
 	}
 
 }

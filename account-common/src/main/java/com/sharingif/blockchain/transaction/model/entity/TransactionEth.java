@@ -22,11 +22,11 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	public static final String RECEIPT_STATUS_SUCCESS = "0x1";
 
 	/**
-	 * 交易状态(S:成功、F:失败、P:处理中)
+	 * 交易状态(S:成功)
 	 */
 	public static final String TX_RECEIPT_STATUS_SUCCESS = "S";
 	/**
-	 * 交易状态(S:成功、F:失败、P:处理中)
+	 * 交易状态(F:失败)
 	 */
 	public static final String TX_RECEIPT_STATUS_FAIL = "F";
 
@@ -38,6 +38,10 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	 * 交易状态(CZCLZYTZ:充值处理中已通知)
 	 */
 	public static final String TX_STATUS_DEPOSIT_PROCESSING_NOTIFIED = "CZCLZYTZ";
+	/**
+	 * 交易状态(QXCLZYTZ:取现处理中已通知)
+	 */
+	public static final String TX_STATUS_WITHDRAWAL_PROCESSING_NOTIFIED = "QXCLZYTZ";
 	/**
 	 * 交易状态(QKQRSCLZ:区块确认数处理中)
 	 */

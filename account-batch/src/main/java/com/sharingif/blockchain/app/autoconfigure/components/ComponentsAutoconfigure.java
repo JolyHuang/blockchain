@@ -1,6 +1,6 @@
 package com.sharingif.blockchain.app.autoconfigure.components;
 
-import com.sharingif.blockchain.app.ole.OleContract;
+import com.sharingif.blockchain.common.components.ole.OleContract;
 import com.sharingif.cube.security.binary.Base64Coder;
 import com.sharingif.cube.security.confidentiality.encrypt.TextEncryptor;
 import com.sharingif.cube.security.confidentiality.encrypt.aes.AESECBEncryptor;
@@ -46,11 +46,11 @@ public class ComponentsAutoconfigure {
     }
 
     @Bean("oleContract")
-    public OleContract createOleContract(Web3j web3j) {
+    public OleContract createOleContract(Web3j web3j, @Value("${ole.contract.address}") String oleContractAddress) {
         Credentials credentials =Credentials.create("75846771996958358843340910652988727472477619126081108028885364801697837883534");
 
         OleContract oleContract = OleContract.load(
-                "0x9d9223436dDD466FC247e9dbbD20207e640fEf58"
+                oleContractAddress
                 ,web3j
                 ,credentials
                 ,BigInteger.ZERO

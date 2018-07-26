@@ -10,6 +10,15 @@ import org.hibernate.validator.constraints.NotBlank;
 public class AccountSysPrm implements java.io.Serializable, IObjectDateOperationHistory {
 
 	/**
+	 * 默认ExtendedKey前缀
+	 */
+	public static final String CHANGE_EXTENDED_KEY_PREFIX = "ExtendedKey_";
+	/**
+	 * 默取现地址前缀
+	 */
+	public static final String WITHDRAWAL_SECRET_KEY_PREFIX = "WITHDRAWAL_SECRET_KEY_";
+
+	/**
 	 * 参数状态(01:有效)
 	 */
 	public static final String PRM_STATUS_VALID = "01";

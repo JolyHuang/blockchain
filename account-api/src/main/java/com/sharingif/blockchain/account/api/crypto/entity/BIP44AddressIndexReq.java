@@ -22,6 +22,10 @@ public class BIP44AddressIndexReq {
     public static final int COIN_TYPE_ETH = 60;
 
     /**
+     * change ExtendedKey Id
+     */
+    private String changeExtendedKeyId;
+    /**
      * 币种
      */
     private int coinType;
@@ -29,6 +33,14 @@ public class BIP44AddressIndexReq {
      * 通知地址
      */
     private String noticeAddress;
+
+    public String getChangeExtendedKeyId() {
+        return changeExtendedKeyId;
+    }
+
+    public void setChangeExtendedKeyId(String changeExtendedKeyId) {
+        this.changeExtendedKeyId = changeExtendedKeyId;
+    }
 
     public int getCoinType() {
         return coinType;
@@ -49,7 +61,8 @@ public class BIP44AddressIndexReq {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("BIP44AddressIndexReq{");
-        sb.append("coinType=").append(coinType);
+        sb.append("changeExtendedKeyId='").append(changeExtendedKeyId).append('\'');
+        sb.append(", coinType=").append(coinType);
         sb.append(", noticeAddress='").append(noticeAddress).append('\'');
         sb.append('}');
         return sb.toString();
