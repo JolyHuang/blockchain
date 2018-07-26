@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="withdrawal">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="withdrawalColumns">
+    	<if test="null!=id">
+    		and ID = #{id}
+    	</if>
+    	<if test="null!=withdrawalId">
+    		and WITHDRAWAL_ID = #{withdrawalId}
+    	</if>
+    	<if test="null!=coinType">
+    		and COIN_TYPE = #{coinType}
+    	</if>
+    	<if test="null!=subCoinType">
+    		and SUB_COIN_TYPE = #{subCoinType}
+    	</if>
+    	<if test="null!=address">
+    		and ADDRESS = #{address}
+    	</if>
+    	<if test="null!=amount">
+    		and AMOUNT = #{amount}
+    	</if>
+    	<if test="null!=txHash">
+    		and TX_HASH = #{txHash}
+    	</if>
+    	<if test="null!=status">
+    		and STATUS = #{status}
+    	</if>
+    	<if test="null!=taskStatus">
+    		and TASK_STATUS = #{taskStatus}
+    	</if>
+    	<if test="null!=createTime">
+    		and CREATE_TIME = #{createTime}
+    	</if>
+    	<if test="null!=modifyTime">
+    		and MODIFY_TIME = #{modifyTime}
+    	</if>
+	</sql>
+	
+	<sql id="withdrawalSetColumns">
+		    <if test="null!=id">
+		    ID = #{id},
+		    </if>
+		    <if test="null!=withdrawalId">
+		    WITHDRAWAL_ID = #{withdrawalId},
+		    </if>
+		    <if test="null!=coinType">
+		    COIN_TYPE = #{coinType},
+		    </if>
+		    <if test="null!=subCoinType">
+		    SUB_COIN_TYPE = #{subCoinType},
+		    </if>
+		    <if test="null!=address">
+		    ADDRESS = #{address},
+		    </if>
+		    <if test="null!=amount">
+		    AMOUNT = #{amount},
+		    </if>
+		    <if test="null!=txHash">
+		    TX_HASH = #{txHash},
+		    </if>
+		    <if test="null!=status">
+		    STATUS = #{status},
+		    </if>
+		    <if test="null!=taskStatus">
+		    TASK_STATUS = #{taskStatus},
+		    </if>
+		    <if test="null!=createTime">
+		    CREATE_TIME = #{createTime},
+		    </if>
+		    <if test="null!=modifyTime">
+		    MODIFY_TIME = #{modifyTime},
+		    </if>
+	</sql>
+
+	<resultMap id="withdrawalResultMap" type="com.sharingif.blockchain.account.model.entity.Withdrawal">
+        <result property="id" column="ID"/>
+        <result property="withdrawalId" column="WITHDRAWAL_ID"/>
+        <result property="coinType" column="COIN_TYPE"/>
+        <result property="subCoinType" column="SUB_COIN_TYPE"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="amount" column="AMOUNT"/>
+        <result property="txHash" column="TX_HASH"/>
+        <result property="status" column="STATUS"/>
+        <result property="taskStatus" column="TASK_STATUS"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="modifyTime" column="MODIFY_TIME"/>
+	</resultMap>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="insert">
+        INSERT INTO WITHDRAWAL (
+        	ID
+        	,WITHDRAWAL_ID
+        	,COIN_TYPE
+        	,SUB_COIN_TYPE
+        	,ADDRESS
+        	,AMOUNT
+        	,TX_HASH
+        	,STATUS
+        	,TASK_STATUS
+        	,CREATE_TIME
+        	,MODIFY_TIME
+        ) VALUES (
+        	#{id}
+        	,#{withdrawalId}
+        	,#{coinType}
+        	,#{subCoinType}
+        	,#{address}
+        	,#{amount}
+        	,#{txHash}
+        	,#{status}
+        	,#{taskStatus}
+        	,#{createTime}
+        	,#{modifyTime}
+        )
+	</insert>
+	
+	<delete id="deleteById">
+	    DELETE FROM
+	    	WITHDRAWAL 
+	    WHERE
+	    ID = #{id} 
+    </delete>
+    
+    <delete id="deleteByCondition">
+	    DELETE FROM
+	    	WITHDRAWAL 
+	    WHERE
+	    	1=1
+		    <include refid="withdrawalColumns" />
+    </delete>
+    
+	<update id="updateById">
+	    UPDATE
+	    	WITHDRAWAL 
+        <set>
+	        <include refid="withdrawalSetColumns" />
+		</set>
+	    WHERE
+	    ID = #{id} 
+	</update>
+	
+    <select id="queryById" resultMap="withdrawalResultMap">
+		SELECT
+			ID
+			,WITHDRAWAL_ID
+			,COIN_TYPE
+			,SUB_COIN_TYPE
+			,ADDRESS
+			,AMOUNT
+			,TX_HASH
+			,STATUS
+			,TASK_STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			WITHDRAWAL 
+		WHERE 
+			ID = #{id} 
+	</select>
+	
+	<select id="queryList" resultMap="withdrawalResultMap">
+		SELECT
+			ID
+			,WITHDRAWAL_ID
+			,COIN_TYPE
+			,SUB_COIN_TYPE
+			,ADDRESS
+			,AMOUNT
+			,TX_HASH
+			,STATUS
+			,TASK_STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			WITHDRAWAL
+		WHERE
+			1=1
+			<include refid="withdrawalColumns" />
+		ORDER BY
+			ID
+	</select>
+	
+	<select id="queryAll" resultMap="withdrawalResultMap">
+		SELECT
+			ID
+			,WITHDRAWAL_ID
+			,COIN_TYPE
+			,SUB_COIN_TYPE
+			,ADDRESS
+			,AMOUNT
+			,TX_HASH
+			,STATUS
+			,TASK_STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			WITHDRAWAL 
+		ORDER BY
+			ID
+	</select>
+	
+	<select id="queryPaginationListCount" resultType="Integer">
+		SELECT
+			COUNT(0)
+		FROM
+			WITHDRAWAL 
+		WHERE
+			1=1 
+			<include refid="withdrawalColumns" />
+	</select>
+	
+	<select id="queryPaginationList" parameterType="PaginationCondition" resultMap="withdrawalResultMap">
+		SELECT
+			ID
+			,WITHDRAWAL_ID
+			,COIN_TYPE
+			,SUB_COIN_TYPE
+			,ADDRESS
+			,AMOUNT
+			,TX_HASH
+			,STATUS
+			,TASK_STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			WITHDRAWAL
+		WHERE
+			1=1
+			<include refid="withdrawalColumns" />
+		ORDER BY
+			ID
+	</select>
+	
+</mapper>
+
