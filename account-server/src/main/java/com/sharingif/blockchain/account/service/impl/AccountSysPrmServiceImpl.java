@@ -72,13 +72,27 @@ public class AccountSysPrmServiceImpl extends BaseServiceImpl<AccountSysPrm, Str
 
         KeyPath keyPath = new KeyPath(extendedKey.getExtendedKeyPath());
 
-        AccountSysPrm accountSysPrm = new AccountSysPrm();
-        accountSysPrm.setPrmName(AccountSysPrm.CHANGE_EXTENDED_KEY_PREFIX+keyPath.getCoinType());
-        accountSysPrm.setPrmValue(req.getChangeExtendedKeyId());
-        accountSysPrm.setPrmDesc(accountSysPrm.getPrmName());
-        accountSysPrm.setPrmStatus(AccountSysPrm.PRM_STATUS_VALID);
+        String prmName = AccountSysPrm.CHANGE_EXTENDED_KEY_PREFIX+keyPath.getCoinType();
 
-        accountSysPrmDAO.insert(accountSysPrm);
+        AccountSysPrm queryAccountSysPrm = new AccountSysPrm();
+        queryAccountSysPrm.setPrmName(prmName);
+        queryAccountSysPrm = accountSysPrmDAO.query(queryAccountSysPrm);
+
+        if(queryAccountSysPrm == null) {
+            AccountSysPrm accountSysPrm = new AccountSysPrm();
+            accountSysPrm.setPrmName(prmName);
+            accountSysPrm.setPrmValue(req.getChangeExtendedKeyId());
+            accountSysPrm.setPrmDesc(accountSysPrm.getPrmName());
+            accountSysPrm.setPrmStatus(AccountSysPrm.PRM_STATUS_VALID);
+
+            accountSysPrmDAO.insert(accountSysPrm);
+        } else {
+            AccountSysPrm accountSysPrm = new AccountSysPrm();
+            accountSysPrm.setId(queryAccountSysPrm.getId());
+            accountSysPrm.setPrmValue(req.getChangeExtendedKeyId());
+
+            accountSysPrmDAO.updateById(accountSysPrm);
+        }
     }
 
     @Override
@@ -89,14 +103,28 @@ public class AccountSysPrmServiceImpl extends BaseServiceImpl<AccountSysPrm, Str
 
         KeyPath keyPath = new KeyPath(extendedKey.getExtendedKeyPath());
 
+        String prmName = AccountSysPrm.WITHDRAWAL_SECRET_KEY_PREFIX+keyPath.getCoinType();
 
-        AccountSysPrm accountSysPrm = new AccountSysPrm();
-        accountSysPrm.setPrmName(AccountSysPrm.WITHDRAWAL_SECRET_KEY_PREFIX+keyPath.getCoinType());
-        accountSysPrm.setPrmValue(secretKey.getId());
-        accountSysPrm.setPrmDesc(accountSysPrm.getPrmName());
-        accountSysPrm.setPrmStatus(AccountSysPrm.PRM_STATUS_VALID);
+        AccountSysPrm queryAccountSysPrm = new AccountSysPrm();
+        queryAccountSysPrm.setPrmName(prmName);
+        queryAccountSysPrm = accountSysPrmDAO.query(queryAccountSysPrm);
 
-        accountSysPrmDAO.insert(accountSysPrm);
+        if(queryAccountSysPrm == null) {
+            AccountSysPrm accountSysPrm = new AccountSysPrm();
+            accountSysPrm.setPrmName(prmName);
+            accountSysPrm.setPrmValue(secretKey.getId());
+            accountSysPrm.setPrmDesc(accountSysPrm.getPrmName());
+            accountSysPrm.setPrmStatus(AccountSysPrm.PRM_STATUS_VALID);
+
+            accountSysPrmDAO.insert(accountSysPrm);
+        } else {
+            AccountSysPrm accountSysPrm = new AccountSysPrm();
+            accountSysPrm.setId(queryAccountSysPrm.getId());
+            accountSysPrm.setPrmValue(secretKey.getId());
+
+            accountSysPrmDAO.updateById(accountSysPrm);
+        }
+
     }
 
 }

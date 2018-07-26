@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 
+import javax.annotation.Resource;
+
 /**
  * SecretKeyServiceImpl
  *
@@ -23,6 +25,7 @@ public class SecretKeyServiceImpl extends BaseServiceImpl<SecretKey, String> imp
 
     private SecretKeyDAO secretKeyDAO;
 
+    @Resource
     public void setSecretKeyDAO(SecretKeyDAO secretKeyDAO) {
         super.setBaseDAO(secretKeyDAO);
         this.secretKeyDAO = secretKeyDAO;

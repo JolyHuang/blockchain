@@ -21,6 +21,7 @@ import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
  * @since v1.0
  * 2018/7/25 下午6:01
  */
+@Service
 public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -115,7 +117,7 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
     protected void withdrawalUntreatedStatus(Withdrawal withdrawal) {
         String secretKeyId = accountSysPrmService.withdrawalAccount(CoinTypeConvert.convertToBipCoinType(withdrawal.getCoinType()));
         SecretKey secretKey = secretKeyService.getById(secretKeyId);
-        BigInteger nonce =  addressNonceService.getNonce(secretKey.getAddress());
+        BigInteger nonce =  ethereumService.ethGetTransactionCountPending(secretKey.getAddress());
         BigInteger gasPrice = ethereumService.getGasPrice();
         String password = secretKeyService.decryptPassword(secretKey.getPassword());
 
@@ -129,9 +131,11 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
         } catch (Exception e) {
             logger.error("eth withdrawa error", e);
             withdrawalService.updateTaskStatusToFail(withdrawal.getId());
+            return;
         }
         if(StringUtils.isTrimEmpty(txHash)) {
             withdrawalService.updateTaskStatusToFail(withdrawal.getId());
+            return;
         }
 
         withdrawalService.updateTaskStatusToSuccessAndStatusToProcessingAndTxHash(withdrawal.getId(), txHash);

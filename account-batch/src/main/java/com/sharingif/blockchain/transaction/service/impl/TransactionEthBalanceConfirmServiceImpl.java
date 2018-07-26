@@ -97,7 +97,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         BigInteger actualFee = transactionEth.getActualFee();
         BigInteger currentBalance = account.getBalance().subtract(txBalance).subtract(actualFee);
 
-        if(currentBalance.subtract(txBalance).compareTo(blockBalance) == 0) {
+        if(currentBalance.compareTo(blockBalance) == 0) {
             transactionEthService.updateTxStatusToValid(transactionEth.getTxHash());
             accountService.outBalance(
                     account.getId()
@@ -118,7 +118,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
     protected void contractOut(String address, Account account, TransactionEth transactionEth) {
         // 处理ETH手续费
         BigInteger ethBlockBalance = ethereumService.getBalance(address);
-        Account ethAccount = accountService.getOutLockAccountByAddress(address, CoinType.ETH.name());
+        Account ethAccount = accountService.getNormalAccountByAddress(address, CoinType.ETH.name());
         BigInteger actualFee = transactionEth.getActualFee();
         BigInteger currentEthBalance = ethAccount.getBalance().subtract(actualFee);
         if(currentEthBalance.compareTo(ethBlockBalance) != 0) {
@@ -152,7 +152,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
     @Transactional
     protected void out(TransactionEth transactionEth) {
         String address = transactionEth.getTxFrom();
-        Account account = accountService.getOutLockAccountByAddress(address, transactionEth.getCoinType());
+        Account account = accountService.getNormalAccountByAddress(address, transactionEth.getCoinType());
 
         if(account == null) {
             return;

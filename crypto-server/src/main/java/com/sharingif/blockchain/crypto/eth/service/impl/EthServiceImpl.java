@@ -6,6 +6,7 @@ import com.sharingif.blockchain.crypto.eth.service.EthService;
 import com.sharingif.blockchain.crypto.key.service.SecretKeyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
@@ -22,6 +23,7 @@ import javax.annotation.Resource;
  * @since v1.0
  * 2018/7/26 下午12:58
  */
+@Service
 public class EthServiceImpl implements EthService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

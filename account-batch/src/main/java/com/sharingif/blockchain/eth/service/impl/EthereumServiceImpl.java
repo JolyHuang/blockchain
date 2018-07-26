@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
-import org.web3j.protocol.core.methods.response.EthBlock;
-import org.web3j.protocol.core.methods.response.EthGetBalance;
-import org.web3j.protocol.core.methods.response.Transaction;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.protocol.core.methods.response.*;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -59,8 +56,13 @@ public class EthereumServiceImpl implements EthereumService {
     }
 
     @Override
-    public TransactionReceipt getTransactionReceipt(String transactionHash) throws IOException {
-        return web3j.ethGetTransactionReceipt(transactionHash).send().getTransactionReceipt().get();
+    public TransactionReceipt getTransactionReceipt(String transactionHash) {
+        try {
+            return web3j.ethGetTransactionReceipt(transactionHash).send().getTransactionReceipt().get();
+        } catch (IOException e) {
+            logger.error("get transaction receipt error", e);
+            throw new CubeRuntimeException(e);
+        }
     }
 
     @Resource
@@ -109,6 +111,19 @@ public class EthereumServiceImpl implements EthereumService {
             logger.error("eth sendRawTransaction error", e);
             throw new CubeRuntimeException(e);
         }
+    }
+
+    @Override
+    public BigInteger ethGetTransactionCountPending(String address) {
+        EthGetTransactionCount ethGetTransactionCount = null;
+        try {
+            ethGetTransactionCount = web3j.ethGetTransactionCount(address, DefaultBlockParameterName.PENDING).sendAsync().get();
+        } catch (Exception e) {
+            logger.error("ethGetTransactionCountPending error", e);
+            throw new CubeRuntimeException(e);
+        }
+
+        return ethGetTransactionCount.getTransactionCount();
     }
 
 }

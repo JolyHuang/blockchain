@@ -323,10 +323,20 @@ public class TestWeb3j {
 
 
         TransactionReceipt transactionReceipt = Transfer.sendFunds(
-                web3j, credentials, "0xd8bbc16219a5b0b79074f1b7777af9ac4b6dce51",
+                web3j, credentials, "0x55018a1fb087ab3b7383ba31f569d68c5e9fc399",
                 new BigDecimal("1"), Convert.Unit.ETHER).send();
 
         System.out.println(transactionReceipt.getTransactionHash());
+
+    }
+
+    @Test
+    public void testnonce() throws Exception {
+        EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount("0xf49b8bC27067935eD2852691F78a6Cc37D24A819", DefaultBlockParameterName.PENDING).sendAsync().get();
+
+        BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+
+        System.out.println(nonce);
     }
 
 }

@@ -29,7 +29,7 @@ import java.util.List;
 public class RemoteContextAutoconfigure {
 
     @Bean(name = "httpJsonConnection")
-    public HttpJsonConnection createSgpHttpJsonConnection(
+    public HttpJsonConnection createHttpJsonConnection(
             @Value("${http.host}")String host
             ,@Value("${http.port}")int port
             ,@Value("${http.contextPath}") String contextPath

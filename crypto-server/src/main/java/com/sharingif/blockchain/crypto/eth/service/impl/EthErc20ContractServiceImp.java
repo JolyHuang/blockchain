@@ -2,13 +2,11 @@ package com.sharingif.blockchain.crypto.eth.service.impl;
 
 import com.sharingif.blockchain.crypto.api.eth.entity.Erc20TransferReq;
 import com.sharingif.blockchain.crypto.api.eth.entity.Erc20TransferRsp;
-import com.sharingif.blockchain.crypto.app.constants.ErrorConstants;
 import com.sharingif.blockchain.crypto.eth.service.EthErc20ContractService;
-import com.sharingif.blockchain.crypto.key.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.key.service.SecretKeyService;
-import com.sharingif.cube.core.exception.validation.ValidationCubeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
@@ -16,7 +14,6 @@ import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
-import org.web3j.crypto.WalletUtils;
 import org.web3j.utils.Numeric;
 
 import javax.annotation.Resource;
@@ -31,6 +28,7 @@ import java.util.Arrays;
  * @since v1.0
  * 2018/7/26 下午12:53
  */
+@Service
 public class EthErc20ContractServiceImp  implements EthErc20ContractService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

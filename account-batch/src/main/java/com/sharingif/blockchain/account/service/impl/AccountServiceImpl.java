@@ -95,7 +95,7 @@ public class AccountServiceImpl extends BaseServiceImpl<Account, java.lang.Strin
 		Account updateAccount = new Account();
 		updateAccount.setId(id);
 		updateAccount.setBalance(queryAccount.getBalance().subtract(totalBalance));
-		updateAccount.setTotalIn(queryAccount.getTotalOut().add(totalBalance));
+		updateAccount.setTotalOut(queryAccount.getTotalOut().add(totalBalance));
 
 		accountDAO.updateById(updateAccount);
 
@@ -116,12 +116,12 @@ public class AccountServiceImpl extends BaseServiceImpl<Account, java.lang.Strin
 		accountDAO.updateById(updateETHAccount);
 
 		// 修改contract账号表
-		Account queryContractAccount = accountDAO.queryById(ethAccountId);
+		Account queryContractAccount = accountDAO.queryById(contractAccountId);
 		Account updateContractETHAccount = new Account();
-		updateContractETHAccount.setId(ethAccountId);
+		updateContractETHAccount.setId(contractAccountId);
 		updateContractETHAccount.setBalance(queryContractAccount.getBalance().subtract(balance));
 		updateContractETHAccount.setTotalOut(queryContractAccount.getTotalOut().add(balance));
-		accountDAO.updateById(queryContractAccount);
+		accountDAO.updateById(updateContractETHAccount);
 	}
 
 

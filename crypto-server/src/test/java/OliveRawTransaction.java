@@ -29,7 +29,7 @@ public class OliveRawTransaction {
 
     static String contractAddress = "0xe49a2Faa1081C177721e2F579b55371Fea5b3019";
     static String methodName = "transfer";
-    static String toAddress = "0x111d45f5e86f6170a791237ea1c74200ced8e165";
+    static String toAddress = "0x55018a1fb087ab3b7383ba31f569d68c5e9fc399";
     static String fromAddress = "0xf49b8bC27067935eD2852691F78a6Cc37D24A819";
 
     static Credentials credentials = null;

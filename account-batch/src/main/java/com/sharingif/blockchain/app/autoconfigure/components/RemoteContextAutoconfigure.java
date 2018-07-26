@@ -1,17 +1,16 @@
 package com.sharingif.blockchain.app.autoconfigure.components;
 
-import co.olivecoin.wallet.api.http.HttpResponse;
-import com.sharingif.blockchain.app.components.HttpBusinessCommunicationExceptionHandler;
-import com.sharingif.blockchain.app.components.StringToHttpMarshaller;
-import com.sharingif.blockchain.app.components.UrlBodyTransportRequestContextResolver;
+import com.sharingif.cube.communication.JsonModel;
+import com.sharingif.cube.communication.exception.JsonModelBusinessCommunicationExceptionHandler;
 import com.sharingif.cube.communication.http.apache.transport.HttpJsonConnection;
-import com.sharingif.cube.communication.http.transport.transform.ObjectToJsonStringMarshaller;
+import com.sharingif.cube.communication.http.transport.HandlerMethodCommunicationTransportRequestContextResolver;
 import com.sharingif.cube.communication.remote.RemoteServices;
 import com.sharingif.cube.communication.remote.RemoteServicesApplicationContext;
 import com.sharingif.cube.communication.transport.ProxyInterfaceHandlerMethodCommunicationTransportFactory;
 import com.sharingif.cube.communication.transport.transform.ProxyInterfaceHandlerMethodCommunicationTransform;
 import com.sharingif.cube.core.handler.bind.support.BindingInitializer;
 import com.sharingif.cube.core.handler.chain.MultiHandlerMethodChain;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,68 +29,45 @@ import java.util.List;
 public class RemoteContextAutoconfigure {
 
     @Bean(name = "httpJsonConnection")
-    public HttpJsonConnection createSgpHttpJsonConnection() {
-        HttpJsonConnection apacheHttpJsonConnection = new HttpJsonConnection();
+    public HttpJsonConnection createSgpHttpJsonConnection(
+            @Value("${http.host}")String host
+            ,@Value("${http.port}")int port
+            ,@Value("${http.contextPath}") String contextPath
+        ) {
+        HttpJsonConnection apacheHttpJsonConnection = new HttpJsonConnection(host, port, contextPath);
 
         return apacheHttpJsonConnection;
     }
 
-    @Bean(name="stringToHttpMarshaller")
-    public StringToHttpMarshaller createStringToHttpMarshaller() {
-        StringToHttpMarshaller stringToHttpMarshaller = new StringToHttpMarshaller();
-
-        return stringToHttpMarshaller;
-    }
-
-    @Bean(name="httpProxyInterfaceHandlerMethodCommunicationTransform")
-    public ProxyInterfaceHandlerMethodCommunicationTransform<String,String,HttpResponse<Object>> createJsonModelProxyInterfaceHandlerMethodCommunicationTransform(
-            ObjectToJsonStringMarshaller objectToJsonStringMarshaller
-            ,StringToHttpMarshaller stringToHttpMarshaller
-    ) {
-        ProxyInterfaceHandlerMethodCommunicationTransform<String,String,HttpResponse<Object>> proxyInterfaceHandlerMethodCommunicationTransform = new ProxyInterfaceHandlerMethodCommunicationTransform<String,String,HttpResponse<Object>>();
-        proxyInterfaceHandlerMethodCommunicationTransform.setMarshaller(objectToJsonStringMarshaller);
-        proxyInterfaceHandlerMethodCommunicationTransform.setUnmarshaller(stringToHttpMarshaller);
-
-        return proxyInterfaceHandlerMethodCommunicationTransform;
-    }
-
-    @Bean(name="httpBusinessCommunicationExceptionHandler")
-    public HttpBusinessCommunicationExceptionHandler createHttpBusinessCommunicationExceptionHandler(){
-        return new HttpBusinessCommunicationExceptionHandler();
-    }
 
     @Bean(name= "httpJsonRemoteHandlerMethodTransportFactory")
-    public ProxyInterfaceHandlerMethodCommunicationTransportFactory<String,String,HttpResponse<Object>> createHandlerMethodCommunicationTransportFactory(
+    public ProxyInterfaceHandlerMethodCommunicationTransportFactory<String,String,JsonModel<Object>> createHandlerMethodCommunicationTransportFactory(
             HttpJsonConnection httpJsonConnection
-            ,ProxyInterfaceHandlerMethodCommunicationTransform<String,String,HttpResponse<Object>> httpProxyInterfaceHandlerMethodCommunicationTransform
-            ,HttpBusinessCommunicationExceptionHandler httpBusinessCommunicationExceptionHandler
+            ,ProxyInterfaceHandlerMethodCommunicationTransform<String,String,JsonModel<Object>> jsonModelProxyInterfaceHandlerMethodCommunicationTransform
+            ,JsonModelBusinessCommunicationExceptionHandler jsonModelBusinessCommunicationExceptionHandler
             ,MultiHandlerMethodChain transportChains
     ) {
-        ProxyInterfaceHandlerMethodCommunicationTransportFactory<String,String,HttpResponse<Object>> httpJsonRemoteHandlerMethodTransportFactory = new ProxyInterfaceHandlerMethodCommunicationTransportFactory<String,String,HttpResponse<Object>>();
+        ProxyInterfaceHandlerMethodCommunicationTransportFactory<String,String,JsonModel<Object>> httpJsonRemoteHandlerMethodTransportFactory = new ProxyInterfaceHandlerMethodCommunicationTransportFactory<String,String,JsonModel<Object>>();
         httpJsonRemoteHandlerMethodTransportFactory.setConnection(httpJsonConnection);
-        httpJsonRemoteHandlerMethodTransportFactory.setTransform(httpProxyInterfaceHandlerMethodCommunicationTransform);
-        httpJsonRemoteHandlerMethodTransportFactory.setBusinessCommunicationExceptionHandler(httpBusinessCommunicationExceptionHandler);
+        httpJsonRemoteHandlerMethodTransportFactory.setTransform(jsonModelProxyInterfaceHandlerMethodCommunicationTransform);
+        httpJsonRemoteHandlerMethodTransportFactory.setBusinessCommunicationExceptionHandler(jsonModelBusinessCommunicationExceptionHandler);
         httpJsonRemoteHandlerMethodTransportFactory.setHandlerMethodChain(transportChains);
 
         return httpJsonRemoteHandlerMethodTransportFactory;
     }
 
-    @Bean(name = "urlBodyTransportRequestContextResolver")
-    public UrlBodyTransportRequestContextResolver createUrlBodyTransportRequestContextResolver() {
-        return new UrlBodyTransportRequestContextResolver();
-    }
-
     @Bean(name = "remoteServices")
     public RemoteServices createOpayRemoteServices(
-            UrlBodyTransportRequestContextResolver urlBodyTransportRequestContextResolver
-            ,ProxyInterfaceHandlerMethodCommunicationTransportFactory<String,String,HttpResponse<Object>> httpJsonRemoteHandlerMethodTransportFactory
+            HandlerMethodCommunicationTransportRequestContextResolver handlerMethodCommunicationTransportRequestContextResolver
+            ,ProxyInterfaceHandlerMethodCommunicationTransportFactory<String,String,JsonModel<Object>> httpJsonRemoteHandlerMethodTransportFactory
     ) {
         List<String> services = new ArrayList<String>();
 
-        services.add("co.olivecoin.wallet.api.blockchain.service.TransactionEthApiService");
+        services.add("com.sharingif.blockchain.crypto.api.eth.service.EthApiService");
+        services.add("com.sharingif.blockchain.crypto.api.eth.service.EthErc20ContractApiService");
 
         RemoteServices remoteServices = new RemoteServices();
-        remoteServices.setRequestContextResolver(urlBodyTransportRequestContextResolver);
+        remoteServices.setRequestContextResolver(handlerMethodCommunicationTransportRequestContextResolver);
         remoteServices.setHandlerMethodCommunicationTransportFactory(httpJsonRemoteHandlerMethodTransportFactory);
         remoteServices.setServices(services);
 
@@ -102,11 +78,13 @@ public class RemoteContextAutoconfigure {
     public RemoteServicesApplicationContext createRemoteServicesApplicationContext(
             BindingInitializer bindingInitializer
             ,RemoteServices remoteServices
+            ,RemoteServices urlBodyRemoteServices
     ) {
 
 
         List<RemoteServices> remoteServicesList = new ArrayList<RemoteServices>();
         remoteServicesList.add(remoteServices);
+        remoteServicesList.add(urlBodyRemoteServices);
 
         RemoteServicesApplicationContext remoteServicesApplicationContext = new RemoteServicesApplicationContext();
         remoteServicesApplicationContext.setBindingInitializer(bindingInitializer);

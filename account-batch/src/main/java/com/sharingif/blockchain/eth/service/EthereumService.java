@@ -72,4 +72,10 @@ public interface EthereumService {
      */
     String ethSendRawTransaction(String hexValue);
 
+    /**
+     * 获取交易唯一编号
+     * @return
+     */
+    BigInteger ethGetTransactionCountPending(String address);
+
 }

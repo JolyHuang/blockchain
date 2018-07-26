@@ -3,6 +3,7 @@ package com.sharingif.blockchain.account.model.entity;
 
 import com.sharingif.blockchain.account.api.account.entity.WithdrawalApplyReq;
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
+import com.sharingif.cube.components.sequence.Sequence;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -51,6 +52,7 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
      * id			db_column: ID 
      */	
 	@Length(max=32)
+	@Sequence(ref="uuidSequenceGenerator")
 	private java.lang.String id;
     /**
      * 取现唯一编号			db_column: WITHDRAWAL_ID 

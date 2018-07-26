@@ -38,7 +38,7 @@ public class AccountSysPrmController {
 	 */
 	@RequestMapping(value="setWithdrawalAccount", method= RequestMethod.POST)
 	public void setWithdrawalAccount(AccountSysSetWithdrawalReq req) {
-
+		accountSysPrmService.setWithdrawalAccount(req);
 	}
 
 }

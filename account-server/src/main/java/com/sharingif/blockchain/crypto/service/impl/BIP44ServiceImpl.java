@@ -134,7 +134,8 @@ public class BIP44ServiceImpl implements BIP44Service {
 
         // 获取change ExtendedKey信息
         ExtendedKey extendedKey = extendedKeyDAO.queryById(changeExtendedKeyId);
-        String extendedKeyPassword = passwordTextEncryptor.decrypt(extendedKey.getPassword());
+        String encrypt = extendedKey.getPassword();
+        String extendedKeyPassword = passwordTextEncryptor.decrypt(encrypt);
 
 
         // BIP44路径
@@ -157,7 +158,7 @@ public class BIP44ServiceImpl implements BIP44Service {
         secretKey.setMnemonicId(extendedKey.getMnemonicId());
         secretKey.setExtendedKeyId(extendedKey.getId());
         secretKey.setAddress(apiRsp.getAddress());
-        secretKey.setPassword(extendedKeyPassword);
+        secretKey.setPassword(encrypt);
         secretKeyDAO.insert(secretKey);
 
         // 返回值

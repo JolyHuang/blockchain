@@ -37,6 +37,8 @@ public class AddressNonceServiceImpl extends BaseServiceImpl<AddressNonce, Strin
             queryAddressNonce.setAddress(address);
             queryAddressNonce.setNonce(BigInteger.ZERO);
             addressNonceDAO.insert(queryAddressNonce);
+
+            return queryAddressNonce.getNonce();
         }
 
         AddressNonce updateAddressNonce = new AddressNonce();

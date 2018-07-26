@@ -4,6 +4,7 @@ package com.sharingif.blockchain.account.service.impl;
 import javax.annotation.Resource;
 
 import com.sharingif.blockchain.account.api.account.entity.WithdrawalApplyReq;
+import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.service.AddressNoticeService;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,10 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, java.lang
 		Withdrawal withdrawal = Withdrawal.convertWithdrawalReqToWithdrawal(req);
 		withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
 		withdrawal.setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
+		if(CoinType.OLE.name().equals(req.getCoinType())) {
+			withdrawal.setCoinType(CoinType.ETH.name());
+			withdrawal.setSubCoinType(req.getCoinType());
+		}
 		withdrawalDAO.insert(withdrawal);
 
 		// 添加通知记录

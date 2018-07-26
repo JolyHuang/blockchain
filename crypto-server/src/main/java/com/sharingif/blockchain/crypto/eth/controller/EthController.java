@@ -1,7 +1,7 @@
 package com.sharingif.blockchain.crypto.eth.controller;
 
-import com.sharingif.blockchain.crypto.api.key.entity.BIP44GenerateReq;
-import com.sharingif.blockchain.crypto.api.key.entity.BIP44GenerateRsp;
+import com.sharingif.blockchain.crypto.api.eth.entity.EthTransferReq;
+import com.sharingif.blockchain.crypto.api.eth.entity.EthTransferRsp;
 import com.sharingif.blockchain.crypto.eth.service.EthService;
 import com.sharingif.cube.core.handler.bind.annotation.RequestMapping;
 import com.sharingif.cube.core.handler.bind.annotation.RequestMethod;
@@ -33,9 +33,9 @@ public class EthController {
      * @return
      */
     @RequestMapping(value="transfer", method= RequestMethod.POST)
-    public BIP44GenerateRsp transfer(BIP44GenerateReq req) {
+    public EthTransferRsp transfer(EthTransferReq req) {
 
-        return null;
+        return ethService.transfer(req);
     }
 
 }

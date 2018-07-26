@@ -1,5 +1,6 @@
 package com.sharingif.blockchain.crypto.service.impl;
 
+import com.sharingif.blockchain.crypto.dao.SecretKeyDAO;
 import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.service.SecretKeyService;
 import com.sharingif.cube.security.confidentiality.encrypt.TextEncryptor;
@@ -19,8 +20,14 @@ import javax.annotation.Resource;
 @Service
 public class SecretKeyServiceImpl extends BaseServiceImpl<SecretKey, String> implements SecretKeyService {
 
+    private SecretKeyDAO secretKeyDAO;
     private TextEncryptor passwordTextEncryptor;
 
+    @Resource
+    public void setSecretKeyDAO(SecretKeyDAO secretKeyDAO) {
+        this.setBaseDAO(secretKeyDAO);
+        this.secretKeyDAO = secretKeyDAO;
+    }
     @Resource
     public void setPasswordTextEncryptor(TextEncryptor passwordTextEncryptor) {
         this.passwordTextEncryptor = passwordTextEncryptor;
