@@ -1,7 +1,6 @@
 package com.sharingif.blockchain.transaction.service.impl;
 
 
-import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.dao.TransactionEthDAO;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.blockchain.transaction.service.TransactionEthService;
@@ -11,7 +10,6 @@ import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.math.BigInteger;
 import java.util.Arrays;
 
 @Service
@@ -29,8 +27,7 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getEthInUntreated(PaginationCondition<TransactionEth> paginationCondition) {
-        paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
+    public PaginationRepertory<TransactionEth> getInUntreated(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_UNTREATED);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_IN);
 
@@ -38,8 +35,7 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getEthOutUntreated(PaginationCondition<TransactionEth> paginationCondition) {
-        paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
+    public PaginationRepertory<TransactionEth> getOutUntreated(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_UNTREATED);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_OUT);
 
@@ -47,9 +43,7 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getEthUnconfirmedBlockNumber(PaginationCondition<TransactionEth> paginationCondition) {
-
-        paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
+    public PaginationRepertory<TransactionEth> getUnconfirmedBlockNumber(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatusArray(Arrays.asList(
                 TransactionEth.TX_STATUS_DEPOSIT_PROCESSING_NOTIFIED
                 ,TransactionEth.TX_STATUS_WITHDRAWAL_PROCESSING_NOTIFIED
@@ -60,17 +54,14 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getEthUnconfirmedBalance(PaginationCondition<TransactionEth> paginationCondition) {
-
-        paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
+    public PaginationRepertory<TransactionEth> getUnconfirmedBalance(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_BALANCE_UNCONFIRM);
 
         return getPagination(paginationCondition);
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getEthInInvalid(PaginationCondition<TransactionEth> paginationCondition) {
-        paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
+    public PaginationRepertory<TransactionEth> getInInvalid(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_INVALID);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_IN);
 
@@ -78,10 +69,25 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getEthInValid(PaginationCondition<TransactionEth> paginationCondition) {
-        paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
+    public PaginationRepertory<TransactionEth> getOutInvalid(PaginationCondition<TransactionEth> paginationCondition) {
+        paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_INVALID);
+        paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_OUT);
+
+        return getPagination(paginationCondition);
+    }
+
+    @Override
+    public PaginationRepertory<TransactionEth> getInValid(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_VALID);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_IN);
+
+        return getPagination(paginationCondition);
+    }
+
+    @Override
+    public PaginationRepertory<TransactionEth> getOutValid(PaginationCondition<TransactionEth> paginationCondition) {
+        paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_VALID);
+        paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_OUT);
 
         return getPagination(paginationCondition);
     }
@@ -161,10 +167,28 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
+    public void updateTxStatusToWithdrawalSuccessNotified(String txHash) {
+        TransactionEth transactionEth = new TransactionEth();
+        transactionEth.setTxHash(txHash);
+        transactionEth.setTxStatus(TransactionEth.TX_STATUS_WITHDRAWAL_SUCCESS_NOTIFIED);
+
+        updateById(transactionEth);
+    }
+
+    @Override
     public void updateTxStatusToDepositFailNotified(String txHash) {
         TransactionEth transactionEth = new TransactionEth();
         transactionEth.setTxHash(txHash);
         transactionEth.setTxStatus(TransactionEth.TX_STATUS_DEPOSIT_FAIL_NOTIFIED);
+
+        updateById(transactionEth);
+    }
+
+    @Override
+    public void updateTxStatusToWithdrawalFailNotified(String txHash) {
+        TransactionEth transactionEth = new TransactionEth();
+        transactionEth.setTxHash(txHash);
+        transactionEth.setTxStatus(TransactionEth.TX_STATUS_WITHDRAWAL_FAIL_NOTIFIED);
 
         updateById(transactionEth);
     }

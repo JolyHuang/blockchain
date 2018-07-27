@@ -3,6 +3,7 @@ package com.sharingif.blockchain.transaction.service.impl;
 import co.olivecoin.wallet.api.blockchain.entity.TransactionEthApiReq;
 import co.olivecoin.wallet.api.blockchain.service.TransactionEthApiService;
 import com.sharingif.blockchain.app.components.UrlBody;
+import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.blockchain.transaction.service.AddressNoticeService;
@@ -44,11 +45,7 @@ public abstract class AbstractTransactionEthDepositNoticeServiceImpl extends Abs
         transactionEthApiReq.setTxFrom(transactionEth.getTxFrom());
         transactionEthApiReq.setTxTo(transactionEth.getTxTo());
         transactionEthApiReq.setContractAddress(transactionEth.getContractAddress());
-        if(StringUtils.isTrimEmpty(transactionEth.getSubCoinType())) {
-            transactionEthApiReq.setCoinType(transactionEth.getCoinType());
-        } else {
-            transactionEthApiReq.setCoinType(transactionEth.getSubCoinType());
-        }
+        transactionEthApiReq.setCoinType(transactionEth.getCoinType());
         transactionEthApiReq.setTxInput(transactionEth.getTxInput());
         transactionEthApiReq.setTxValue(transactionEth.getTxValue());
         transactionEthApiReq.setTxIndex(transactionEth.getTxIndex());
@@ -68,7 +65,7 @@ public abstract class AbstractTransactionEthDepositNoticeServiceImpl extends Abs
 
     protected void sendNotice(TransactionEth transactionEth) {
         // 获取通知地址
-        AddressNotice addressNotice = getAddressNoticeService().getDepositNoticeAddress(transactionEth.getTxTo(), transactionEth.getCoinType());
+        AddressNotice addressNotice = getAddressNoticeService().getDepositNoticeAddress(transactionEth.getTxTo(), CoinType.ETH.name());
         if(addressNotice != null) {
             String noticeAddress = addressNotice.getNoticeAddress();
             // 发送通知

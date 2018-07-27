@@ -18,7 +18,7 @@ public class TransactionEthDepositProcessingNoticeServiceImpl extends AbstractTr
 
     @Override
     PaginationRepertory<TransactionEth> getPaginationRepertory(PaginationCondition<TransactionEth> paginationCondition) {
-        return getTransactionEthService().getEthInUntreated(paginationCondition);
+        return getTransactionEthService().getInUntreated(paginationCondition);
     }
 
     @Override

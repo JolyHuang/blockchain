@@ -14,42 +14,57 @@ public interface TransactionEthService extends IBaseService<TransactionEth, Stri
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getEthInUntreated(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getInUntreated(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 获取取现未处理交易数据
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getEthOutUntreated(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getOutUntreated(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 获取未确认交易数据
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getEthUnconfirmedBlockNumber(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getUnconfirmedBlockNumber(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 获取充值未确认余额数据
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getEthUnconfirmedBalance(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getUnconfirmedBalance(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 获取充值充值无效交易
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getEthInInvalid(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getInInvalid(PaginationCondition<TransactionEth> paginationCondition);
+
+    /**
+     * 获取取现充值无效交易
+     * @param paginationCondition
+     * @return
+     */
+    PaginationRepertory<TransactionEth> getOutInvalid(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 获取充值确认余额数据
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getEthInValid(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getInValid(PaginationCondition<TransactionEth> paginationCondition);
+
+    /**
+     * 获取取现确认余额数据
+     * @param paginationCondition
+     * @return
+     */
+    PaginationRepertory<TransactionEth> getOutValid(PaginationCondition<TransactionEth> paginationCondition);
+
 
     /**
      * 修改交易状态充值处理中已通知
@@ -58,7 +73,7 @@ public interface TransactionEthService extends IBaseService<TransactionEth, Stri
     void updateTxStatusToDepositProcessingNotified(String txHash);
 
     /**
-     * 修改交易状态充值处理中已通知
+     * 修改交易状态取现处理中已通知
      * @param txHash
      */
     void updateTxStatusToWithdrawalProcessingNotified(String txHash);
@@ -102,9 +117,21 @@ public interface TransactionEthService extends IBaseService<TransactionEth, Stri
     void updateTxStatusToDepositSuccessNotified(String txHash);
 
     /**
+     * 修改交易状态为取现成功已通知
+     * @param txHash
+     */
+    void updateTxStatusToWithdrawalSuccessNotified(String txHash);
+
+    /**
      * 修改交易状态为充值失败已通知
      * @param txHash
      */
     void updateTxStatusToDepositFailNotified(String txHash);
+
+    /**
+     * 修改交易状态为取现失败已通知
+     * @param txHash
+     */
+    void updateTxStatusToWithdrawalFailNotified(String txHash);
 
 }

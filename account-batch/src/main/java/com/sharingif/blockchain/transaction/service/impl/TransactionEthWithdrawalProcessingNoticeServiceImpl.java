@@ -1,5 +1,7 @@
 package com.sharingif.blockchain.transaction.service.impl;
 
+import com.sharingif.blockchain.account.model.entity.Withdrawal;
+import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
@@ -19,16 +21,16 @@ public class TransactionEthWithdrawalProcessingNoticeServiceImpl extends Abstrac
 
     @Override
     PaginationRepertory<TransactionEth> getPaginationRepertory(PaginationCondition<TransactionEth> paginationCondition) {
-        return getTransactionEthService().getEthOutUntreated(paginationCondition);
+        return getTransactionEthService().getOutUntreated(paginationCondition);
     }
 
     @Override
-    void updateTxStatus(String txHash) {
+    protected void sendNotice(AddressNotice addressNotice, Withdrawal withdrawal, TransactionEth transactionEth) {
+        // 处理中不需要发送通知
+    }
+
+    @Override
+    void updateTxStatus(Withdrawal withdrawal, String txHash) {
         getTransactionEthService().updateTxStatusToWithdrawalProcessingNotified(txHash);
-    }
-
-    @Override
-    protected void sendNotice(TransactionEth transactionEth) {
-
     }
 }

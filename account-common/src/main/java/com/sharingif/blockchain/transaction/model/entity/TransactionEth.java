@@ -64,6 +64,10 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	 */
 	public static final String TX_STATUS_VALID = "YX";
 	/**
+	 * 交易状态(QXCGYTZ:充值成功已通知)
+	 */
+	public static final String TX_STATUS_WITHDRAWAL_SUCCESS_NOTIFIED= "QXCGYTZ";
+	/**
 	 * 交易状态(CZCGYTZ:充值成功已通知)
 	 */
 	public static final String TX_STATUS_DEPOSIT_SUCCESS_NOTIFIED= "CZCGYTZ";
@@ -71,6 +75,10 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	 * 交易状态(CZSBYTZ:充值失败已通知)
 	 */
 	public static final String TX_STATUS_DEPOSIT_FAIL_NOTIFIED= "CZSBYTZ";
+	/**
+	 * 交易状态(QXSBYTZ:充值失败已通知)
+	 */
+	public static final String TX_STATUS_WITHDRAWAL_FAIL_NOTIFIED= "QXSBYTZ";
 
 	/**
 	 * 处理状态(WCL:未处理)
@@ -130,11 +138,6 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	 */
 	@Length(max=20)
 	private java.lang.String coinType;
-    /**
-     * 子币种			db_column: SUB_COIN_TYPE 
-     */	
-	@Length(max=20)
-	private java.lang.String subCoinType;
 	/**
 	 * input			db_column: TX_INPUT
 	 */
@@ -259,12 +262,6 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	public java.lang.String getCoinType() {
 		return this.coinType;
 	}
-	public void setSubCoinType(java.lang.String subCoinType) {
-		this.subCoinType = subCoinType;
-	}
-	public java.lang.String getSubCoinType() {
-		return this.subCoinType;
-	}
 	public void setTxInput(java.lang.String txInput) {
 		this.txInput = txInput;
 	}
@@ -382,7 +379,6 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 					.append("TxTo=").append(getTxTo()).append(", ")
 					.append("ContractAddress=").append(getContractAddress()).append(", ")
 					.append("CoinType=").append(getCoinType()).append(", ")
-					.append("SubCoinType=").append(getSubCoinType()).append(", ")
 					.append("TxInput=").append(getTxInput()).append(", ")
 					.append("TxValue=").append(getTxValue()).append(", ")
 					.append("TxIndex=").append(getTxIndex()).append(", ")

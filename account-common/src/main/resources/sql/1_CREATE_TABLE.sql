@@ -164,7 +164,6 @@ CREATE TABLE TRANSACTION_ETH
   TX_TO                 VARCHAR(100) COMMENT 'TO地址',
   CONTRACT_ADDRESS      VARCHAR(100) COMMENT '合约地址',
   COIN_TYPE             VARCHAR(20) COMMENT '币种',
-  SUB_COIN_TYPE         VARCHAR(20) COMMENT '子币种',
   TX_INPUT              VARCHAR(2000) COMMENT 'input',
   TX_VALUE              DECIMAL(65,0) COMMENT '交易值',
   TX_INDEX              BIGINT COMMENT 'tx index',

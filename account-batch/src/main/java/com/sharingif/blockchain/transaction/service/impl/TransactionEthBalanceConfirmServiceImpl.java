@@ -7,7 +7,6 @@ import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.eth.service.EthereumService;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.blockchain.transaction.service.TransactionEthService;
-import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.slf4j.Logger;
@@ -57,11 +56,8 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
 
     @Transactional
     protected void in(TransactionEth transactionEth) {
-        String coinType = transactionEth.getCoinType();
-        if(!StringUtils.isTrimEmpty(transactionEth.getSubCoinType())) {
-            coinType = transactionEth.getSubCoinType();
-        }
         String address = transactionEth.getTxTo();
+        String coinType = transactionEth.getCoinType();
         Account account = accountService.getNormalAccountByAddress(address, coinType);
 
         if(account == null) {
@@ -95,16 +91,16 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
 
     }
 
-    protected void ethOut(String address, Account ethAccount, TransactionEth transactionEth) {
+    protected void ethOut(String address, Account account, TransactionEth transactionEth) {
         BigInteger blockBalance = ethereumService.getBalance(address);
         BigInteger txBalance = transactionEth.getTxValue();
         BigInteger actualFee = transactionEth.getActualFee();
-        BigInteger currentBalance = ethAccount.getBalance().subtract(txBalance).subtract(actualFee);
+        BigInteger currentBalance = account.getBalance().subtract(txBalance).subtract(actualFee);
 
         if(currentBalance.compareTo(blockBalance) == 0) {
             transactionEthService.updateTxStatusToValid(transactionEth.getTxHash());
             accountService.outBalance(
-                    ethAccount.getId()
+                    account.getId()
                     ,transactionEth.getTxFrom()
                     ,transactionEth.getTxTo()
                     ,transactionEth.getCoinType()
@@ -119,10 +115,10 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         }
     }
 
-    protected void contractOut(String address, Account ethAccount, TransactionEth transactionEth) {
+    protected void contractOut(String address, Account account, TransactionEth transactionEth) {
         // 处理ETH手续费
         BigInteger ethBlockBalance = ethereumService.getBalance(address);
-
+        Account ethAccount = accountService.getNormalAccountByAddress(address, CoinType.ETH.name());
         BigInteger actualFee = transactionEth.getActualFee();
         BigInteger currentEthBalance = ethAccount.getBalance().subtract(actualFee);
         if(currentEthBalance.compareTo(ethBlockBalance) != 0) {
@@ -131,18 +127,17 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         }
 
         // 处理合约
-        Account contractAccount = accountService.getNormalAccountByAddress(address, transactionEth.getSubCoinType());
         BigInteger blockContractBalance = oleContract.balanceOf(address);
         BigInteger txBalance = transactionEth.getTxValue();
-        BigInteger currentContractBalance = contractAccount.getBalance().subtract(txBalance);
+        BigInteger currentContractBalance = account.getBalance().subtract(txBalance);
         if(currentContractBalance.compareTo(blockContractBalance) == 0) {
             transactionEthService.updateTxStatusToValid(transactionEth.getTxHash());
             accountService.outBalance(
                     ethAccount.getId()
-                    ,contractAccount.getId()
+                    ,account.getId()
                     ,transactionEth.getTxFrom()
                     ,transactionEth.getTxTo()
-                    ,transactionEth.getSubCoinType()
+                    ,transactionEth.getCoinType()
                     ,transactionEth.getTxHash()
                     ,transactionEth.getTxTime()
                     ,txBalance
@@ -157,19 +152,19 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
     @Transactional
     protected void out(TransactionEth transactionEth) {
         String address = transactionEth.getTxFrom();
-        Account ethAccount = accountService.getNormalAccountByAddress(address, transactionEth.getCoinType());
+        Account account = accountService.getNormalAccountByAddress(address, transactionEth.getCoinType());
 
-        if(ethAccount == null) {
+        if(account == null) {
             return;
         }
 
         // 判断是ETH还是token,token暂时只支持ole
         // 如果是ETH需要处理转账值和手续费
         // 如果是token需要处理eth账户和token账户
-        if(StringUtils.isTrimEmpty(transactionEth.getSubCoinType())) {
-            ethOut(address, ethAccount, transactionEth);
+        if(CoinType.ETH.name().equals(transactionEth.getCoinType())) {
+            ethOut(address, account, transactionEth);
         } else {
-            contractOut(address, ethAccount, transactionEth);
+            contractOut(address, account, transactionEth);
         }
 
     }
@@ -203,7 +198,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         paginationCondition.setCondition(queryTransactionEth);
 
         while (true){
-            PaginationRepertory<TransactionEth> paginationRepertory = transactionEthService.getEthUnconfirmedBalance(paginationCondition);
+            PaginationRepertory<TransactionEth> paginationRepertory = transactionEthService.getUnconfirmedBalance(paginationCondition);
 
             if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
                 try {

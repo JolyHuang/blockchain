@@ -6,7 +6,7 @@ import com.sharingif.blockchain.account.service.WithdrawalService;
 import com.sharingif.blockchain.app.components.UrlBody;
 import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
-import com.sharingif.cube.core.util.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -38,11 +38,7 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
         transactionEthWithdrawalApiReq.setTxFrom(transactionEth.getTxFrom());
         transactionEthWithdrawalApiReq.setTxTo(transactionEth.getTxTo());
         transactionEthWithdrawalApiReq.setContractAddress(transactionEth.getContractAddress());
-        if(StringUtils.isTrimEmpty(transactionEth.getSubCoinType())) {
-            transactionEthWithdrawalApiReq.setCoinType(transactionEth.getCoinType());
-        } else {
-            transactionEthWithdrawalApiReq.setCoinType(transactionEth.getSubCoinType());
-        }
+        transactionEthWithdrawalApiReq.setCoinType(transactionEth.getCoinType());
         transactionEthWithdrawalApiReq.setTxInput(transactionEth.getTxInput());
         transactionEthWithdrawalApiReq.setTxValue(transactionEth.getTxValue());
         transactionEthWithdrawalApiReq.setTxIndex(transactionEth.getTxIndex());
@@ -60,12 +56,32 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
         return transactionEthWithdrawalApiReq;
     }
 
-    protected void sendNotice(TransactionEth transactionEth) {
+    @Transactional
+    protected void doTransactionEth(TransactionEth transactionEth) {
         // 获取通知地址
         AddressNotice addressNotice = getAddressNoticeService().getDepositNoticeAddress(transactionEth.getTxFrom(), transactionEth.getCoinType());
         // 获取取现id
         Withdrawal withdrawal = withdrawalService.getById(addressNotice.getAddressRegisterId());
 
+        sendNotice(addressNotice, withdrawal, transactionEth);
+
+        // 修改交易状态
+        updateTxStatus(withdrawal, transactionEth.getTxHash());
+    }
+
+    @Deprecated
+    @Override
+    void updateTxStatus(String txHash) {
+
+    }
+
+    @Deprecated
+    @Override
+    void sendNotice(TransactionEth transactionEth) {
+
+    }
+
+    protected void sendNotice(AddressNotice addressNotice, Withdrawal withdrawal, TransactionEth transactionEth) {
         if(addressNotice != null) {
             String noticeAddress = addressNotice.getNoticeAddress();
             // 发送通知
@@ -77,5 +93,7 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
             getTransactionEthApiService().withdrawal(transactionEthWithdrawalApiReqUrlBody);
         }
     }
+
+    abstract void updateTxStatus(Withdrawal withdrawal, String txHash);
 
 }
