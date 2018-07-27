@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 
@@ -96,7 +97,7 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	 * 交易类型(1:转出)
 	 */
 	public static final String TX_TYPE_OUT = "1";
-
+	
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
 	//columns START
 	/**
@@ -129,6 +130,11 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	 */
 	@Length(max=20)
 	private java.lang.String coinType;
+    /**
+     * 子币种			db_column: SUB_COIN_TYPE 
+     */	
+	@Length(max=20)
+	private java.lang.String subCoinType;
 	/**
 	 * input			db_column: TX_INPUT
 	 */
@@ -178,7 +184,7 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	 * 交易时间			db_column: TX_TIME
 	 */
 
-	private java.util.Date txTime;
+	private Date txTime;
 	/**
 	 * 确认区块数			db_column: CONFIRM_BLOCK_NUMBER
 	 */
@@ -203,12 +209,12 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	 * 创建时间			db_column: CREATE_TIME
 	 */
 
-	private java.util.Date createTime;
+	private Date createTime;
 	/**
 	 * 修改时间			db_column: MODIFY_TIME
 	 */
 
-	private java.util.Date modifyTime;
+	private Date modifyTime;
 	//columns END
 
 	private List<String> txStatusArray;
@@ -252,6 +258,12 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	}
 	public java.lang.String getCoinType() {
 		return this.coinType;
+	}
+	public void setSubCoinType(java.lang.String subCoinType) {
+		this.subCoinType = subCoinType;
+	}
+	public java.lang.String getSubCoinType() {
+		return this.subCoinType;
 	}
 	public void setTxInput(java.lang.String txInput) {
 		this.txInput = txInput;
@@ -370,6 +382,7 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 					.append("TxTo=").append(getTxTo()).append(", ")
 					.append("ContractAddress=").append(getContractAddress()).append(", ")
 					.append("CoinType=").append(getCoinType()).append(", ")
+					.append("SubCoinType=").append(getSubCoinType()).append(", ")
 					.append("TxInput=").append(getTxInput()).append(", ")
 					.append("TxValue=").append(getTxValue()).append(", ")
 					.append("TxIndex=").append(getTxIndex()).append(", ")

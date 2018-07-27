@@ -107,7 +107,7 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
         paginationCondition.setCondition(queryTransactionEth);
 
         while (true){
-            PaginationRepertory<TransactionEth> paginationRepertory = transactionEthService.getUnconfirmedBlockNumber(paginationCondition);
+            PaginationRepertory<TransactionEth> paginationRepertory = transactionEthService.getEthUnconfirmedBlockNumber(paginationCondition);
 
             if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
                 try {

@@ -14,42 +14,42 @@ public interface TransactionEthService extends IBaseService<TransactionEth, Stri
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getInUntreated(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getEthInUntreated(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 获取取现未处理交易数据
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getOutUntreated(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getEthOutUntreated(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 获取未确认交易数据
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getUnconfirmedBlockNumber(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getEthUnconfirmedBlockNumber(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 获取充值未确认余额数据
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getUnconfirmedBalance(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getEthUnconfirmedBalance(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 获取充值充值无效交易
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getInInvalid(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getEthInInvalid(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 获取充值确认余额数据
      * @param paginationCondition
      * @return
      */
-    PaginationRepertory<TransactionEth> getInValid(PaginationCondition<TransactionEth> paginationCondition);
+    PaginationRepertory<TransactionEth> getEthInValid(PaginationCondition<TransactionEth> paginationCondition);
 
     /**
      * 修改交易状态充值处理中已通知

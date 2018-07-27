@@ -1,6 +1,7 @@
 package com.sharingif.blockchain.transaction.service.impl;
 
 
+import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.dao.TransactionEthDAO;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.blockchain.transaction.service.TransactionEthService;
@@ -28,7 +29,8 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getInUntreated(PaginationCondition<TransactionEth> paginationCondition) {
+    public PaginationRepertory<TransactionEth> getEthInUntreated(PaginationCondition<TransactionEth> paginationCondition) {
+        paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_UNTREATED);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_IN);
 
@@ -36,7 +38,8 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getOutUntreated(PaginationCondition<TransactionEth> paginationCondition) {
+    public PaginationRepertory<TransactionEth> getEthOutUntreated(PaginationCondition<TransactionEth> paginationCondition) {
+        paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_UNTREATED);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_OUT);
 
@@ -44,8 +47,9 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getUnconfirmedBlockNumber(PaginationCondition<TransactionEth> paginationCondition) {
+    public PaginationRepertory<TransactionEth> getEthUnconfirmedBlockNumber(PaginationCondition<TransactionEth> paginationCondition) {
 
+        paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
         paginationCondition.getCondition().setTxStatusArray(Arrays.asList(
                 TransactionEth.TX_STATUS_DEPOSIT_PROCESSING_NOTIFIED
                 ,TransactionEth.TX_STATUS_WITHDRAWAL_PROCESSING_NOTIFIED
@@ -56,15 +60,17 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getUnconfirmedBalance(PaginationCondition<TransactionEth> paginationCondition) {
+    public PaginationRepertory<TransactionEth> getEthUnconfirmedBalance(PaginationCondition<TransactionEth> paginationCondition) {
 
+        paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_BALANCE_UNCONFIRM);
 
         return getPagination(paginationCondition);
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getInInvalid(PaginationCondition<TransactionEth> paginationCondition) {
+    public PaginationRepertory<TransactionEth> getEthInInvalid(PaginationCondition<TransactionEth> paginationCondition) {
+        paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_INVALID);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_IN);
 
@@ -72,7 +78,8 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     }
 
     @Override
-    public PaginationRepertory<TransactionEth> getInValid(PaginationCondition<TransactionEth> paginationCondition) {
+    public PaginationRepertory<TransactionEth> getEthInValid(PaginationCondition<TransactionEth> paginationCondition) {
+        paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_VALID);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_IN);
 

@@ -323,7 +323,7 @@ public class TestWeb3j {
 
 
         TransactionReceipt transactionReceipt = Transfer.sendFunds(
-                web3j, credentials, "0x55018a1fb087ab3b7383ba31f569d68c5e9fc399",
+                web3j, credentials, "0x5a86cfb8a8fd3103a824bef78225817466c60f31",
                 new BigDecimal("1"), Convert.Unit.ETHER).send();
 
         System.out.println(transactionReceipt.getTransactionHash());

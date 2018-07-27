@@ -27,6 +27,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	<if test="null!=coinType">
     		and COIN_TYPE = #{coinType}
     	</if>
+    	<if test="null!=subCoinType">
+    		and SUB_COIN_TYPE = #{subCoinType}
+    	</if>
     	<if test="null!=txInput">
     		and TX_INPUT = #{txInput}
     	</if>
@@ -96,6 +99,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    <if test="null!=coinType">
 		    COIN_TYPE = #{coinType},
 		    </if>
+		    <if test="null!=subCoinType">
+		    SUB_COIN_TYPE = #{subCoinType},
+		    </if>
 		    <if test="null!=txInput">
 		    TX_INPUT = #{txInput},
 		    </if>
@@ -153,6 +159,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         <result property="txTo" column="TX_TO"/>
         <result property="contractAddress" column="CONTRACT_ADDRESS"/>
         <result property="coinType" column="COIN_TYPE"/>
+        <result property="subCoinType" column="SUB_COIN_TYPE"/>
         <result property="txInput" column="TX_INPUT"/>
         <result property="txValue" column="TX_VALUE"/>
         <result property="txIndex" column="TX_INDEX"/>
@@ -180,6 +187,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,TX_TO
         	,CONTRACT_ADDRESS
         	,COIN_TYPE
+        	,SUB_COIN_TYPE
         	,TX_INPUT
         	,TX_VALUE
         	,TX_INDEX
@@ -203,6 +211,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,#{txTo}
         	,#{contractAddress}
         	,#{coinType}
+        	,#{subCoinType}
         	,#{txInput}
         	,#{txValue}
         	,#{txIndex}
@@ -255,6 +264,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TX_TO
 			,CONTRACT_ADDRESS
 			,COIN_TYPE
+			,SUB_COIN_TYPE
 			,TX_INPUT
 			,TX_VALUE
 			,TX_INDEX
@@ -285,6 +295,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TX_TO
 			,CONTRACT_ADDRESS
 			,COIN_TYPE
+			,SUB_COIN_TYPE
 			,TX_INPUT
 			,TX_VALUE
 			,TX_INDEX
@@ -318,6 +329,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TX_TO
 			,CONTRACT_ADDRESS
 			,COIN_TYPE
+			,SUB_COIN_TYPE
 			,TX_INPUT
 			,TX_VALUE
 			,TX_INDEX
@@ -358,6 +370,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TX_TO
 			,CONTRACT_ADDRESS
 			,COIN_TYPE
+			,SUB_COIN_TYPE
 			,TX_INPUT
 			,TX_VALUE
 			,TX_INDEX
@@ -380,7 +393,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			1=1
 			<include refid="transactionEthColumns" />
 		ORDER BY
-			TX_HASH
+			CREATE_TIME
 	</select>
 
 	<select id="queryPaginationTxStatusInListCount" resultType="Integer">
@@ -390,7 +403,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			TRANSACTION_ETH
 		WHERE
 			1=1
-			AND
+		AND
 			TX_STATUS IN
 			<foreach collection="txStatusArray" item="txStatus" index="index"
 					 open="(" close=")" separator=",">
@@ -425,13 +438,16 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			TRANSACTION_ETH
 		WHERE
 			1=1
+			<if test="null!=coinType">
+				and COIN_TYPE = #{coinType}
+			</if>
 			AND
 			TX_STATUS IN
 			<foreach collection="txStatusArray" item="txStatus" index="index"
 					 open="(" close=")" separator=",">
 				#{txStatus}
 			</foreach>
-		ORDER BY
+			ORDER BY
 			CREATE_TIME
 	</select>
 	

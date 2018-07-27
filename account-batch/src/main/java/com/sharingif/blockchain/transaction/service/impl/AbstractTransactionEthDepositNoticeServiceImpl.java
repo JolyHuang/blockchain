@@ -7,6 +7,7 @@ import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.blockchain.transaction.service.AddressNoticeService;
 import com.sharingif.blockchain.transaction.service.TransactionEthService;
+import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import com.sharingif.cube.security.binary.Base64Coder;
@@ -43,7 +44,11 @@ public abstract class AbstractTransactionEthDepositNoticeServiceImpl extends Abs
         transactionEthApiReq.setTxFrom(transactionEth.getTxFrom());
         transactionEthApiReq.setTxTo(transactionEth.getTxTo());
         transactionEthApiReq.setContractAddress(transactionEth.getContractAddress());
-        transactionEthApiReq.setCoinType(transactionEth.getCoinType());
+        if(StringUtils.isTrimEmpty(transactionEth.getSubCoinType())) {
+            transactionEthApiReq.setCoinType(transactionEth.getCoinType());
+        } else {
+            transactionEthApiReq.setCoinType(transactionEth.getSubCoinType());
+        }
         transactionEthApiReq.setTxInput(transactionEth.getTxInput());
         transactionEthApiReq.setTxValue(transactionEth.getTxValue());
         transactionEthApiReq.setTxIndex(transactionEth.getTxIndex());

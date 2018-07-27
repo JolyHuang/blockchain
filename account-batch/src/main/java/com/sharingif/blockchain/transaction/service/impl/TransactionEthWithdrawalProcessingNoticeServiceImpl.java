@@ -19,7 +19,7 @@ public class TransactionEthWithdrawalProcessingNoticeServiceImpl extends Abstrac
 
     @Override
     PaginationRepertory<TransactionEth> getPaginationRepertory(PaginationCondition<TransactionEth> paginationCondition) {
-        return getTransactionEthService().getOutUntreated(paginationCondition);
+        return getTransactionEthService().getEthOutUntreated(paginationCondition);
     }
 
     @Override

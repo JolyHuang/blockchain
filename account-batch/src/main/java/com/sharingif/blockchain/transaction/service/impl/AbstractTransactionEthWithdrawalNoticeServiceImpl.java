@@ -6,6 +6,7 @@ import com.sharingif.blockchain.account.service.WithdrawalService;
 import com.sharingif.blockchain.app.components.UrlBody;
 import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
+import com.sharingif.cube.core.util.StringUtils;
 
 import javax.annotation.Resource;
 
@@ -37,7 +38,11 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
         transactionEthWithdrawalApiReq.setTxFrom(transactionEth.getTxFrom());
         transactionEthWithdrawalApiReq.setTxTo(transactionEth.getTxTo());
         transactionEthWithdrawalApiReq.setContractAddress(transactionEth.getContractAddress());
-        transactionEthWithdrawalApiReq.setCoinType(transactionEth.getCoinType());
+        if(StringUtils.isTrimEmpty(transactionEth.getSubCoinType())) {
+            transactionEthWithdrawalApiReq.setCoinType(transactionEth.getCoinType());
+        } else {
+            transactionEthWithdrawalApiReq.setCoinType(transactionEth.getSubCoinType());
+        }
         transactionEthWithdrawalApiReq.setTxInput(transactionEth.getTxInput());
         transactionEthWithdrawalApiReq.setTxValue(transactionEth.getTxValue());
         transactionEthWithdrawalApiReq.setTxIndex(transactionEth.getTxIndex());
