@@ -61,6 +61,7 @@ public class MnemonicServiceImpl extends BaseServiceImpl<Mnemonic, String> imple
         try {
             filePath = keystore.persistence(directory, fileName, mnemonic.getMnemonic(), req.getPassword());
         } catch (Exception e) {
+            logger.error("persistence key error", e);
             throw new ValidationCubeException(ErrorConstants.GENERATE_MNEMONIC_ERROR);
         }
 

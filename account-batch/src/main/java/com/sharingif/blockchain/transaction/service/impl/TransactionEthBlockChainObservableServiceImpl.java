@@ -140,6 +140,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         transactionEth.setContractAddress(transactionEth.getTxTo());
         transactionEth.setTxTo(transferEventResponse.to);
         transactionEth.setTxValue(new BigInteger(transferEventResponse.value.toString()));
+        transactionEth.setCoinType(oleContract.symbol());
 
         if(ethAddressRegister.isSubCoinType(subCoinTypeMap, transactionEth.getTxFrom())) {
             transactionEth.setTxType(TransactionEth.TX_TYPE_OUT);

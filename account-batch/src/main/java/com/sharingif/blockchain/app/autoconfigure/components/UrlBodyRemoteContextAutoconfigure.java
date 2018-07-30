@@ -7,11 +7,10 @@ import com.sharingif.blockchain.app.components.UrlBodyTransportRequestContextRes
 import com.sharingif.cube.communication.http.apache.transport.HttpJsonConnection;
 import com.sharingif.cube.communication.http.transport.transform.ObjectToJsonStringMarshaller;
 import com.sharingif.cube.communication.remote.RemoteServices;
-import com.sharingif.cube.communication.remote.RemoteServicesApplicationContext;
 import com.sharingif.cube.communication.transport.ProxyInterfaceHandlerMethodCommunicationTransportFactory;
 import com.sharingif.cube.communication.transport.transform.ProxyInterfaceHandlerMethodCommunicationTransform;
-import com.sharingif.cube.core.handler.bind.support.BindingInitializer;
 import com.sharingif.cube.core.handler.chain.MultiHandlerMethodChain;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,8 +29,11 @@ import java.util.List;
 public class UrlBodyRemoteContextAutoconfigure {
 
     @Bean(name = "urlBodyHttpJsonConnection")
-    public HttpJsonConnection createUrlBodyHttpJsonConnection() {
+    public HttpJsonConnection createUrlBodyHttpJsonConnection(
+            @Value("${http.so.timeout}")int soTimeout
+    ) {
         HttpJsonConnection apacheHttpJsonConnection = new HttpJsonConnection();
+        apacheHttpJsonConnection.setSoTimeout(soTimeout);
 
         return apacheHttpJsonConnection;
     }
