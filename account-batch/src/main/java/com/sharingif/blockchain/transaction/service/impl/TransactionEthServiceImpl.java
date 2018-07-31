@@ -30,6 +30,7 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     public PaginationRepertory<TransactionEth> getInUntreated(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_UNTREATED);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_IN);
+        paginationCondition.getCondition().setTaskStatus(TransactionEth.TASK_STATUS_UNTREATED);
 
         return getPagination(paginationCondition);
     }
@@ -38,6 +39,7 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     public PaginationRepertory<TransactionEth> getOutUntreated(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_UNTREATED);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_OUT);
+        paginationCondition.getCondition().setTaskStatus(TransactionEth.TASK_STATUS_UNTREATED);
 
         return getPagination(paginationCondition);
     }
@@ -49,6 +51,7 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
                 ,TransactionEth.TX_STATUS_WITHDRAWAL_PROCESSING_NOTIFIED
                 ,TransactionEth.TX_STATUS_BLOCK_CONFIRMING
         ));
+        paginationCondition.getCondition().setTaskStatus(TransactionEth.TASK_STATUS_UNTREATED);
 
         return transactionEthDAO.queryPaginationTxStatusInList(paginationCondition);
     }
@@ -56,6 +59,7 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     @Override
     public PaginationRepertory<TransactionEth> getUnconfirmedBalance(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_BALANCE_UNCONFIRM);
+        paginationCondition.getCondition().setTaskStatus(TransactionEth.TASK_STATUS_UNTREATED);
 
         return getPagination(paginationCondition);
     }
@@ -64,6 +68,7 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     public PaginationRepertory<TransactionEth> getInInvalid(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_INVALID);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_IN);
+        paginationCondition.getCondition().setTaskStatus(TransactionEth.TASK_STATUS_UNTREATED);
 
         return getPagination(paginationCondition);
     }
@@ -72,6 +77,7 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     public PaginationRepertory<TransactionEth> getOutInvalid(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_INVALID);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_OUT);
+        paginationCondition.getCondition().setTaskStatus(TransactionEth.TASK_STATUS_UNTREATED);
 
         return getPagination(paginationCondition);
     }
@@ -80,6 +86,7 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     public PaginationRepertory<TransactionEth> getInValid(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_VALID);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_IN);
+        paginationCondition.getCondition().setTaskStatus(TransactionEth.TASK_STATUS_UNTREATED);
 
         return getPagination(paginationCondition);
     }
@@ -88,6 +95,7 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
     public PaginationRepertory<TransactionEth> getOutValid(PaginationCondition<TransactionEth> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionEth.TX_STATUS_VALID);
         paginationCondition.getCondition().setTxType(TransactionEth.TX_TYPE_OUT);
+        paginationCondition.getCondition().setTaskStatus(TransactionEth.TASK_STATUS_UNTREATED);
 
         return getPagination(paginationCondition);
     }

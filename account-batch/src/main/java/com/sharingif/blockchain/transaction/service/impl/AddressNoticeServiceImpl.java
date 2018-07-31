@@ -33,4 +33,14 @@ public class AddressNoticeServiceImpl extends BaseServiceImpl<AddressNotice, Str
 
 		return addressNoticeDAO.query(addressNotice);
 	}
+
+	@Override
+	public AddressNotice getWithdrawalNoticeAddress(String address, String coinType) {
+		AddressNotice addressNotice = new AddressNotice();
+		addressNotice.setAddress(address);
+		addressNotice.setCoinType(coinType);
+		addressNotice.setNoticeType(AddressNotice.NOTICE_TYPE_WITHDRAWAL);
+
+		return addressNoticeDAO.query(addressNotice);
+	}
 }

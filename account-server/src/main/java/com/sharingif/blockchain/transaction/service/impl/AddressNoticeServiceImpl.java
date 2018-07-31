@@ -27,26 +27,54 @@ public class AddressNoticeServiceImpl extends BaseServiceImpl<AddressNotice, Str
 
 	@Override
 	public void registerDepositAddressNotice(String addressRegisterId, String noticeAddress, String address, String coinType) {
-		AddressNotice addressNotice = new AddressNotice();
-		addressNotice.setAddressRegisterId(addressRegisterId);
-		addressNotice.setNoticeAddress(noticeAddress);
-		addressNotice.setAddress(address);
-		addressNotice.setCoinType(coinType);
-		addressNotice.setNoticeType(AddressNotice.NOTICE_TYPE_DEPOSIT);
+		AddressNotice queryAddressNotice = new AddressNotice();
+		queryAddressNotice.setAddress(address);
+		queryAddressNotice.setCoinType(coinType);
+		queryAddressNotice.setNoticeType(AddressNotice.NOTICE_TYPE_DEPOSIT);
+		queryAddressNotice = addressNoticeDAO.query(queryAddressNotice);
 
-		addressNoticeDAO.insert(addressNotice);
+		if(queryAddressNotice == null) {
+			AddressNotice insertAddressNotice = new AddressNotice();
+			insertAddressNotice.setAddressRegisterId(addressRegisterId);
+			insertAddressNotice.setNoticeAddress(noticeAddress);
+			insertAddressNotice.setAddress(address);
+			insertAddressNotice.setCoinType(coinType);
+			insertAddressNotice.setNoticeType(AddressNotice.NOTICE_TYPE_DEPOSIT);
+
+			addressNoticeDAO.insert(insertAddressNotice);
+		} else {
+			AddressNotice updateAddressNotice = new AddressNotice();
+			updateAddressNotice.setId(queryAddressNotice.getId());
+			updateAddressNotice.setNoticeAddress(noticeAddress);
+
+			addressNoticeDAO.updateById(updateAddressNotice);
+		}
 	}
 
 	@Override
 	public void registerWithdrawalAddressNotice(String addressRegisterId, String noticeAddress, String address, String coinType) {
-		AddressNotice addressNotice = new AddressNotice();
-		addressNotice.setAddressRegisterId(addressRegisterId);
-		addressNotice.setNoticeAddress(noticeAddress);
-		addressNotice.setAddress(address);
-		addressNotice.setCoinType(coinType);
-		addressNotice.setNoticeType(AddressNotice.NOTICE_TYPE_WITHDRAWAL);
+		AddressNotice queryAddressNotice = new AddressNotice();
+		queryAddressNotice.setAddress(address);
+		queryAddressNotice.setCoinType(coinType);
+		queryAddressNotice.setNoticeType(AddressNotice.NOTICE_TYPE_WITHDRAWAL);
+		queryAddressNotice = addressNoticeDAO.query(queryAddressNotice);
 
-		addressNoticeDAO.insert(addressNotice);
+		if(queryAddressNotice == null) {
+			AddressNotice insertAddressNotice = new AddressNotice();
+			insertAddressNotice.setAddressRegisterId(addressRegisterId);
+			insertAddressNotice.setNoticeAddress(noticeAddress);
+			insertAddressNotice.setAddress(address);
+			insertAddressNotice.setCoinType(coinType);
+			insertAddressNotice.setNoticeType(AddressNotice.NOTICE_TYPE_WITHDRAWAL);
+
+			addressNoticeDAO.insert(insertAddressNotice);
+		} else {
+			AddressNotice updateAddressNotice = new AddressNotice();
+			updateAddressNotice.setId(queryAddressNotice.getId());
+			updateAddressNotice.setNoticeAddress(noticeAddress);
+
+			addressNoticeDAO.updateById(updateAddressNotice);
+		}
 
 	}
 
