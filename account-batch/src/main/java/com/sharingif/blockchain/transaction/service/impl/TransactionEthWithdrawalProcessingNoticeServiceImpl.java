@@ -36,7 +36,7 @@ public class TransactionEthWithdrawalProcessingNoticeServiceImpl extends Abstrac
 
     @Override
     void writeLoadDataLogger(PaginationRepertory<TransactionEth> paginationRepertory) {
-        logger.error("eth withdrawal processing notice, totalCount:{}", paginationRepertory.getTotalCount());
+        logger.info("eth withdrawal processing notice, totalCount:{}", paginationRepertory.getTotalCount());
     }
 
     @Override

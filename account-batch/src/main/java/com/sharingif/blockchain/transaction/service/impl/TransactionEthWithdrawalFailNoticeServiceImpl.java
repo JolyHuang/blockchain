@@ -31,7 +31,7 @@ public class TransactionEthWithdrawalFailNoticeServiceImpl extends AbstractTrans
 
     @Override
     void writeLoadDataLogger(PaginationRepertory<TransactionEth> paginationRepertory) {
-        logger.error("eth withdrawal fail notice, totalCount:{}", paginationRepertory.getTotalCount());
+        logger.info("eth withdrawal fail notice, totalCount:{}", paginationRepertory.getTotalCount());
     }
 
     @Override

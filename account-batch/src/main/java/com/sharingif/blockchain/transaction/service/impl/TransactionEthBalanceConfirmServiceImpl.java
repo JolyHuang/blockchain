@@ -171,13 +171,17 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
 
     @Transactional
     protected void confirmTransactionEthBalance(TransactionEth transactionEth) {
-        String txType = transactionEth.getTxType();
-        if(TransactionEth.TX_TYPE_IN.equals(txType)) {
-            in(transactionEth);
-        } else {
-            out(transactionEth);
+        try {
+            String txType = transactionEth.getTxType();
+            if (TransactionEth.TX_TYPE_IN.equals(txType)) {
+                in(transactionEth);
+            } else {
+                out(transactionEth);
+            }
+        }catch (Exception e) {
+            logger.error("confirm transaction eth balance error, transactionEth:{}", transactionEth, e);
+            throw e;
         }
-
     }
 
     protected void confirmTransactionEthBalance(PaginationRepertory<TransactionEth> paginationRepertory) {
@@ -198,22 +202,28 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         paginationCondition.setCondition(queryTransactionEth);
 
         while (true){
-            PaginationRepertory<TransactionEth> paginationRepertory = transactionEthService.getUnconfirmedBalance(paginationCondition);
+            try {
 
-            if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    logger.error("get unconfirmed balance error", e);
+                PaginationRepertory<TransactionEth> paginationRepertory = transactionEthService.getUnconfirmedBalance(paginationCondition);
+
+                if (paginationRepertory == null || paginationRepertory.getPageItems() == null) {
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        logger.error("get unconfirmed balance error", e);
+                    }
                 }
-            }
 
-            confirmTransactionEthBalance(paginationRepertory);
+                confirmTransactionEthBalance(paginationRepertory);
 
-            if(paginationRepertory.getTotalCount() < (paginationRepertory.getCurrentIndex()+paginationCondition.getPageSize())) {
-                paginationCondition.setCurrentPage(1);
-            } else {
-                paginationCondition.setCurrentPage(paginationCondition.getCurrentPage()+1);
+                if (paginationRepertory.getTotalCount() < (paginationRepertory.getCurrentIndex() + paginationCondition.getPageSize())) {
+                    paginationCondition.setCurrentPage(1);
+                } else {
+                    paginationCondition.setCurrentPage(paginationCondition.getCurrentPage() + 1);
+                }
+
+            }catch (Exception e) {
+                logger.error("confirm transaction eth balance error", e);
             }
         }
     }

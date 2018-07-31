@@ -28,7 +28,7 @@ public class TransactionEthDepositProcessingNoticeServiceImpl extends AbstractTr
 
     @Override
     void writeLoadDataLogger(PaginationRepertory<TransactionEth> paginationRepertory) {
-        logger.error("eth deposit processing notice, totalCount:{}", paginationRepertory.getTotalCount());
+        logger.info("eth deposit processing notice, totalCount:{}", paginationRepertory.getTotalCount());
     }
 
     @Override

@@ -60,41 +60,47 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
         return true;
     }
 
+    protected void confirmTransactionEthBlockNumber(TransactionEth transactionEth) {
+        BigInteger currentBlockNumber = ethereumService.getBlockNumber();
+        BigInteger blockNumber = transactionEth.getBlockNumber();
+        int confirmBlockNumber = transactionEth.getConfirmBlockNumber();
+        BigInteger txConfirmBlockNumber = blockNumber.add(new BigInteger(String.valueOf(confirmBlockNumber)));
+
+        if(currentBlockNumber.compareTo(txConfirmBlockNumber) <= 0) {
+            return;
+        }
+
+        Transaction transaction = null;
+        try {
+            transaction = ethereumService.getTransactionByHash(transactionEth.getTxHash());
+        } catch (Exception e) {
+            logger.error("validate transaction confirm block number error", e);
+            transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
+            return;
+        }
+
+        boolean validateTransactionStatus = validateTransaction(transactionEth, transaction);
+        if(!validateTransactionStatus) {
+            transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
+            return;
+        }
+
+        if(currentBlockNumber.compareTo(blockNumber.add(new BigInteger(String.valueOf(validBlockNumber)))) > 0) {
+            transactionEthService.updateTxStatusToBalanceUnconfirm(transactionEth.getTxHash(), currentBlockNumber.subtract(transaction.getBlockNumber()).intValue());
+            return;
+        } else {
+            transactionEthService.updateConfirmBlockNumber(transactionEth.getTxHash(), currentBlockNumber.subtract(transaction.getBlockNumber()).intValue());
+            return;
+        }
+    }
+
     protected void confirmTransactionEthBlockNumber(PaginationRepertory<TransactionEth> paginationRepertory) {
         if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
             return;
         }
 
         for(TransactionEth transactionEth : paginationRepertory.getPageItems()) {
-            BigInteger currentBlockNumber = ethereumService.getBlockNumber();
-            BigInteger blockNumber = transactionEth.getBlockNumber();
-            int confirmBlockNumber = transactionEth.getConfirmBlockNumber();
-            BigInteger txConfirmBlockNumber = blockNumber.add(new BigInteger(String.valueOf(confirmBlockNumber)));
-
-            if(currentBlockNumber.compareTo(txConfirmBlockNumber) <= 0) {
-                continue;
-            }
-
-            Transaction transaction = null;
-            try {
-                transaction = ethereumService.getTransactionByHash(transactionEth.getTxHash());
-            } catch (Exception e) {
-                logger.error("validate transaction confirm block number error", e);
-                transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
-            }
-
-            boolean validateTransactionStatus = validateTransaction(transactionEth, transaction);
-            if(!validateTransactionStatus) {
-                transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
-                return;
-            }
-
-            if(currentBlockNumber.compareTo(blockNumber.add(new BigInteger(String.valueOf(validBlockNumber)))) > 0) {
-                transactionEthService.updateTxStatusToBalanceUnconfirm(transactionEth.getTxHash(), currentBlockNumber.subtract(transaction.getBlockNumber()).intValue());
-                continue;
-            } else {
-                transactionEthService.updateConfirmBlockNumber(transactionEth.getTxHash(), currentBlockNumber.subtract(transaction.getBlockNumber()).intValue());
-            }
+            confirmTransactionEthBlockNumber(transactionEth);
         }
     }
 
@@ -107,22 +113,26 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
         paginationCondition.setCondition(queryTransactionEth);
 
         while (true){
-            PaginationRepertory<TransactionEth> paginationRepertory = transactionEthService.getUnconfirmedBlockNumber(paginationCondition);
+            try {
+                PaginationRepertory<TransactionEth> paginationRepertory = transactionEthService.getUnconfirmedBlockNumber(paginationCondition);
 
-            if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    logger.error("get unconfirmed block number error", e);
+                if (paginationRepertory == null || paginationRepertory.getPageItems() == null) {
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        logger.error("get unconfirmed block number error", e);
+                    }
                 }
-            }
 
-            confirmTransactionEthBlockNumber(paginationRepertory);
+                confirmTransactionEthBlockNumber(paginationRepertory);
 
-            if(paginationRepertory.getTotalCount() < (paginationRepertory.getCurrentIndex()+paginationCondition.getPageSize())) {
-                paginationCondition.setCurrentPage(1);
-            } else {
-                paginationCondition.setCurrentPage(paginationCondition.getCurrentPage()+1);
+                if (paginationRepertory.getTotalCount() < (paginationRepertory.getCurrentIndex() + paginationCondition.getPageSize())) {
+                    paginationCondition.setCurrentPage(1);
+                } else {
+                    paginationCondition.setCurrentPage(paginationCondition.getCurrentPage() + 1);
+                }
+            }catch (Exception e) {
+                logger.error("confirm transaction eth block number error", e);
             }
         }
 

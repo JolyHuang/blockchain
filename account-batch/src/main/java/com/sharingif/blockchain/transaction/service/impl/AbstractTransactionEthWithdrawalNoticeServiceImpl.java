@@ -70,7 +70,7 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
             updateTxStatus(withdrawal, transactionEth.getTxHash());
 
         } catch (Exception e) {
-            logger.error("transaction eth info:{}", transactionEth);
+            logger.error("transaction eth info:{}", transactionEth, e);
             getTransactionEthService().updateTaskStatusToFail(transactionEth.getTxHash());
             throw e;
         }
