@@ -108,6 +108,7 @@ public abstract class AbstractTransactionEthNoticeServiceImpl implements Initial
             // 修改交易状态
             updateTxStatus(transactionEth.getTxHash());
         } catch (Exception e) {
+            logger.error("transaction eth info:{}", transactionEth);
             transactionEthService.updateTaskStatusToFail(transactionEth.getTxHash());
             throw e;
         }

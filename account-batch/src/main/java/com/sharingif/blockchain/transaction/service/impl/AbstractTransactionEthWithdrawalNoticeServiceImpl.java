@@ -60,7 +60,7 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
     protected void doTransactionEth(TransactionEth transactionEth) {
         try {
             // 获取通知地址
-            AddressNotice addressNotice = getAddressNoticeService().getDepositNoticeAddress(transactionEth.getTxFrom(), transactionEth.getCoinType());
+            AddressNotice addressNotice = getAddressNoticeService().getDepositNoticeAddress(transactionEth.getTxTo(), transactionEth.getCoinType());
             // 获取取现id
             Withdrawal withdrawal = withdrawalService.getById(addressNotice.getAddressRegisterId());
 
@@ -70,6 +70,7 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
             updateTxStatus(withdrawal, transactionEth.getTxHash());
 
         } catch (Exception e) {
+            logger.error("transaction eth info:{}", transactionEth);
             getTransactionEthService().updateTaskStatusToFail(transactionEth.getTxHash());
             throw e;
         }
