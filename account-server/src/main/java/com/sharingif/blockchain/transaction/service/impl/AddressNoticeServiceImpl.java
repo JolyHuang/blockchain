@@ -46,6 +46,7 @@ public class AddressNoticeServiceImpl extends BaseServiceImpl<AddressNotice, Str
 			AddressNotice updateAddressNotice = new AddressNotice();
 			updateAddressNotice.setId(queryAddressNotice.getId());
 			updateAddressNotice.setNoticeAddress(noticeAddress);
+			updateAddressNotice.setAddressRegisterId(addressRegisterId);
 
 			addressNoticeDAO.updateById(updateAddressNotice);
 		}
@@ -72,6 +73,7 @@ public class AddressNoticeServiceImpl extends BaseServiceImpl<AddressNotice, Str
 			AddressNotice updateAddressNotice = new AddressNotice();
 			updateAddressNotice.setId(queryAddressNotice.getId());
 			updateAddressNotice.setNoticeAddress(noticeAddress);
+			updateAddressNotice.setAddressRegisterId(addressRegisterId);
 
 			addressNoticeDAO.updateById(updateAddressNotice);
 		}

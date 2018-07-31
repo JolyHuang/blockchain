@@ -82,4 +82,12 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, String> i
 		withdrawalDAO.updateById(withdrawal);
 	}
 
+	@Override
+	public Withdrawal getWithdrawalByTxHash(String txHash) {
+		Withdrawal withdrawal = new Withdrawal();
+		withdrawal.setTxHash(txHash);
+
+		return withdrawalDAO.query(withdrawal);
+	}
+
 }

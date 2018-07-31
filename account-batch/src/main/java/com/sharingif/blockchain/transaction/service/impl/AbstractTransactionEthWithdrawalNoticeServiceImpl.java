@@ -6,6 +6,7 @@ import com.sharingif.blockchain.account.service.WithdrawalService;
 import com.sharingif.blockchain.app.components.UrlBody;
 import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
+import com.sharingif.cube.core.exception.UnknownCubeException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -62,7 +63,11 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
             // 获取通知地址
             AddressNotice addressNotice = getAddressNoticeService().getWithdrawalNoticeAddress(transactionEth.getTxTo(), transactionEth.getCoinType());
             // 获取取现id
-            Withdrawal withdrawal = withdrawalService.getById(addressNotice.getAddressRegisterId());
+            Withdrawal withdrawal = withdrawalService.getWithdrawalByTxHash(transactionEth.getTxHash());
+            if(withdrawal == null) {
+                logger.error("getWithdrawalByTxHash error, transactionEth:{}", transactionEth);
+                throw new UnknownCubeException();
+            }
 
             sendNotice(addressNotice, withdrawal, transactionEth);
 

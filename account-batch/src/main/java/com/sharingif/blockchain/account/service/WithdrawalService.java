@@ -47,4 +47,11 @@ public interface WithdrawalService extends IBaseService<Withdrawal, String> {
      */
     void updateTaskStatusToSuccessAndStatusToProcessingAndTxHash(String id, String txHash);
 
+    /**
+     * 根据txHash获取Withdrawal
+     * @param txHash
+     * @return
+     */
+    Withdrawal getWithdrawalByTxHash(String txHash);
+
 }
