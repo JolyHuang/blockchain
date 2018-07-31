@@ -26,4 +26,14 @@ public class TransactionEthDepositSuccessNoticeServiceImpl extends AbstractTrans
         getTransactionEthService().updateTxStatusToDepositSuccessNotified(txHash);
     }
 
+    @Override
+    void writeLoadDataLogger(PaginationRepertory<TransactionEth> paginationRepertory) {
+        logger.error("eth deposit success notice, totalCount:{}", paginationRepertory.getTotalCount());
+    }
+
+    @Override
+    void writeError(Exception e) {
+        logger.error("eth deposit success notice error", e);
+    }
+
 }

@@ -26,4 +26,14 @@ public class TransactionEthDepositFailNoticeServiceImpl extends AbstractTransact
         getTransactionEthService().updateTxStatusToDepositFailNotified(txHash);
     }
 
+    @Override
+    void writeLoadDataLogger(PaginationRepertory<TransactionEth> paginationRepertory) {
+        logger.error("eth deposit fail notice, totalCount:{}", paginationRepertory.getTotalCount());
+    }
+
+    @Override
+    void writeError(Exception e) {
+        logger.error("eth deposit fail notice error", e);
+    }
+
 }

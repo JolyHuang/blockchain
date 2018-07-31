@@ -134,4 +134,10 @@ public interface TransactionEthService extends IBaseService<TransactionEth, Stri
      */
     void updateTxStatusToWithdrawalFailNotified(String txHash);
 
+    /**
+     * 修改处理状态为处理失败
+     * @param txHash
+     */
+    void updateTaskStatusToFail(String txHash);
+
 }

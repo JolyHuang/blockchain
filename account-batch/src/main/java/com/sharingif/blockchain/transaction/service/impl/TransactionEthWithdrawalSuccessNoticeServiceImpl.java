@@ -29,4 +29,14 @@ public class TransactionEthWithdrawalSuccessNoticeServiceImpl extends AbstractTr
         getWithdrawalService().updateStatusToSuccess(withdrawal.getId());
     }
 
+    @Override
+    void writeLoadDataLogger(PaginationRepertory<TransactionEth> paginationRepertory) {
+        logger.error("eth withdrawal success notice, totalCount:{}", paginationRepertory.getTotalCount());
+    }
+
+    @Override
+    void writeError(Exception e) {
+        logger.error("eth withdrawal success notice error", e);
+    }
+
 }

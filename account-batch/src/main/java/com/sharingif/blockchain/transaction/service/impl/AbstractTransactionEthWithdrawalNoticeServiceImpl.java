@@ -58,15 +58,21 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
 
     @Transactional
     protected void doTransactionEth(TransactionEth transactionEth) {
-        // 获取通知地址
-        AddressNotice addressNotice = getAddressNoticeService().getDepositNoticeAddress(transactionEth.getTxFrom(), transactionEth.getCoinType());
-        // 获取取现id
-        Withdrawal withdrawal = withdrawalService.getById(addressNotice.getAddressRegisterId());
+        try {
+            // 获取通知地址
+            AddressNotice addressNotice = getAddressNoticeService().getDepositNoticeAddress(transactionEth.getTxFrom(), transactionEth.getCoinType());
+            // 获取取现id
+            Withdrawal withdrawal = withdrawalService.getById(addressNotice.getAddressRegisterId());
 
-        sendNotice(addressNotice, withdrawal, transactionEth);
+            sendNotice(addressNotice, withdrawal, transactionEth);
 
-        // 修改交易状态
-        updateTxStatus(withdrawal, transactionEth.getTxHash());
+            // 修改交易状态
+            updateTxStatus(withdrawal, transactionEth.getTxHash());
+
+        } catch (Exception e) {
+            getTransactionEthService().updateTaskStatusToFail(transactionEth.getTxHash());
+            throw e;
+        }
     }
 
     @Deprecated

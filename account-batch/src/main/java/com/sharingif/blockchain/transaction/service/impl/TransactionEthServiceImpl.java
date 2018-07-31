@@ -192,4 +192,13 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
 
         updateById(transactionEth);
     }
+
+    @Override
+    public void updateTaskStatusToFail(String txHash) {
+        TransactionEth transactionEth = new TransactionEth();
+        transactionEth.setTxHash(txHash);
+        transactionEth.setTaskStatus(TransactionEth.TASK_STATUS_FAIL);
+
+        updateById(transactionEth);
+    }
 }

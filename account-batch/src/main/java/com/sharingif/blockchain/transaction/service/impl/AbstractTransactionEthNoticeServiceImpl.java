@@ -102,10 +102,15 @@ public abstract class AbstractTransactionEthNoticeServiceImpl implements Initial
 
     @Transactional
     protected void doTransactionEth(TransactionEth transactionEth) {
-        sendNotice(transactionEth);
+        try {
+            sendNotice(transactionEth);
 
-        // 修改交易状态
-        updateTxStatus(transactionEth.getTxHash());
+            // 修改交易状态
+            updateTxStatus(transactionEth.getTxHash());
+        } catch (Exception e) {
+            transactionEthService.updateTaskStatusToFail(transactionEth.getTxHash());
+            throw e;
+        }
     }
 
     protected void doPaginationRepertory(PaginationRepertory<TransactionEth> paginationRepertory) {
@@ -126,22 +131,28 @@ public abstract class AbstractTransactionEthNoticeServiceImpl implements Initial
         paginationCondition.setCondition(queryTransactionEth);
 
         while (true){
-            PaginationRepertory<TransactionEth> paginationRepertory = getPaginationRepertory(paginationCondition);
+            try {
+                PaginationRepertory<TransactionEth> paginationRepertory = getPaginationRepertory(paginationCondition);
 
-            if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    logger.error("get transaction error", e);
+                writeLoadDataLogger(paginationRepertory);
+
+                if (paginationRepertory == null || paginationRepertory.getPageItems() == null) {
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        logger.error("get transaction error", e);
+                    }
                 }
-            }
 
-            doPaginationRepertory(paginationRepertory);
+                doPaginationRepertory(paginationRepertory);
 
-            if(paginationRepertory.getTotalCount() < (paginationRepertory.getCurrentIndex()+paginationCondition.getPageSize())) {
-                paginationCondition.setCurrentPage(1);
-            } else {
-                paginationCondition.setCurrentPage(paginationCondition.getCurrentPage()+1);
+                if (paginationRepertory.getTotalCount() < (paginationRepertory.getCurrentIndex() + paginationCondition.getPageSize())) {
+                    paginationCondition.setCurrentPage(1);
+                } else {
+                    paginationCondition.setCurrentPage(paginationCondition.getCurrentPage() + 1);
+                }
+            } catch (Exception e) {
+                writeError(e);
             }
         }
     }
@@ -151,6 +162,10 @@ public abstract class AbstractTransactionEthNoticeServiceImpl implements Initial
     abstract void updateTxStatus(String txHash);
 
     abstract void sendNotice(TransactionEth transactionEth);
+
+    abstract void writeLoadDataLogger(PaginationRepertory<TransactionEth> paginationRepertory);
+
+    abstract void writeError(Exception e);
 
     @Override
     public void afterPropertiesSet() throws Exception {

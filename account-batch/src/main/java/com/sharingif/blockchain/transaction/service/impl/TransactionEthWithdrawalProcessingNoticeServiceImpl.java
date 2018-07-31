@@ -33,4 +33,14 @@ public class TransactionEthWithdrawalProcessingNoticeServiceImpl extends Abstrac
     void updateTxStatus(Withdrawal withdrawal, String txHash) {
         getTransactionEthService().updateTxStatusToWithdrawalProcessingNotified(txHash);
     }
+
+    @Override
+    void writeLoadDataLogger(PaginationRepertory<TransactionEth> paginationRepertory) {
+        logger.error("eth withdrawal processing notice, totalCount:{}", paginationRepertory.getTotalCount());
+    }
+
+    @Override
+    void writeError(Exception e) {
+        logger.error("eth withdrawal processing notice error", e);
+    }
 }
