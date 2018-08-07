@@ -3,8 +3,6 @@ package com.sharingif.blockchain.crypto.mnemonic.service;
 import com.sharingif.blockchain.crypto.api.mnemonic.entity.MnemonicGenerateReq;
 import com.sharingif.blockchain.crypto.api.mnemonic.entity.MnemonicGenerateRsp;
 import com.sharingif.blockchain.crypto.mnemonic.entity.Mnemonic;
-import com.sharingif.cube.core.handler.bind.annotation.RequestMapping;
-import com.sharingif.cube.core.handler.bind.annotation.RequestMethod;
 import com.sharingif.cube.support.service.base.IBaseService;
 
 /**
@@ -22,7 +20,6 @@ public interface MnemonicService extends IBaseService<Mnemonic, String> {
      * @param req
      * @return
      */
-    @RequestMapping(value="generate", method= RequestMethod.POST)
     MnemonicGenerateRsp generate(MnemonicGenerateReq req);
 
     /**
