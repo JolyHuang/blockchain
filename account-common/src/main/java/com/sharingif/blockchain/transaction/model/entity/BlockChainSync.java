@@ -13,7 +13,11 @@ import java.util.Date;
 public class BlockChainSync implements java.io.Serializable, IObjectDateOperationHistory {
 
 	/**
-	 * 区块类型(BTC:比特币、ETH:以太坊)			db_column: BLOCK_CHAIN_TYPE
+	 * 区块类型(BTC:比特币)
+	 */
+	public static final String BLOCK_CHAIN_TYPE_BTC = "BTC";
+	/**
+	 * 区块类型(ETH:以太坊)
 	 */
 	public static final String BLOCK_CHAIN_TYPE_ETH = "ETH";
 	

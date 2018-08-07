@@ -24,6 +24,13 @@ public class BlockChainSyncServiceImpl extends BaseServiceImpl<BlockChainSync, S
 		this.blockChainSyncDAO = blockChainSyncDAO;
 	}
 
+	@Override
+	public BlockChainSync getBTCBlockChainSync() {
+		BlockChainSync blockChainSync = new BlockChainSync();
+		blockChainSync.setBlockChainType(BlockChainSync.BLOCK_CHAIN_TYPE_BTC);
+
+		return blockChainSyncDAO.query(blockChainSync);
+	}
 
 	@Override
 	public BlockChainSync getETHBlockChainSync() {
@@ -31,6 +38,17 @@ public class BlockChainSyncServiceImpl extends BaseServiceImpl<BlockChainSync, S
 		blockChainSync.setBlockChainType(BlockChainSync.BLOCK_CHAIN_TYPE_ETH);
 
 		return blockChainSyncDAO.query(blockChainSync);
+	}
+
+	@Override
+	public void setBTCBlockChainCurrentNumber(BigInteger currentBlockNumber) {
+		BlockChainSync queryBlockChainSync = getBTCBlockChainSync();
+
+		BlockChainSync blockChainSync = new BlockChainSync();
+		blockChainSync.setId(queryBlockChainSync.getId());
+		blockChainSync.setCurrentSyncBlockNumber(currentBlockNumber);
+
+		blockChainSyncDAO.updateById(blockChainSync);
 	}
 
 	@Override
@@ -42,6 +60,14 @@ public class BlockChainSyncServiceImpl extends BaseServiceImpl<BlockChainSync, S
 		blockChainSync.setCurrentSyncBlockNumber(currentBlockNumber);
 
 		blockChainSyncDAO.updateById(blockChainSync);
+	}
+
+	@Override
+	public void addBTCBlockChainSync(BigInteger blockNumber) {
+		BlockChainSync blockChainSync = new BlockChainSync();
+		blockChainSync.setBlockChainType(BlockChainSync.BLOCK_CHAIN_TYPE_BTC);
+
+		blockChainSyncDAO.insert(blockChainSync);
 	}
 
 	@Override

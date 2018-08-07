@@ -10,7 +10,9 @@ import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AddressRegisterServiceImpl extends BaseServiceImpl<AddressRegister, String> implements AddressRegisterService {
@@ -35,5 +37,24 @@ public class AddressRegisterServiceImpl extends BaseServiceImpl<AddressRegister,
 		List<AddressRegister> addressRegisterList = addressRegisterDAO.queryList(queryAddressRegister);
 
 		return new ETHAddressRegister(addressRegisterList);
+	}
+
+	@Override
+	public Map<String, String> getBTCAddressRegister() {
+		AddressRegister queryAddressRegister = new AddressRegister();
+		queryAddressRegister.setCoinType(AddressRegister.COIN_TYPE_BTC);
+
+		List<AddressRegister> addressRegisterList = addressRegisterDAO.queryList(queryAddressRegister);
+
+		if(addressRegisterList == null) {
+			return new HashMap<String, String>();
+		}
+
+		Map<String, String> map = new HashMap<String, String>();
+		for(AddressRegister addressRegister : addressRegisterList) {
+			map.put(addressRegister.getAddress(), addressRegister.getCoinType());
+		}
+
+		return map;
 	}
 }

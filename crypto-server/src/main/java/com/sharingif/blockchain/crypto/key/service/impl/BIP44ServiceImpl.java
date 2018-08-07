@@ -119,43 +119,53 @@ public class BIP44ServiceImpl implements BIP44Service {
         return rsp;
     }
 
+    protected String saveFile(ECKeyPair ecKeyPair, ExtendedKey extendedKey, KeyPath keyPath, String password) {
+        String mnemonicPath = extendedKey.getFilePath().split("/")[0];
+        String directoryStr = new StringBuilder(keystore.getKeyRootPath())
+                .append("/").append(mnemonicPath)
+                .append("/").append(keyPath.getPath())
+                .toString();
+
+        File directory = new File(directoryStr);
+
+        if(!(directory.mkdirs())) {
+            logger.error("create directory error, path:{}", directoryStr);
+            throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
+        }
+        String fileName;
+        try {
+            fileName = WalletUtils.generateWalletFile(password, ecKeyPair, directory, true);
+        } catch (IOException | CipherException e) {
+            logger.error("generate addressIndex key error", e);
+            throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
+        }
+        String filePath = new StringBuilder(directoryStr).append("/").append(fileName).toString();
+
+        return filePath;
+
+    }
+
     protected SecretKey addressIndexETH(DeterministicKey addressIndexDeterministicKey, ExtendedKey extendedKey, KeyPath keyPath, String password) {
         SecretKey secretKey = new SecretKey();
 
         ECKeyPair ecKeyPair = ECKeyPair.create(addressIndexDeterministicKey.getPrivKey());
         Credentials credentials = Credentials.create(ecKeyPair);
-        try {
-            String mnemonicPath = extendedKey.getFilePath().split("/")[0];
-            String directoryStr = new StringBuilder(keystore.getKeyRootPath())
-                    .append("/").append(mnemonicPath)
-                    .append("/").append(keyPath.getPath())
-                    .toString();
+        String filePath = saveFile(ecKeyPair, extendedKey, keyPath, password);
 
-            File directory = new File(directoryStr);
+        secretKey.setAddress(credentials.getAddress());
+        secretKey.setFilePath(filePath);
 
-            if(!(directory.mkdirs())) {
-                logger.error("create directory error, path:{}", directoryStr);
-                throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
-            }
-
-            String fileName = WalletUtils.generateWalletFile(password, ecKeyPair, directory, true);
-
-            String filePath = new StringBuilder(directoryStr).append("/").append(fileName).toString();
-
-            secretKey.setAddress(credentials.getAddress());
-            secretKey.setFilePath(filePath);
-
-            return secretKey;
-        } catch (IOException | CipherException e) {
-            logger.error("generate addressIndex key error", e);
-            throw new ValidationCubeException(ErrorConstants.GENERATE_ADDRESSINDEX_KEY_ERROR);
-        }
+        return secretKey;
     }
 
-    protected SecretKey addressIndexBTC(DeterministicKey addressIndexDeterministicKey) {
+    protected SecretKey addressIndexBTC(DeterministicKey addressIndexDeterministicKey, ExtendedKey extendedKey, KeyPath keyPath, String password) {
         SecretKey secretKey = new SecretKey();
 
+        ECKeyPair ecKeyPair = ECKeyPair.create(addressIndexDeterministicKey.getPrivKey());
+        String filePath = saveFile(ecKeyPair, extendedKey, keyPath, password);
+
         secretKey.setAddress(addressIndexDeterministicKey.toAddress(MainNetParams.get()).toBase58());
+        secretKey.setFilePath(filePath);
 
         return secretKey;
     }
@@ -190,7 +200,7 @@ public class BIP44ServiceImpl implements BIP44Service {
         }
 
         if(BIP44GenerateReq.COIN_TYPE_BTC == req.getCoinType()) {
-            secretKey = addressIndexBTC(addressIndexDeterministicKey);
+            secretKey = addressIndexBTC(addressIndexDeterministicKey, extendedKey, keyPath, req.getPassword());
         }
 
         // 保存key信息
