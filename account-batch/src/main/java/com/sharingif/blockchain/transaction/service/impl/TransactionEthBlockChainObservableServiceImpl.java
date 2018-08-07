@@ -94,11 +94,11 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
 
             logger.info("observable current block number,blockNumber:{}",txBlockNumber);
 
-            currentBlockNumber.setCurrentBlockNumber(txBlockNumber);
-
             EthBlock.Block block = ethereumService.getBlock(txBlockNumber, false);
 
+            currentBlockNumber.setCurrentBlockNumber(txBlockNumber);
             currentBlockNumber.setTimestamp(block.getTimestamp());
+
             blockChainSyncService.setETHBlockChainCurrentNumber(txBlockNumber);
 
         }
@@ -156,7 +156,10 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         return false;
     }
 
-    protected boolean isListenTrans(TransactionEth transactionEth, ETHAddressRegister ethAddressRegister, TransactionReceipt transactionReceipt) {
+    protected boolean isListenTrans(TransactionEth transactionEth, TransactionReceipt transactionReceipt) {
+
+        // 查询需要监听的数据
+        ETHAddressRegister ethAddressRegister = addressRegisterService.getETHAddressRegister();
 
         boolean isListenContractTrans = isListenContractTrans(transactionEth, ethAddressRegister, transactionReceipt);
 
@@ -167,7 +170,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         return isListenETHTrans(transactionEth, ethAddressRegister);
     }
 
-    protected TransactionEth convertBlockDateToTransactionEth(Transaction tx, CurrentBlockNumber currentBlockNumber, ETHAddressRegister ethAddressRegister) {
+    protected TransactionEth convertBlockDateToTransactionEth(Transaction tx, CurrentBlockNumber currentBlockNumber) {
 
         TransactionEth transactionEth = new TransactionEth();
         transactionEth.setTxHash(tx.getHash());
@@ -195,7 +198,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
             return null;
         }
 
-        boolean isListenTrans = isListenTrans(transactionEth, ethAddressRegister, transactionReceipt);
+        boolean isListenTrans = isListenTrans(transactionEth, transactionReceipt);
         if(!isListenTrans) {
             return null;
         }
@@ -218,28 +221,16 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
      */
     @Transactional
     protected void persistenceAndNoticeTransactionEth(TransactionEth transactionEth) {
+        if(isDuplicationData(transactionEth.getTxHash())) {
+            return;
+        }
         transactionEthDAO.insert(transactionEth);
     }
 
-    public void ethTransactionsObservable() {
-
-        // 查看数据库是否有当前区块数据
-        BlockChainSync blockChainSync = blockChainSyncService.getETHBlockChainSync();
-
-        BigInteger startBlockNumber;
-        // 如果没有区块数据获取当前区块数据插入数据库
-        if(blockChainSync == null) {
-            startBlockNumber = ethereumService.getBlockNumber();
-            blockChainSyncService.addETHBlockChainSync(startBlockNumber);
-        } else {
-            startBlockNumber = blockChainSync.getCurrentSyncBlockNumber();
-        }
-
-        // 查询需要监听的数据
-        ETHAddressRegister ethAddressRegister = addressRegisterService.getETHAddressRegister();
+    protected void ethTransactionsObservable(BigInteger startBlockNumber) {
         CurrentBlockNumber currentBlockNumber = new CurrentBlockNumber();
 
-        // 监听地址k
+        // 监听地址
         ethereumService.getWeb3j().replayTransactionsObservable(new DefaultBlockParameterNumber(startBlockNumber), DefaultBlockParameterName.LATEST)
             .doOnCompleted(new Action0() {
                 @Override
@@ -247,26 +238,42 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
                     ethTransactionsObservableIsfinsh = true;
                 }
             }).subscribe(tx -> {
-            try {
-
-                if(startBlockNumber.compareTo(tx.getBlockNumber()) ==0 && isDuplicationData(tx.getHash())) {
-                    return;
-                }
 
                 handleCurrentBlockNumber(tx, currentBlockNumber);
 
-                TransactionEth transactionEth = convertBlockDateToTransactionEth(tx, currentBlockNumber, ethAddressRegister);
+                TransactionEth transactionEth = convertBlockDateToTransactionEth(tx, currentBlockNumber);
 
                 if(transactionEth != null) {
                     persistenceAndNoticeTransactionEth(transactionEth);
                 }
 
-
-            } catch (Throwable e) {
-                logger.error("subscribe error", e);
-                throw e;
-            }
         });
+    }
+
+    protected void ethTransactionsObservable() {
+        if(ethTransactionsObservableIsfinsh !=null && !ethTransactionsObservableIsfinsh) {
+            return;
+        }
+
+        // 查看数据库是否有当前区块数据
+        BlockChainSync blockChainSync = blockChainSyncService.getETHBlockChainSync();
+
+        BigInteger startBlockNumber;
+        BigInteger blockNumber = ethereumService.getBlockNumber();
+        // 如果没有区块数据获取当前区块数据插入数据库
+        if(blockChainSync == null) {
+            startBlockNumber = blockNumber;
+            blockChainSyncService.addETHBlockChainSync(startBlockNumber);
+        } else {
+            startBlockNumber = blockChainSync.getCurrentSyncBlockNumber();
+            // 判断当前块数是否与区块链区块数相等，如果相等不处理
+            if(startBlockNumber.compareTo(blockNumber) == 0) {
+                return;
+            }
+        }
+
+        ethTransactionsObservableIsfinsh = false;
+        ethTransactionsObservable(startBlockNumber);
     }
 
     @Override
@@ -276,20 +283,25 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
             public void run() {
 
                 while (true) {
-                    if (ethTransactionsObservableIsfinsh == null || ethTransactionsObservableIsfinsh) {
-                        ethTransactionsObservableIsfinsh = false;
+                    try {
                         ethTransactionsObservable();
+                    } catch (Throwable e) {
+                        logger.error("eth subscribe error", e);
                     }
 
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch (InterruptedException e) {
-                        logger.error("ethTransactionsObservable error", e);
-                    }
+                    threadSleep();
                 }
 
             }
         }).start();
+    }
+
+    protected void threadSleep() {
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            logger.error("ethTransactionsObservable error", e);
+        }
     }
 
 }
