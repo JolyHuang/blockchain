@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 
 public class TransactionBtcUtxo implements java.io.Serializable, IObjectDateOperationHistory {
@@ -173,6 +174,7 @@ public class TransactionBtcUtxo implements java.io.Serializable, IObjectDateOper
 	private Date modifyTime;
 	//columns END
 
+	private List<String> txStatusArray;
 
 	public String getId() {
 		return id;
@@ -296,6 +298,14 @@ public class TransactionBtcUtxo implements java.io.Serializable, IObjectDateOper
 	@Override
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	public List<String> getTxStatusArray() {
+		return txStatusArray;
+	}
+
+	public void setTxStatusArray(List<String> txStatusArray) {
+		this.txStatusArray = txStatusArray;
 	}
 
 	public String toString() {

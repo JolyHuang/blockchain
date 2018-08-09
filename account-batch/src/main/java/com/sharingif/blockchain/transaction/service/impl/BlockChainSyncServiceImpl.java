@@ -66,6 +66,7 @@ public class BlockChainSyncServiceImpl extends BaseServiceImpl<BlockChainSync, S
 	public void addBTCBlockChainSync(BigInteger blockNumber) {
 		BlockChainSync blockChainSync = new BlockChainSync();
 		blockChainSync.setBlockChainType(BlockChainSync.BLOCK_CHAIN_TYPE_BTC);
+		blockChainSync.setCurrentSyncBlockNumber(blockNumber);
 
 		blockChainSyncDAO.insert(blockChainSync);
 	}
@@ -74,6 +75,7 @@ public class BlockChainSyncServiceImpl extends BaseServiceImpl<BlockChainSync, S
 	public void addETHBlockChainSync(BigInteger blockNumber) {
 		BlockChainSync blockChainSync = new BlockChainSync();
 		blockChainSync.setBlockChainType(BlockChainSync.BLOCK_CHAIN_TYPE_ETH);
+		blockChainSync.setCurrentSyncBlockNumber(blockNumber);
 
 		blockChainSyncDAO.insert(blockChainSync);
 	}

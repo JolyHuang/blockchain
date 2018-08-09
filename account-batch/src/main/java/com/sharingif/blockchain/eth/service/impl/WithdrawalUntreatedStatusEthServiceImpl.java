@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.transaction.service.impl;
+package com.sharingif.blockchain.eth.service.impl;
 
 import com.sharingif.blockchain.account.model.entity.Withdrawal;
 import com.sharingif.blockchain.account.service.AccountSysPrmService;
@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  * @since v1.0
  * 2018/7/25 下午6:01
  */
-@Service
+//@Service
 public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

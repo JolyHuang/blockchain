@@ -10,9 +10,6 @@ package com.sharingif.blockchain.crypto.api.key.entity;
  */
 public class BIP44GenerateReq {
 
-    public static final int COIN_TYPE_BTC = 0;
-    public static final int COIN_TYPE_ETH = 60;
-
     /**
      * 助记词唯一编号
      */

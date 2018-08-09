@@ -1,8 +1,8 @@
 package com.sharingif.blockchain.crypto.key.service.impl;
 
 import com.sharingif.blockchain.crypto.api.key.entity.*;
-import com.sharingif.blockchain.crypto.api.key.service.BIP44ApiService;
 import com.sharingif.blockchain.crypto.app.components.Keystore;
+import com.sharingif.blockchain.crypto.app.constants.CoinType;
 import com.sharingif.blockchain.crypto.app.constants.ErrorConstants;
 import com.sharingif.blockchain.crypto.key.dao.ExtendedKeyDAO;
 import com.sharingif.blockchain.crypto.key.dao.SecretKeyDAO;
@@ -10,11 +10,12 @@ import com.sharingif.blockchain.crypto.key.model.entity.ExtendedKey;
 import com.sharingif.blockchain.crypto.key.model.entity.KeyPath;
 import com.sharingif.blockchain.crypto.key.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.key.service.BIP44Service;
+import com.sharingif.blockchain.crypto.key.service.BtcService;
 import com.sharingif.blockchain.crypto.mnemonic.service.MnemonicService;
 import com.sharingif.cube.core.exception.validation.ValidationCubeException;
 import com.sharingif.cube.security.confidentiality.encrypt.digest.SHA256Encryptor;
+import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.*;
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.DeterministicKeyChain;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.UnreadableWalletException;
@@ -49,6 +50,8 @@ public class BIP44ServiceImpl implements BIP44Service {
     private ExtendedKeyDAO extendedKeyDAO;
     private SecretKeyDAO secretKeyDAO;
     private MnemonicService mnemonicService;
+    private BtcService btcService;
+
 
     @Resource
     public void setKeystore(Keystore keystore) {
@@ -70,6 +73,10 @@ public class BIP44ServiceImpl implements BIP44Service {
     @Resource
     public void setMnemonicService(MnemonicService mnemonicService) {
         this.mnemonicService = mnemonicService;
+    }
+    @Resource
+    public void setBtcService(BtcService btcService) {
+        this.btcService = btcService;
     }
 
     @Override
@@ -98,7 +105,8 @@ public class BIP44ServiceImpl implements BIP44Service {
         DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
         List<ChildNumber> childNumberList = HDUtils.parsePath(keyPath.getBitcoinjPath());
         DeterministicKey changeDeterministicKey = chain.getKeyByPath(childNumberList, true);
-        String deterministicKeyStr = changeDeterministicKey.serializePrivB58(MainNetParams.get());
+        NetworkParameters networkParameters = btcService.getNetworkParameters(req.getCoinType());
+        String deterministicKeyStr = changeDeterministicKey.serializePrivB58(networkParameters);
 
         String fileName = sha256Encryptor.encrypt(deterministicKeyStr);
 
@@ -158,13 +166,13 @@ public class BIP44ServiceImpl implements BIP44Service {
         return secretKey;
     }
 
-    protected SecretKey addressIndexBTC(DeterministicKey addressIndexDeterministicKey, ExtendedKey extendedKey, KeyPath keyPath, String password) {
+    protected SecretKey addressIndexBTC(DeterministicKey addressIndexDeterministicKey, ExtendedKey extendedKey, KeyPath keyPath, String password, NetworkParameters networkParameters) {
         SecretKey secretKey = new SecretKey();
 
         ECKeyPair ecKeyPair = ECKeyPair.create(addressIndexDeterministicKey.getPrivKey());
         String filePath = saveFile(ecKeyPair, extendedKey, keyPath, password);
 
-        secretKey.setAddress(addressIndexDeterministicKey.toAddress(MainNetParams.get()).toBase58());
+        secretKey.setAddress(addressIndexDeterministicKey.toAddress(networkParameters).toBase58());
         secretKey.setFilePath(filePath);
 
         return secretKey;
@@ -188,19 +196,21 @@ public class BIP44ServiceImpl implements BIP44Service {
         // BIP44路径
         KeyPath keyPath = new KeyPath(req, addressIndex);
 
+        NetworkParameters networkParameters = btcService.getNetworkParameters(req.getCoinType());
+
         String changeDeterministicKeyBase58 = keystore.load(extendedKey.getFilePath(), req.getChangeExtendedKeyPassword());
-        DeterministicKey changeDeterministicKey = DeterministicKey.deserializeB58(changeDeterministicKeyBase58, MainNetParams.get());
+        DeterministicKey changeDeterministicKey = DeterministicKey.deserializeB58(changeDeterministicKeyBase58, networkParameters);
         changeDeterministicKey = new DeterministicKey(HDUtils.append(HDUtils.parsePath(keyPath.getBitcoinjParentPath()), ChildNumber.ZERO), changeDeterministicKey.getChainCode(), changeDeterministicKey.getPrivKey(), changeDeterministicKey);
 
         DeterministicKey addressIndexDeterministicKey = HDKeyDerivation.deriveChildKey(changeDeterministicKey, new ChildNumber(addressIndex, false));
 
         SecretKey secretKey = null;
-        if(BIP44GenerateReq.COIN_TYPE_ETH == req.getCoinType()) {
+        if(CoinType.BIP_ETH.getBipCoinType() == req.getCoinType()) {
             secretKey = addressIndexETH(addressIndexDeterministicKey, extendedKey, keyPath, req.getPassword());
         }
 
-        if(BIP44GenerateReq.COIN_TYPE_BTC == req.getCoinType()) {
-            secretKey = addressIndexBTC(addressIndexDeterministicKey, extendedKey, keyPath, req.getPassword());
+        if(CoinType.BIP_BTC.getBipCoinType() == req.getCoinType() || CoinType.BIP_BTC_TEST.getBipCoinType() == req.getCoinType()) {
+            secretKey = addressIndexBTC(addressIndexDeterministicKey, extendedKey, keyPath, req.getPassword(), networkParameters);
         }
 
         // 保存key信息

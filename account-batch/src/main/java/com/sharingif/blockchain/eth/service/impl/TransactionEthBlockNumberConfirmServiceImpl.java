@@ -1,15 +1,14 @@
-package com.sharingif.blockchain.transaction.service.impl;
+package com.sharingif.blockchain.eth.service.impl;
 
 import com.sharingif.blockchain.eth.service.EthereumService;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
-import com.sharingif.blockchain.transaction.service.TransactionEthService;
+import com.sharingif.blockchain.eth.service.TransactionEthService;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.web3j.protocol.core.methods.response.Transaction;
 
 import javax.annotation.Resource;
@@ -24,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @since v1.0
  * 2018/7/17 下午4:32
  */
-@Service
+//@Service
 public class TransactionEthBlockNumberConfirmServiceImpl implements InitializingBean {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -74,7 +73,7 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
         try {
             transaction = ethereumService.getTransactionByHash(transactionEth.getTxHash());
         } catch (Exception e) {
-            logger.error("validate transaction confirm block number error", e);
+            logger.error("eth validate transaction confirm block number error", e);
             transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
             return;
         }

@@ -291,6 +291,52 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		ORDER BY
 			TX_HASH
 	</select>
+
+	<select id="queryPaginationTxStatusInListCount" resultType="Integer">
+		SELECT
+			COUNT(0)
+		FROM
+			TRANSACTION_BTC_UTXO
+		WHERE
+			1=1
+			AND
+			TX_STATUS IN
+			<foreach collection="txStatusArray" item="txStatus" index="index"
+					 open="(" close=")" separator=",">
+				#{txStatus}
+			</foreach>
+	</select>
+
+	<select id="queryPaginationTxStatusInList" parameterType="PaginationCondition" resultMap="transactionBtcUtxoResultMap">
+		SELECT
+			ID
+			,TX_HASH
+			,BLOCK_NUMBER
+			,TX_FROM
+			,TX_TO
+			,TX_VALUE
+			,TX_INDEX
+			,ACTUAL_FEE
+			,TX_TIME
+			,CONFIRM_BLOCK_NUMBER
+			,TX_TYPE
+			,TX_STATUS
+			,TASK_STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+		TRANSACTION_BTC_UTXO
+		WHERE
+			1=1
+			AND
+			TX_STATUS IN
+			<foreach collection="txStatusArray" item="txStatus" index="index"
+					 open="(" close=")" separator=",">
+				#{txStatus}
+			</foreach>
+			ORDER BY
+			CREATE_TIME
+	</select>
 	
 </mapper>
 

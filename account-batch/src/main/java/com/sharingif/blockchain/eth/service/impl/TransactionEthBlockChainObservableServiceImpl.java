@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.transaction.service.impl;
+package com.sharingif.blockchain.eth.service.impl;
 
 import com.sharingif.blockchain.common.components.ole.OleContract;
 import com.sharingif.blockchain.common.components.ole.TransferEventResponse;
@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * @since v1.0
  * 2018/7/13 下午5:02
  */
-@Service
+//@Service
 public class TransactionEthBlockChainObservableServiceImpl implements InitializingBean {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -92,7 +92,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         BigInteger txBlockNumber = tx.getBlockNumber();
         if(currentBlockNumber.getCurrentBlockNumber() == null || currentBlockNumber.getCurrentBlockNumber().compareTo(txBlockNumber) != 0) {
 
-            logger.info("observable current block number,blockNumber:{}",txBlockNumber);
+            logger.info("observable current eth block number,blockNumber:{}",txBlockNumber);
 
             EthBlock.Block block = ethereumService.getBlock(txBlockNumber, false);
 
