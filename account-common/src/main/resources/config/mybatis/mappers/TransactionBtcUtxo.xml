@@ -361,7 +361,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 				#{txStatus}
 			</foreach>
 			ORDER BY
-			CREATE_TIME
+				CREATE_TIME
 	</select>
 	
 </mapper>

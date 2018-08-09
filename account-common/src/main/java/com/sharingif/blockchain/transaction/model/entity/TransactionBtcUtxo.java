@@ -146,7 +146,6 @@ public class TransactionBtcUtxo implements java.io.Serializable, IObjectDateOper
     /**
      * actual fee			db_column: ACTUAL_FEE 
      */	
-	
 	private BigInteger actualFee;
     /**
      * 交易时间			db_column: TX_TIME 
