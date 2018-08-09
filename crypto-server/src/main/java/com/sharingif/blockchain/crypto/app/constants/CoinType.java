@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.common.constants;
+package com.sharingif.blockchain.crypto.app.constants;
 
 /**
  * 币种
@@ -8,7 +8,7 @@ package com.sharingif.blockchain.common.constants;
  * @since v1.0
  * 2018/7/19 上午11:53
  */
-public enum  CoinType {
+public enum CoinType {
 
     BIP_BTC(0),BIP_BTC_TEST(1),BIP_ETH(60),BTC("BTC"),ETH("ETH"),OLE("OLE");
 

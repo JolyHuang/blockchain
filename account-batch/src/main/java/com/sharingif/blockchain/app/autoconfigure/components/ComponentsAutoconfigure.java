@@ -1,9 +1,16 @@
 package com.sharingif.blockchain.app.autoconfigure.components;
 
+import com.neemre.btcdcli4j.core.BitcoindException;
+import com.neemre.btcdcli4j.core.CommunicationException;
+import com.neemre.btcdcli4j.core.client.BtcdClient;
+import com.neemre.btcdcli4j.core.client.BtcdClientImpl;
 import com.sharingif.blockchain.common.components.ole.OleContract;
 import com.sharingif.cube.security.binary.Base64Coder;
 import com.sharingif.cube.security.confidentiality.encrypt.TextEncryptor;
 import com.sharingif.cube.security.confidentiality.encrypt.aes.AESECBEncryptor;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,6 +65,26 @@ public class ComponentsAutoconfigure {
         );
 
         return oleContract;
+    }
+
+    @Bean("btcdClient")
+    public BtcdClient createBtcdClient(
+             @Value("${node.bitcoind.rpc.protocol}")String rpcProtocol
+            ,@Value("${node.bitcoind.rpc.host}")String rpcHost
+            ,@Value("${node.bitcoind.rpc.port}")Integer rpcPort
+            ,@Value("${node.bitcoind.rpc.user}")String rpcUser
+            ,@Value("${node.bitcoind.rpc.password}")String rpcPassword
+            ,@Value("${node.bitcoind.http.auth_scheme}")String httpAuthScheme
+    ) throws BitcoindException, CommunicationException {
+        PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
+        connManager.setMaxTotal(200);
+        connManager.setDefaultMaxPerRoute(200);
+        CloseableHttpClient httpProvider = HttpClients.custom().setConnectionManager(connManager)
+                .build();
+
+        BtcdClient btcdClient = new BtcdClientImpl(httpProvider, rpcProtocol, rpcHost, rpcPort, rpcUser, rpcPassword, httpAuthScheme);
+
+        return btcdClient;
     }
 
 }

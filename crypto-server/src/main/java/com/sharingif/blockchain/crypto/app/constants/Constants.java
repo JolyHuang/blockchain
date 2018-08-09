@@ -10,4 +10,9 @@ package com.sharingif.blockchain.crypto.app.constants;
  */
 public class Constants {
 
+    /**
+     * btc网络类型(test:测试网络)
+     */
+    public static final String BTC_NET_TYPE_TEST = "test";
+
 }

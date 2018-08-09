@@ -19,6 +19,7 @@ public class CoinTypeConvert {
     static {
         COIN_TYPE_MAP = new HashMap<Object, Object>();
         COIN_TYPE_MAP.put(CoinType.BIP_BTC.getBipCoinType(), CoinType.BTC.name());
+        COIN_TYPE_MAP.put(CoinType.BIP_BTC_TEST.getBipCoinType(), CoinType.BTC.name());
         COIN_TYPE_MAP.put(CoinType.BIP_ETH.getBipCoinType(), CoinType.ETH.name());
 
         COIN_TYPE_MAP.put(CoinType.BTC.name(), CoinType.BIP_BTC.getBipCoinType());
