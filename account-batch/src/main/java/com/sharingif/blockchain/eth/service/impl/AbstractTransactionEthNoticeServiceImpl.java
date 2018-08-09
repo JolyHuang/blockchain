@@ -1,27 +1,18 @@
-package com.sharingif.blockchain.transaction.service.impl;
+package com.sharingif.blockchain.eth.service.impl;
 
-import co.olivecoin.wallet.api.blockchain.entity.TransactionEthApiReq;
 import co.olivecoin.wallet.api.blockchain.service.TransactionEthApiService;
+import com.sharingif.blockchain.eth.service.TransactionEthService;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.blockchain.transaction.service.AddressNoticeService;
-import com.sharingif.blockchain.transaction.service.TransactionEthService;
+import com.sharingif.blockchain.transaction.service.AddressNoticeSignatureService;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
-import com.sharingif.cube.security.binary.Base64Coder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
-import sun.security.rsa.RSAPrivateCrtKeyImpl;
 
 import javax.annotation.Resource;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,8 +30,7 @@ public abstract class AbstractTransactionEthNoticeServiceImpl implements Initial
     private AddressNoticeService addressNoticeService;
     private TransactionEthService transactionEthService;
     private TransactionEthApiService transactionEthApiService;
-    private Signature signature;
-    private Base64Coder base64Coder;
+    private AddressNoticeSignatureService addressNoticeSignatureService;
 
     @Resource
     public void setAddressNoticeService(AddressNoticeService addressNoticeService) {
@@ -63,41 +53,12 @@ public abstract class AbstractTransactionEthNoticeServiceImpl implements Initial
     public TransactionEthApiService getTransactionEthApiService() {
         return transactionEthApiService;
     }
-    public Signature getSignature() {
-        return signature;
-    }
-    public Base64Coder getBase64Coder() {
-        return base64Coder;
+    public AddressNoticeSignatureService getAddressNoticeSignatureService() {
+        return addressNoticeSignatureService;
     }
     @Resource
-    public void setBase64Coder(Base64Coder base64Coder) {
-        this.base64Coder = base64Coder;
-    }
-    @Value("${deposit.callback.private}")
-    public void setDepositCallbackPrivate(String depositCallbackPrivate) {
-        try {
-            RSAPrivateKey rsaPrivateKey = RSAPrivateCrtKeyImpl.newKey(base64Coder.decode(depositCallbackPrivate));
-
-            PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(rsaPrivateKey.getEncoded());
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
-            signature = Signature.getInstance("MD5withRSA");
-            signature.initSign(privateKey);
-        } catch (Exception e) {
-            logger.error("invalid key exception", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected String sign(byte[] signData) {
-        try {
-            getSignature().update(signData);
-            byte[] result = getSignature().sign();
-            return getBase64Coder().encode(result);
-        } catch (SignatureException e) {
-            logger.error("signature exception", e);
-            throw new RuntimeException(e);
-        }
+    public void setAddressNoticeSignatureService(AddressNoticeSignatureService addressNoticeSignatureService) {
+        this.addressNoticeSignatureService = addressNoticeSignatureService;
     }
 
     @Transactional

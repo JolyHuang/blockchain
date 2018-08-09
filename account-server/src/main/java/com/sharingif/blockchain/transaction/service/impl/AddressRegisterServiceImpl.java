@@ -1,15 +1,20 @@
 package com.sharingif.blockchain.transaction.service.impl;
 
 
+import com.neemre.btcdcli4j.core.BitcoindException;
+import com.neemre.btcdcli4j.core.CommunicationException;
+import com.neemre.btcdcli4j.core.client.BtcdClient;
 import com.sharingif.blockchain.account.api.transaction.entity.RegisterReq;
 import com.sharingif.blockchain.account.api.transaction.entity.RegisterRsp;
 import com.sharingif.blockchain.account.api.transaction.entity.UnregisterReq;
 import com.sharingif.blockchain.account.api.transaction.entity.UnregisterRsp;
+import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.dao.AddressRegisterDAO;
 import com.sharingif.blockchain.transaction.model.entity.AddressRegister;
 import com.sharingif.blockchain.transaction.model.entity.ETHAddressRegister;
 import com.sharingif.blockchain.transaction.service.AddressNoticeService;
 import com.sharingif.blockchain.transaction.service.AddressRegisterService;
+import com.sharingif.cube.core.exception.CubeRuntimeException;
 import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
 import org.springframework.stereotype.Service;
@@ -23,6 +28,7 @@ public class AddressRegisterServiceImpl extends BaseServiceImpl<AddressRegister,
 	
 	private AddressRegisterDAO addressRegisterDAO;
 	private AddressNoticeService addressNoticeService;
+	private BtcdClient btcdClient;
 
 	public AddressRegisterDAO getAddressRegisterDAO() {
 		return addressRegisterDAO;
@@ -35,6 +41,10 @@ public class AddressRegisterServiceImpl extends BaseServiceImpl<AddressRegister,
 	@Resource
 	public void setAddressNoticeService(AddressNoticeService addressNoticeService) {
 		this.addressNoticeService = addressNoticeService;
+	}
+	@Resource
+	public void setBtcdClient(BtcdClient btcdClient) {
+		this.btcdClient = btcdClient;
 	}
 
 	@Override
@@ -65,6 +75,16 @@ public class AddressRegisterServiceImpl extends BaseServiceImpl<AddressRegister,
 		// 注册通知地址
 		if(StringUtils.isTrimEmpty(req.getSubCoinType()) && !(StringUtils.isTrimEmpty(req.getNoticeAddress()))) {
 			addressNoticeService.registerDepositAddressNotice(addressRegister.getId(), req.getNoticeAddress(), addressRegister.getAddress(), addressRegister.getCoinType());
+		}
+
+		// 如果币种是BTC，地址导入BTC钱包
+		if(CoinType.BTC.name().equals(req.getCoinType())) {
+			try {
+				btcdClient.importAddress(req.getAddress(), "OLIVE", false);
+			} catch (Exception e) {
+				logger.error("import address error", e);
+				throw new CubeRuntimeException(e);
+			}
 		}
 
 		return rsp;

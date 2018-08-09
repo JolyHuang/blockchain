@@ -1,4 +1,4 @@
-package com.sharingif.blockchain.transaction.service.impl;
+package com.sharingif.blockchain.eth.service.impl;
 
 import co.olivecoin.wallet.api.blockchain.entity.TransactionEthWithdrawalApiReq;
 import com.sharingif.blockchain.account.model.entity.Withdrawal;
@@ -98,7 +98,7 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
             String noticeAddress = addressNotice.getNoticeAddress();
             // 发送通知
             TransactionEthWithdrawalApiReq transactionEthWithdrawalApiReq = convertTransactionEthToTransactionEthWithdrawalApiReq(withdrawal.getWithdrawalId() ,transactionEth);
-            transactionEthWithdrawalApiReq.setSign(sign(transactionEthWithdrawalApiReq.getSignData()));
+            transactionEthWithdrawalApiReq.setSign(getAddressNoticeSignatureService().sign(transactionEthWithdrawalApiReq.getSignData()));
             UrlBody<TransactionEthWithdrawalApiReq> transactionEthWithdrawalApiReqUrlBody = new UrlBody<TransactionEthWithdrawalApiReq>();
             transactionEthWithdrawalApiReqUrlBody.setUrl(noticeAddress);
             transactionEthWithdrawalApiReqUrlBody.setBody(transactionEthWithdrawalApiReq);
