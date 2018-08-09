@@ -5,6 +5,7 @@ import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
 import com.sharingif.cube.components.sequence.Sequence;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.web3j.abi.datatypes.Int;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -93,20 +94,30 @@ public class TransactionBtcUtxo implements java.io.Serializable, IObjectDateOper
 	 * 交易类型(1:转出)
 	 */
 	public static final String TX_TYPE_OUT = "1";
-	
+
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
 	//columns START
     /**
      * id			db_column: ID 
      */	
-	@NotBlank @Length(max=32)
+	@Length(max=32)
 	@Sequence(ref="uuidSequenceGenerator")
 	private String id;
     /**
      * 交易hash			db_column: TX_HASH 
      */	
-	@Length(max=100)
+	@NotBlank @Length(max=100)
 	private String txHash;
+    /**
+     * vin交易hash			db_column: VIN_TX_HASH 
+     */	
+	@NotBlank @Length(max=100)
+	private String vinTxHash;
+    /**
+     * vin tx index			db_column: VIN_TX_INDEX 
+     */	
+	
+	private Integer vinTxIndex;
     /**
      * 区块号			db_column: BLOCK_NUMBER 
      */	
@@ -190,6 +201,22 @@ public class TransactionBtcUtxo implements java.io.Serializable, IObjectDateOper
 
 	public void setTxHash(String txHash) {
 		this.txHash = txHash;
+	}
+
+	public String getVinTxHash() {
+		return vinTxHash;
+	}
+
+	public void setVinTxHash(String vinTxHash) {
+		this.vinTxHash = vinTxHash;
+	}
+
+	public Integer getVinTxIndex() {
+		return vinTxIndex;
+	}
+
+	public void setVinTxIndex(Integer vinTxIndex) {
+		this.vinTxIndex = vinTxIndex;
 	}
 
 	public BigInteger getBlockNumber() {
@@ -300,6 +327,8 @@ public class TransactionBtcUtxo implements java.io.Serializable, IObjectDateOper
 		this.modifyTime = modifyTime;
 	}
 
+
+
 	public List<String> getTxStatusArray() {
 		return txStatusArray;
 	}
@@ -312,6 +341,8 @@ public class TransactionBtcUtxo implements java.io.Serializable, IObjectDateOper
 		return new StringBuilder("TransactionBtcUtxo [")
 			.append("Id=").append(getId()).append(", ")
 					.append("TxHash=").append(getTxHash()).append(", ")
+					.append("VinTxHash=").append(getVinTxHash()).append(", ")
+					.append("VinTxIndex=").append(getVinTxIndex()).append(", ")
 					.append("BlockNumber=").append(getBlockNumber()).append(", ")
 					.append("TxFrom=").append(getTxFrom()).append(", ")
 					.append("TxTo=").append(getTxTo()).append(", ")

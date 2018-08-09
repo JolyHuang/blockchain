@@ -3,6 +3,7 @@ package com.sharingif.blockchain.transaction.service.impl;
 import com.sharingif.blockchain.btc.service.TransactionBtcUtxoService;
 import com.sharingif.blockchain.transaction.dao.TransactionBtcUtxoDAO;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
+import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
@@ -71,6 +72,24 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
     }
 
     @Override
+    public PaginationRepertory<TransactionBtcUtxo> getInValid(PaginationCondition<TransactionBtcUtxo> paginationCondition) {
+        paginationCondition.getCondition().setTxStatus(TransactionBtcUtxo.TX_STATUS_VALID);
+        paginationCondition.getCondition().setTxType(TransactionBtcUtxo.TX_TYPE_IN);
+        paginationCondition.getCondition().setTaskStatus(TransactionBtcUtxo.TASK_STATUS_UNTREATED);
+
+        return getPagination(paginationCondition);
+    }
+
+    @Override
+    public PaginationRepertory<TransactionBtcUtxo> getInInvalid(PaginationCondition<TransactionBtcUtxo> paginationCondition) {
+        paginationCondition.getCondition().setTxStatus(TransactionBtcUtxo.TX_STATUS_INVALID);
+        paginationCondition.getCondition().setTxType(TransactionBtcUtxo.TX_TYPE_IN);
+        paginationCondition.getCondition().setTaskStatus(TransactionBtcUtxo.TASK_STATUS_UNTREATED);
+
+        return getPagination(paginationCondition);
+    }
+
+    @Override
     public void updateTxStatusToDepositProcessingNotified(String id) {
         TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
         transactionBtcUtxo.setId(id);
@@ -100,6 +119,33 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
     }
 
     @Override
+    public void updateTxStatusToValid(String id) {
+        TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
+        transactionBtcUtxo.setId(id);
+        transactionBtcUtxo.setTxStatus(TransactionEth.TX_STATUS_VALID);
+
+        updateById(transactionBtcUtxo);
+    }
+
+    @Override
+    public void updateTxStatusToBalanceError(String id) {
+        TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
+        transactionBtcUtxo.setId(id);
+        transactionBtcUtxo.setTxStatus(TransactionEth.TX_STATUS_BALANCE_ERROR);
+
+        updateById(transactionBtcUtxo);
+    }
+
+    @Override
+    public void updateTxStatusToDepositSuccessNotified(String id) {
+        TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
+        transactionBtcUtxo.setId(id);
+        transactionBtcUtxo.setTxStatus(TransactionBtcUtxo.TX_STATUS_DEPOSIT_SUCCESS_NOTIFIED);
+
+        updateById(transactionBtcUtxo);
+    }
+
+    @Override
     public void updateTxStatusToInvalid(String id) {
         TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
         transactionBtcUtxo.setId(id);
@@ -115,5 +161,14 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
         transactionBtcUtxo.setTaskStatus(TransactionBtcUtxo.TASK_STATUS_FAIL);
 
         transactionBtcUtxoDAO.updateById(transactionBtcUtxo);
+    }
+
+    @Override
+    public void updateTxStatusToDepositFailNotified(String id) {
+        TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
+        transactionBtcUtxo.setId(id);
+        transactionBtcUtxo.setTxStatus(TransactionEth.TX_STATUS_DEPOSIT_FAIL_NOTIFIED);
+
+        updateById(transactionBtcUtxo);
     }
 }

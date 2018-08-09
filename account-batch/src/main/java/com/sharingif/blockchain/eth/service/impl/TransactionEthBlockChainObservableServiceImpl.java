@@ -182,7 +182,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         transactionEth.setGasLimit(tx.getGas());
         transactionEth.setGasPrice(tx.getGasPrice());
         transactionEth.setNonce(tx.getNonce());
-        transactionEth.setTxValue(new BigInteger(tx.getValue().toString()));
+        transactionEth.setTxValue(tx.getValue());
         transactionEth.setCoinType(CoinType.ETH.name());
 
 

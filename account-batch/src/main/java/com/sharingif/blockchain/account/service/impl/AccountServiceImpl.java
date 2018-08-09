@@ -82,6 +82,20 @@ public class AccountServiceImpl extends BaseServiceImpl<Account, java.lang.Strin
 	}
 
 	@Override
+	public void outBalance(String id, String from, String to, String coinType, String txHash, Date txTime, BigInteger balance) {
+		accountJnlService.out(from, to, coinType, txHash, txTime, balance);
+		// 修改账号表
+		Account queryAccount = accountDAO.queryById(id);
+
+		Account updateAccount = new Account();
+		updateAccount.setId(id);
+		updateAccount.setBalance(queryAccount.getBalance().subtract(balance));
+		updateAccount.setTotalOut(queryAccount.getTotalOut().add(balance));
+
+		accountDAO.updateById(updateAccount);
+	}
+
+	@Override
 	public void outBalance(String id, String from, String to, String coinType, String txHash, Date txTime, BigInteger balance, BigInteger actualFee) {
 		// 添加账户流水
 		accountJnlService.out(from, to, coinType, txHash, txTime, balance);

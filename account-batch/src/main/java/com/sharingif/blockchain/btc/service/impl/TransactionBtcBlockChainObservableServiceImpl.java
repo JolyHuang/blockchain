@@ -2,6 +2,7 @@ package com.sharingif.blockchain.btc.service.impl;
 
 import com.neemre.btcdcli4j.core.domain.*;
 import com.neemre.btcdcli4j.core.domain.enums.ScriptTypes;
+import com.sharingif.blockchain.btc.entity.UtxoRawInput;
 import com.sharingif.blockchain.btc.service.BtcService;
 import com.sharingif.blockchain.transaction.model.entity.BlockChainSync;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
@@ -34,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since v1.0
  * 2018/8/6 下午6:12
  */
-@Service
+//@Service
 public class TransactionBtcBlockChainObservableServiceImpl implements InitializingBean {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -113,28 +114,46 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
         return utxo;
     }
 
-    protected void handlerIn(RawOutput rawOutput, String txHash, BigInteger blockNumber, Long time, BigInteger actualFee, Map<String, String> ethAddressRegisterMap) {
-        TransactionBtcUtxo utxo = handleUTXO(rawOutput, ethAddressRegisterMap);
+    protected void handlerIn(UtxoRawInput utxoRawInput, String txHash, BigInteger blockNumber, Long time, BigInteger actualFee, Map<String, String> ethAddressRegisterMap, List<RawOutput> vOut) {
+        TransactionBtcUtxo utxo = handleUTXO(utxoRawInput.getRawOutput(), ethAddressRegisterMap);
         if(utxo == null) {
             return;
         }
 
-
+        utxo.setVinTxHash(utxoRawInput.getVinTxHash());
+        utxo.setVinTxIndex(utxoRawInput.getVinTxIndex());
         utxo.setTxFrom(utxo.getTxTo());
-        utxo.setTxTo(null);
         utxo.setTxType(TransactionBtcUtxo.TX_TYPE_OUT);
+
+        for(RawOutput rawOutput : vOut) {
+            List<String> addresses = rawOutput.getScriptPubKey().getAddresses();
+            String addresse = addresses.get(0);
+            if(!addresse.equals(utxo.getTxFrom())) {
+                utxo.setTxTo(addresse);
+                break;
+            }
+        }
 
         addTransactionBtcUtxo(txHash, blockNumber, time, actualFee, utxo);
     }
 
-    protected void handlerOut(RawOutput rawOutput, String txHash, BigInteger blockNumber, Long time, BigInteger actualFee, Map<String, String> ethAddressRegisterMap) {
+    protected void handlerOut(RawOutput rawOutput, String txHash, BigInteger blockNumber, Long time, BigInteger actualFee, Map<String, String> ethAddressRegisterMap, List<UtxoRawInput> vIn) {
         TransactionBtcUtxo utxo = handleUTXO(rawOutput, ethAddressRegisterMap);
         if(utxo == null) {
             return;
         }
 
         utxo.setTxType(TransactionBtcUtxo.TX_TYPE_IN);
-        utxo.setActualFee(BigInteger.ZERO);
+
+        for(UtxoRawInput utxoRawInput : vIn) {
+            RawOutput inRawOutput = utxoRawInput.getRawOutput();
+            List<String> addresses = inRawOutput.getScriptPubKey().getAddresses();
+            String addresse = addresses.get(0);
+            if(!addresse.equals(utxo.getTxTo())) {
+                utxo.setTxFrom(addresse);
+                break;
+            }
+        }
 
         addTransactionBtcUtxo(txHash, blockNumber, time, actualFee, utxo);
     }
@@ -149,25 +168,32 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
         List<RawInput> vInRawInput = rawTransaction.getVIn();
         List<RawOutput> vOut = rawTransaction.getVOut();
 
-        List<RawOutput> vIn = new ArrayList<RawOutput>(vInRawInput.size());
-        for(RawInput rawInput : vInRawInput) {
-            Integer vOutIndex = rawInput.getVOut();
+        List<UtxoRawInput> vIn = new ArrayList<UtxoRawInput>(vInRawInput.size());
+        for(int i=0; i<vInRawInput.size(); i++) {
+            RawInput rawInput = vInRawInput.get(i);
+
             String txId = rawInput.getTxId();
+            Integer vOutIndex = rawInput.getVOut();
+
             if(StringUtils.isTrimEmpty(txId)) {
                 continue;
             }
-            try {
-                RawTransaction inRawTransaction = btcService.getRawTransaction(txId);
-                RawOutput rawOutput = inRawTransaction.getVOut().get(vOutIndex);
-                vIn.add(rawOutput);
-            }catch (Exception e) {
-                continue;
-            }
+
+            RawTransaction inRawTransaction = btcService.getRawTransaction(txId);
+            RawOutput rawOutput = inRawTransaction.getVOut().get(vOutIndex);
+
+            UtxoRawInput utxoRawInput = new UtxoRawInput();
+            utxoRawInput.setVinTxHash(txId);
+            utxoRawInput.setVinTxIndex(i);
+            utxoRawInput.setVout(vOutIndex);
+            utxoRawInput.setRawOutput(rawOutput);
+
+            vIn.add(utxoRawInput);
         }
 
         BigDecimal inValue = BigDecimal.ZERO;
-        for(RawOutput rawOutput : vIn) {
-            inValue = inValue.add(rawOutput.getValue());
+        for(UtxoRawInput utxoRawInput : vIn) {
+            inValue = inValue.add(utxoRawInput.getRawOutput().getValue());
         }
 
         BigInteger actualFee = BigInteger.ZERO;
@@ -180,17 +206,17 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
         }
 
         // 判断交易vin中是否存在观察地址，如果有存入数据库
-        for(RawOutput rawOutput : vIn) {
-            handlerIn(rawOutput, txHash, blockNumber, time, actualFee, ethAddressRegisterMap);
+        for(UtxoRawInput utxoRawInput : vIn) {
+            handlerIn(utxoRawInput, txHash, blockNumber, time, actualFee, ethAddressRegisterMap, vOut);
         }
 
         // 判断交易out中是否存在观察地址，如果有存入数据库
         for(RawOutput rawOutput : vOut) {
-            handlerOut(rawOutput, txHash, blockNumber, time, actualFee, ethAddressRegisterMap);
+            handlerOut(rawOutput, txHash, blockNumber, time, actualFee, ethAddressRegisterMap, vIn);
         }
     }
 
-    protected List<List<String>> splitTxList( List<String> txList) {
+    protected List<List<String>> splitTxList(List<String> txList) {
         List<List<String>> splitList = new ArrayList<List<String>>(FIXED_THREAD_POOL_NUMBER);
         int listSize = (txList.size()/FIXED_THREAD_POOL_NUMBER)+1;
         List<String> list = null;
@@ -213,10 +239,10 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
 
                         for(String tx : txList) {
                             try {
-                                logger.info("=============>tx:{}",tx);
                                 RawTransaction rawTransaction = btcService.getRawTransaction(tx);
                                 btcTransactionsObservable(rawTransaction, blockNumber, time);
                             }catch (Exception e) {
+                                logger.info("btc transactions observable error", e);
                                 continue;
                             }
                         }
@@ -303,7 +329,7 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
         try {
             TimeUnit.SECONDS.sleep(timeout);
         } catch (InterruptedException e) {
-            logger.error("ethTransactionsObservable error", e);
+            logger.error("btcTransactionsObservable error", e);
         }
     }
 

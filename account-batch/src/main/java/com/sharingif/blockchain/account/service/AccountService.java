@@ -39,14 +39,21 @@ public interface AccountService extends IBaseService<Account, java.lang.String> 
     void inBalance(String id, String from, String to, String coinType, String txHash, Date txTime, BigInteger balance);
 
     /**
-     * 入账金额
+     * 出账金额
+     * @param id
+     * @param balance
+     */
+    void outBalance(String id, String from, String to, String coinType, String txHash, Date txTime, BigInteger balance);
+
+    /**
+     * 出账金额
      * @param id
      * @param balance
      */
     void outBalance(String id, String from, String to, String coinType, String txHash, Date txTime, BigInteger balance, BigInteger actualFee);
 
     /**
-     * 入账金额
+     * 出账金额
      * @param ethAccountId
      * @param balance
      */

@@ -1,21 +1,26 @@
 package com.sharingif.blockchain.btc.service.impl;
 
+import com.neemre.btcdcli4j.core.domain.RawOutput;
 import com.neemre.btcdcli4j.core.domain.RawTransaction;
 import com.sharingif.blockchain.btc.service.BtcService;
 import com.sharingif.blockchain.btc.service.TransactionBtcUtxoService;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
+import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.web3j.protocol.core.methods.response.Transaction;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * TransactionBtcBlockNumberConfirmServiceImpl
+ * 交易区块数确认
  *
  * @author Joly
  * @version v1.0
@@ -41,6 +46,32 @@ public class TransactionBtcBlockNumberConfirmServiceImpl implements Initializing
     @Resource
     public void setBtcService(BtcService btcService) {
         this.btcService = btcService;
+    }
+
+    protected boolean validateTransaction(TransactionBtcUtxo transactionBtcUtxo, RawTransaction rawTransaction) {
+
+        if(TransactionBtcUtxo.TX_TYPE_IN.equals(transactionBtcUtxo.getTxType())){
+            List<RawOutput> rawOutputList = rawTransaction.getVOut();
+
+            RawOutput rawOutput = rawOutputList.get(transactionBtcUtxo.getTxIndex().intValue());
+
+            BigInteger value = rawOutput.getValue().multiply(TransactionBtcUtxo.BTC_UNIT).toBigInteger();
+            String address = rawOutput.getScriptPubKey().getAddresses().get(0);
+
+            if(transactionBtcUtxo.getTxValue().compareTo(value) !=0) {
+                return false;
+            }
+
+            if(!transactionBtcUtxo.getTxTo().equals(address)) {
+                return false;
+            }
+        }
+
+        if(TransactionBtcUtxo.TX_TYPE_IN.equals(transactionBtcUtxo.getTxType())) {
+        }
+
+
+        return true;
     }
 
     protected void confirmBlockNumber(TransactionBtcUtxo transactionBtcUtxo) {

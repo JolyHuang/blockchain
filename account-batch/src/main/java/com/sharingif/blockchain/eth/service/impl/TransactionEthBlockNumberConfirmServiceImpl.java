@@ -55,6 +55,9 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
         if(!transactionEth.getTxInput().equals(transaction.getInput())) {
             return false;
         }
+        if(transactionEth.getTxValue().compareTo(transaction.getValue()) != 0) {
+            return false;
+        }
 
         return true;
     }

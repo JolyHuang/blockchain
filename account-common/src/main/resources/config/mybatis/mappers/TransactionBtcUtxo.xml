@@ -15,6 +15,12 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	<if test="null!=txHash">
     		and TX_HASH = #{txHash}
     	</if>
+    	<if test="null!=vinTxHash">
+    		and VIN_TX_HASH = #{vinTxHash}
+    	</if>
+    	<if test="null!=vinTxIndex">
+    		and VIN_TX_INDEX = #{vinTxIndex}
+    	</if>
     	<if test="null!=blockNumber">
     		and BLOCK_NUMBER = #{blockNumber}
     	</if>
@@ -63,6 +69,12 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    <if test="null!=txHash">
 		    TX_HASH = #{txHash},
 		    </if>
+		    <if test="null!=vinTxHash">
+		    VIN_TX_HASH = #{vinTxHash},
+		    </if>
+		    <if test="null!=vinTxIndex">
+		    VIN_TX_INDEX = #{vinTxIndex},
+		    </if>
 		    <if test="null!=blockNumber">
 		    BLOCK_NUMBER = #{blockNumber},
 		    </if>
@@ -107,6 +119,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<resultMap id="transactionBtcUtxoResultMap" type="com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo">
         <result property="id" column="ID"/>
         <result property="txHash" column="TX_HASH"/>
+        <result property="vinTxHash" column="VIN_TX_HASH"/>
+        <result property="vinTxIndex" column="VIN_TX_INDEX"/>
         <result property="blockNumber" column="BLOCK_NUMBER"/>
         <result property="txFrom" column="TX_FROM"/>
         <result property="txTo" column="TX_TO"/>
@@ -127,6 +141,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         INSERT INTO TRANSACTION_BTC_UTXO (
         	ID
         	,TX_HASH
+        	,VIN_TX_HASH
+        	,VIN_TX_INDEX
         	,BLOCK_NUMBER
         	,TX_FROM
         	,TX_TO
@@ -143,6 +159,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         ) VALUES (
         	#{id}
         	,#{txHash}
+        	,#{vinTxHash}
+        	,#{vinTxIndex}
         	,#{blockNumber}
         	,#{txFrom}
         	,#{txTo}
@@ -163,7 +181,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	    DELETE FROM
 	    	TRANSACTION_BTC_UTXO 
 	    WHERE
-	    TX_HASH = #{id} 
+	    ID = #{id} 
     </delete>
     
     <delete id="deleteByCondition">
@@ -181,13 +199,15 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	        <include refid="transactionBtcUtxoSetColumns" />
 		</set>
 	    WHERE
-	    TX_HASH = #{txHash} 
+	    ID = #{id} 
 	</update>
 	
     <select id="queryById" resultMap="transactionBtcUtxoResultMap">
 		SELECT
 			ID
 			,TX_HASH
+			,VIN_TX_HASH
+			,VIN_TX_INDEX
 			,BLOCK_NUMBER
 			,TX_FROM
 			,TX_TO
@@ -204,13 +224,15 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		FROM
 			TRANSACTION_BTC_UTXO 
 		WHERE 
-			TX_HASH = #{id} 
+			ID = #{id} 
 	</select>
 	
 	<select id="queryList" resultMap="transactionBtcUtxoResultMap">
 		SELECT
 			ID
 			,TX_HASH
+			,VIN_TX_HASH
+			,VIN_TX_INDEX
 			,BLOCK_NUMBER
 			,TX_FROM
 			,TX_TO
@@ -230,13 +252,15 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			1=1
 			<include refid="transactionBtcUtxoColumns" />
 		ORDER BY
-			TX_HASH
+			ID
 	</select>
 	
 	<select id="queryAll" resultMap="transactionBtcUtxoResultMap">
 		SELECT
 			ID
 			,TX_HASH
+			,VIN_TX_HASH
+			,VIN_TX_INDEX
 			,BLOCK_NUMBER
 			,TX_FROM
 			,TX_TO
@@ -253,7 +277,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		FROM
 			TRANSACTION_BTC_UTXO 
 		ORDER BY
-			TX_HASH
+			ID
 	</select>
 	
 	<select id="queryPaginationListCount" resultType="Integer">
@@ -270,6 +294,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		SELECT
 			ID
 			,TX_HASH
+			,VIN_TX_HASH
+			,VIN_TX_INDEX
 			,BLOCK_NUMBER
 			,TX_FROM
 			,TX_TO
@@ -289,7 +315,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			1=1
 			<include refid="transactionBtcUtxoColumns" />
 		ORDER BY
-			TX_HASH
+			ID
 	</select>
 
 	<select id="queryPaginationTxStatusInListCount" resultType="Integer">
@@ -325,7 +351,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
-		TRANSACTION_BTC_UTXO
+			TRANSACTION_BTC_UTXO
 		WHERE
 			1=1
 			AND

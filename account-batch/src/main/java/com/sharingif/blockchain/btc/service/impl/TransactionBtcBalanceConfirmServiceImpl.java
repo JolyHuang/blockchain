@@ -1,6 +1,10 @@
 package com.sharingif.blockchain.btc.service.impl;
 
+import com.sharingif.blockchain.account.model.entity.Account;
+import com.sharingif.blockchain.account.service.AccountService;
+import com.sharingif.blockchain.btc.service.BtcService;
 import com.sharingif.blockchain.btc.service.TransactionBtcUtxoService;
+import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
@@ -11,6 +15,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,20 +31,81 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private TransactionBtcUtxoService transactionBtcUtxoService;
+    private AccountService accountService;
+    private BtcService btcService;
 
     @Resource
     public void setTransactionBtcUtxoService(TransactionBtcUtxoService transactionBtcUtxoService) {
         this.transactionBtcUtxoService = transactionBtcUtxoService;
     }
+    @Resource
+    public void setAccountService(AccountService accountService) {
+        this.accountService = accountService;
+    }
+    @Resource
+    public void setBtcService(BtcService btcService) {
+        this.btcService = btcService;
+    }
 
     @Transactional
     protected void in(TransactionBtcUtxo transactionBtcUtxo) {
+        String address = transactionBtcUtxo.getTxTo();
+        Account account = accountService.getNormalAccountByAddress(address, CoinType.BTC.name());
+
+        if(account == null) {
+            transactionBtcUtxoService.updateTxStatusToBalanceError(transactionBtcUtxo.getId());
+        }
+
+        BigInteger blockBalance = btcService.getReceivedByAddress(address, transactionBtcUtxo.getConfirmBlockNumber());
+        BigInteger txBalance = transactionBtcUtxo.getTxValue();
+        BigInteger currentBalance = account.getBalance().add(txBalance);
+
+        if(currentBalance.compareTo(blockBalance) <= 0) {
+            accountService.inBalance(
+                    account.getId()
+                    ,transactionBtcUtxo.getTxFrom()
+                    ,transactionBtcUtxo.getTxTo()
+                    ,CoinType.BTC.name()
+                    ,transactionBtcUtxo.getTxHash()
+                    ,transactionBtcUtxo.getTxTime()
+                    ,txBalance
+            );
+            transactionBtcUtxoService.updateTxStatusToValid(transactionBtcUtxo.getId());
+
+        } else {
+            transactionBtcUtxoService.updateTxStatusToBalanceError(transactionBtcUtxo.getId());
+        }
 
     }
 
     @Transactional
     protected void out(TransactionBtcUtxo transactionBtcUtxo) {
+        String address = transactionBtcUtxo.getTxTo();
+        Account account = accountService.getNormalAccountByAddress(address, CoinType.BTC.name());
 
+        if(account == null) {
+            transactionBtcUtxoService.updateTxStatusToBalanceError(transactionBtcUtxo.getId());
+        }
+
+        BigInteger blockBalance = btcService.getReceivedByAddress(address, transactionBtcUtxo.getConfirmBlockNumber());
+        BigInteger txBalance = transactionBtcUtxo.getTxValue();
+        BigInteger currentBalance = account.getBalance().subtract(txBalance);
+
+        if(currentBalance.compareTo(blockBalance) <= 0) {
+            transactionBtcUtxoService.updateTxStatusToValid(transactionBtcUtxo.getId());
+            accountService.outBalance(
+                    account.getId()
+                    ,transactionBtcUtxo.getTxFrom()
+                    ,transactionBtcUtxo.getTxTo()
+                    ,CoinType.BTC.name()
+                    ,transactionBtcUtxo.getTxHash()
+                    ,transactionBtcUtxo.getTxTime()
+                    ,txBalance
+            );
+
+        } else {
+            transactionBtcUtxoService.updateTxStatusToBalanceError(transactionBtcUtxo.getId());
+        }
     }
 
     protected void confirmBalance(TransactionBtcUtxo transactionBtcUtxo) {

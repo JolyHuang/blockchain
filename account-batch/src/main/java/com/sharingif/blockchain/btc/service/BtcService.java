@@ -3,6 +3,8 @@ package com.sharingif.blockchain.btc.service;
 import com.neemre.btcdcli4j.core.domain.Block;
 import com.neemre.btcdcli4j.core.domain.RawTransaction;
 
+import java.math.BigInteger;
+
 /**
  * BtcService
  *
@@ -41,10 +43,18 @@ public interface BtcService {
     Block getBlock(String blockhash);
 
     /**
-     * 更具交易id获取交易信息
+     * 根据交易id获取交易信息
      * @param txId
      * @return
      */
     RawTransaction getRawTransaction(String txId);
+
+    /**
+     * 查询地址余额
+     * @param address
+     * @param confirmations
+     * @return
+     */
+    BigInteger getReceivedByAddress(String address, Integer confirmations);
 
 }

@@ -62,7 +62,7 @@ public abstract class AbstractTransactionBtcNoticeServiceImpl implements Initial
     }
 
     @Transactional
-    protected void doTransactionEth(TransactionBtcUtxo transactionBtcUtxo) {
+    protected void doTransaction(TransactionBtcUtxo transactionBtcUtxo) {
         try {
             sendNotice(transactionBtcUtxo);
 
@@ -81,7 +81,7 @@ public abstract class AbstractTransactionBtcNoticeServiceImpl implements Initial
         }
 
         for (TransactionBtcUtxo transactionBtcUtxo : paginationRepertory.getPageItems()) {
-            doTransactionEth(transactionBtcUtxo);
+            doTransaction(transactionBtcUtxo);
         }
     }
 

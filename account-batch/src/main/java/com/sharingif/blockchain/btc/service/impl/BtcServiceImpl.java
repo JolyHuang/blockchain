@@ -1,15 +1,19 @@
 package com.sharingif.blockchain.btc.service.impl;
 
+import com.neemre.btcdcli4j.core.BitcoindException;
+import com.neemre.btcdcli4j.core.CommunicationException;
 import com.neemre.btcdcli4j.core.client.BtcdClient;
 import com.neemre.btcdcli4j.core.domain.Block;
 import com.neemre.btcdcli4j.core.domain.RawTransaction;
 import com.sharingif.blockchain.btc.service.BtcService;
+import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
 import com.sharingif.cube.core.exception.CubeRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
 
 /**
  * BtcServiceImpl
@@ -73,6 +77,16 @@ public class BtcServiceImpl implements BtcService {
         try {
             return (RawTransaction)btcdClient.getRawTransaction(txId, true);
         } catch (Exception e) {
+            logger.error("get raw transaction error", e);
+            throw new CubeRuntimeException(e);
+        }
+    }
+
+    public BigInteger getReceivedByAddress(String address, Integer confirmations) {
+        try {
+            return btcdClient.getReceivedByAddress(address, confirmations).multiply(TransactionBtcUtxo.BTC_UNIT).toBigInteger();
+        } catch (Exception e) {
+            logger.error("get received by address error", e);
             throw new CubeRuntimeException(e);
         }
     }
