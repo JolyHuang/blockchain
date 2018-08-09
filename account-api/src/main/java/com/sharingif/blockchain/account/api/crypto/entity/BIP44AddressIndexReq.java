@@ -13,15 +13,6 @@ import java.util.List;
 public class BIP44AddressIndexReq {
 
     /**
-     * BTC
-     */
-    public static final int COIN_TYPE_BTC = 0;
-    /**
-     * ETH
-     */
-    public static final int COIN_TYPE_ETH = 60;
-
-    /**
      * change ExtendedKey Id
      */
     private String changeExtendedKeyId;

@@ -174,7 +174,7 @@ public class BIP44ServiceImpl implements BIP44Service {
         registerReq.setNoticeAddress(req.getNoticeAddress());
         addressRegisterService.register(registerReq);
         accountService.initAccount(registerReq.getCoinType(), registerReq.getAddress());
-        if(BIP44AddressIndexReq.COIN_TYPE_ETH == CoinType.BIP_ETH.getBipCoinType()) {
+        if(CoinType.BIP_ETH.getBipCoinType() == req.getCoinType()) {
             registerReq.setSubCoinType(CoinType.OLE.name());
             registerReq.setContractAddress(oleContract.getContractAddress());
             addressRegisterService.register(registerReq);
