@@ -3,6 +3,7 @@ package com.sharingif.blockchain.eth.service.impl;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
+import org.springframework.stereotype.Service;
 
 /**
  * 充值处理中通知
@@ -12,7 +13,7 @@ import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
  * @since v1.0
  * 2018/7/20 下午6:28
  */
-//@Service
+@Service
 public class TransactionEthDepositProcessingNoticeServiceImpl extends AbstractTransactionEthDepositNoticeServiceImpl {
 
     @Override

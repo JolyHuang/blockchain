@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.web3j.protocol.core.methods.response.Transaction;
 
 import javax.annotation.Resource;
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
  * @since v1.0
  * 2018/8/8 下午6:57
  */
+@Service
 public class TransactionBtcBlockNumberConfirmServiceImpl implements InitializingBean {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -87,15 +89,15 @@ public class TransactionBtcBlockNumberConfirmServiceImpl implements Initializing
         Integer confirmations = rawTransaction.getConfirmations();
         int confirmBlockNumber = transactionBtcUtxo.getConfirmBlockNumber();
 
-        if(confirmations == confirmBlockNumber) {
+        if(confirmations == confirmBlockNumber && confirmations < validBlockNumber) {
             return;
         }
 
         if(confirmations > validBlockNumber) {
-            transactionBtcUtxoService.updateConfirmBlockNumber(transactionBtcUtxo.getId(), confirmations);
+            transactionBtcUtxoService.updateTxStatusToBalanceUnconfirm(transactionBtcUtxo.getId(), confirmations);
             return;
         } else {
-            transactionBtcUtxoService.updateTxStatusToBalanceUnconfirm(transactionBtcUtxo.getId(), confirmations);
+            transactionBtcUtxoService.updateConfirmBlockNumber(transactionBtcUtxo.getId(), confirmations);
             return;
         }
 

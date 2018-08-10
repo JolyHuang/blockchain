@@ -12,6 +12,7 @@ import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
  * @since v1.0
  * 2018/8/8 下午7:35
  */
+@Service
 public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

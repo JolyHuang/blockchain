@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.web3j.protocol.core.methods.response.Transaction;
 
 import javax.annotation.Resource;
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * @since v1.0
  * 2018/7/17 下午4:32
  */
-//@Service
+@Service
 public class TransactionEthBlockNumberConfirmServiceImpl implements InitializingBean {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

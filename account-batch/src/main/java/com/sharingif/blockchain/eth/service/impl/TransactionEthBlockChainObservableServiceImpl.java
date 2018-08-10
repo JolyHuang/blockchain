@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * @since v1.0
  * 2018/7/13 下午5:02
  */
-//@Service
+@Service
 public class TransactionEthBlockChainObservableServiceImpl implements InitializingBean {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

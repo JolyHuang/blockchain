@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since v1.0
  * 2018/8/6 下午6:12
  */
-//@Service
+@Service
 public class TransactionBtcBlockChainObservableServiceImpl implements InitializingBean {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

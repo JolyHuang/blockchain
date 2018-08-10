@@ -5,6 +5,7 @@ import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
+import org.springframework.stereotype.Service;
 
 /**
  * 取现处理中通知
@@ -14,7 +15,7 @@ import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
  * @since v1.0
  * 2018/7/25 下午4:03
  */
-//@Service
+@Service
 public class TransactionEthWithdrawalProcessingNoticeServiceImpl extends AbstractTransactionEthWithdrawalNoticeServiceImpl {
 
 

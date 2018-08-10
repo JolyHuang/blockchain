@@ -3,6 +3,7 @@ package com.sharingif.blockchain.btc.service.impl;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
+import org.springframework.stereotype.Service;
 
 /**
  * 充值失败通知
@@ -12,6 +13,7 @@ import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
  * @since v1.0
  * 2018/8/9 下午2:54
  */
+@Service
 public class TransactionBtcDepositFailNoticeServiceImpl extends AbstractTransactionBtcDepositNoticeServiceImpl {
 
     @Override
