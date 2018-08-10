@@ -80,11 +80,13 @@ public class RemoteContextAutoconfigure {
     public RemoteServicesApplicationContext createRemoteServicesApplicationContext(
             BindingInitializer bindingInitializer
             ,RemoteServices remoteServices
+            ,RemoteServices accountBatchRemoteServices
     ) {
 
 
         List<RemoteServices> remoteServicesList = new ArrayList<RemoteServices>();
         remoteServicesList.add(remoteServices);
+        remoteServicesList.add(accountBatchRemoteServices);
 
         RemoteServicesApplicationContext remoteServicesApplicationContext = new RemoteServicesApplicationContext();
         remoteServicesApplicationContext.setBindingInitializer(bindingInitializer);
