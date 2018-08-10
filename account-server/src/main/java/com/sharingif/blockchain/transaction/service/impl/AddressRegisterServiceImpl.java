@@ -1,13 +1,12 @@
 package com.sharingif.blockchain.transaction.service.impl;
 
 
-import com.neemre.btcdcli4j.core.BitcoindException;
-import com.neemre.btcdcli4j.core.CommunicationException;
 import com.neemre.btcdcli4j.core.client.BtcdClient;
 import com.sharingif.blockchain.account.api.transaction.entity.RegisterReq;
 import com.sharingif.blockchain.account.api.transaction.entity.RegisterRsp;
 import com.sharingif.blockchain.account.api.transaction.entity.UnregisterReq;
 import com.sharingif.blockchain.account.api.transaction.entity.UnregisterRsp;
+import com.sharingif.blockchain.account.batch.api.transaction.service.AddressRegisterApiService;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.dao.AddressRegisterDAO;
 import com.sharingif.blockchain.transaction.model.entity.AddressRegister;
@@ -29,6 +28,7 @@ public class AddressRegisterServiceImpl extends BaseServiceImpl<AddressRegister,
 	private AddressRegisterDAO addressRegisterDAO;
 	private AddressNoticeService addressNoticeService;
 	private BtcdClient btcdClient;
+	private com.sharingif.blockchain.account.batch.api.transaction.service.AddressRegisterApiService addressRegisterApiService;
 
 	public AddressRegisterDAO getAddressRegisterDAO() {
 		return addressRegisterDAO;
@@ -45,6 +45,10 @@ public class AddressRegisterServiceImpl extends BaseServiceImpl<AddressRegister,
 	@Resource
 	public void setBtcdClient(BtcdClient btcdClient) {
 		this.btcdClient = btcdClient;
+	}
+	@Resource
+	public void setAddressRegisterApiService(AddressRegisterApiService addressRegisterApiService) {
+		this.addressRegisterApiService = addressRegisterApiService;
 	}
 
 	@Override
@@ -86,6 +90,14 @@ public class AddressRegisterServiceImpl extends BaseServiceImpl<AddressRegister,
 				throw new CubeRuntimeException(e);
 			}
 		}
+
+		// 通知batch服务更新地址
+		com.sharingif.blockchain.account.batch.api.transaction.entity.RegisterReq batchRegisterReq = new com.sharingif.blockchain.account.batch.api.transaction.entity.RegisterReq();
+		batchRegisterReq.setAddress(req.getAddress());
+		batchRegisterReq.setCoinType(req.getCoinType());
+		batchRegisterReq.setSubCoinType(req.getSubCoinType());
+		batchRegisterReq.setContractAddress(req.getContractAddress());
+		addressRegisterApiService.register(batchRegisterReq);
 
 		return rsp;
 	}
