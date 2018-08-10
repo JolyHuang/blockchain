@@ -21,20 +21,7 @@ public class ETHAddressRegister {
 
     public ETHAddressRegister(List<AddressRegister> addressRegisterList) {
         for(AddressRegister addressRegister : addressRegisterList) {
-            String address = addressRegister.getAddress().toLowerCase();
-
-            if(StringUtils.isTrimEmpty(addressRegister.getSubCoinType())) {
-                ethMap.put(address, addressRegister.getCoinType());
-            } else {
-                String contractAddress = addressRegister.getContractAddress().toLowerCase();
-
-                Map<String, String> subCoinTypeMap = contractAddressMap.get(contractAddress);
-                if(subCoinTypeMap == null) {
-                    subCoinTypeMap = new HashMap<String, String>();
-                    contractAddressMap.put(contractAddress, subCoinTypeMap);
-                }
-                subCoinTypeMap.put(address, addressRegister.getSubCoinType());
-            }
+            addAddressRegister(addressRegister);
         }
     }
 
@@ -68,6 +55,23 @@ public class ETHAddressRegister {
 
     public boolean isSubCoinType(Map<String, String> subCoinTypeMap, String address) {
         return subCoinTypeMap.get(address.toLowerCase()) == null ? false : true;
+    }
+
+    public void addAddressRegister(AddressRegister addressRegister) {
+        String address = addressRegister.getAddress().toLowerCase();
+
+        if(StringUtils.isTrimEmpty(addressRegister.getSubCoinType())) {
+            ethMap.put(address, addressRegister.getCoinType());
+        } else {
+            String contractAddress = addressRegister.getContractAddress().toLowerCase();
+
+            Map<String, String> subCoinTypeMap = contractAddressMap.get(contractAddress);
+            if(subCoinTypeMap == null) {
+                subCoinTypeMap = new HashMap<String, String>();
+                contractAddressMap.put(contractAddress, subCoinTypeMap);
+            }
+            subCoinTypeMap.put(address, addressRegister.getSubCoinType());
+        }
     }
 
 }
