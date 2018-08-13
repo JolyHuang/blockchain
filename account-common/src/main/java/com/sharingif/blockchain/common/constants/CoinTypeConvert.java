@@ -18,13 +18,13 @@ public class CoinTypeConvert {
 
     static {
         COIN_TYPE_MAP = new HashMap<Object, Object>();
-        COIN_TYPE_MAP.put(CoinType.BIP_BTC.getBipCoinType(), CoinType.BTC.name());
+        COIN_TYPE_MAP.put(CoinType.BTC.getBipCoinType(), CoinType.BTC.name());
         COIN_TYPE_MAP.put(CoinType.BIP_BTC_TEST.getBipCoinType(), CoinType.BTC.name());
-        COIN_TYPE_MAP.put(CoinType.BIP_ETH.getBipCoinType(), CoinType.ETH.name());
+        COIN_TYPE_MAP.put(CoinType.ETH.getBipCoinType(), CoinType.ETH.name());
 
-        COIN_TYPE_MAP.put(CoinType.BTC.name(), CoinType.BIP_BTC.getBipCoinType());
-        COIN_TYPE_MAP.put(CoinType.ETH.name(), CoinType.BIP_ETH.getBipCoinType());
-        COIN_TYPE_MAP.put(CoinType.OLE.name(), CoinType.BIP_ETH.getBipCoinType());
+        COIN_TYPE_MAP.put(CoinType.BTC.name(), CoinType.BTC.getBipCoinType());
+        COIN_TYPE_MAP.put(CoinType.ETH.name(), CoinType.ETH.getBipCoinType());
+        COIN_TYPE_MAP.put(CoinType.OLE.name(), CoinType.ETH.getBipCoinType());
     }
 
     public static String convertToCoinType(int bipCoinType) {

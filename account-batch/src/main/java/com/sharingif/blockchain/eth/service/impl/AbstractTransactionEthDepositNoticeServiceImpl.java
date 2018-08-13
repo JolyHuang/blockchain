@@ -5,7 +5,6 @@ import com.sharingif.blockchain.app.components.UrlBody;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
-import org.springframework.stereotype.Service;
 
 /**
  * 充值通知服务
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
  * @since v1.0
  * 2018/7/20 下午6:28
  */
-@Service
 public abstract class AbstractTransactionEthDepositNoticeServiceImpl extends AbstractTransactionEthNoticeServiceImpl {
 
     protected TransactionEthApiReq convertTransactionEthToTransactionEthApiReq(TransactionEth transactionEth) {

@@ -10,26 +10,22 @@ package com.sharingif.blockchain.crypto.app.constants;
  */
 public enum CoinType {
 
-    BIP_BTC(0),BIP_BTC_TEST(1),BIP_ETH(60),BTC("BTC"),ETH("ETH"),OLE("OLE");
+    BTC(0,"BTC"),BIP_BTC_TEST(1, "BTC"),ETH(60, "ETH"),OLE(60, "OLE");
 
-
-    private String coinType;
     private int bipCoinType;
+    private String coinType;
 
-    CoinType(String coinType) {
-        this.coinType = coinType;
-    }
-
-    CoinType(int bipCoinType) {
+    CoinType(int bipCoinType, String coinType) {
         this.bipCoinType = bipCoinType;
-    }
-
-    public String getCoinType() {
-        return coinType;
+        this.coinType = coinType;
     }
 
     public int getBipCoinType() {
         return bipCoinType;
+    }
+
+    public String getCoinType() {
+        return coinType;
     }
 
 }

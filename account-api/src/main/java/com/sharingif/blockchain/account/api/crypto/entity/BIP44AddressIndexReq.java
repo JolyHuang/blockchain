@@ -1,7 +1,5 @@
 package com.sharingif.blockchain.account.api.crypto.entity;
 
-import java.util.List;
-
 /**
  * 生成addressIndex请求
  *

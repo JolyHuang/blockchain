@@ -205,11 +205,11 @@ public class BIP44ServiceImpl implements BIP44Service {
         DeterministicKey addressIndexDeterministicKey = HDKeyDerivation.deriveChildKey(changeDeterministicKey, new ChildNumber(addressIndex, false));
 
         SecretKey secretKey = null;
-        if(CoinType.BIP_ETH.getBipCoinType() == req.getCoinType()) {
+        if(CoinType.ETH.getBipCoinType() == req.getCoinType()) {
             secretKey = addressIndexETH(addressIndexDeterministicKey, extendedKey, keyPath, req.getPassword());
         }
 
-        if(CoinType.BIP_BTC.getBipCoinType() == req.getCoinType() || CoinType.BIP_BTC_TEST.getBipCoinType() == req.getCoinType()) {
+        if(CoinType.BTC.getBipCoinType() == req.getCoinType() || CoinType.BIP_BTC_TEST.getBipCoinType() == req.getCoinType()) {
             secretKey = addressIndexBTC(addressIndexDeterministicKey, extendedKey, keyPath, req.getPassword(), networkParameters);
         }
 
