@@ -47,6 +47,7 @@ public class MnemonicServiceImpl extends BaseServiceImpl<Mnemonic, String> imple
         // 调用crypto-api生成助记词
         com.sharingif.blockchain.crypto.api.mnemonic.entity.MnemonicGenerateReq apiReq = new com.sharingif.blockchain.crypto.api.mnemonic.entity.MnemonicGenerateReq();
         apiReq.setLocale(req.getLocale());
+        apiReq.setMnemonic(req.getMnemonic());
         apiReq.setLength(req.getLength());
         apiReq.setPassword(req.getPassword());
         com.sharingif.blockchain.crypto.api.mnemonic.entity.MnemonicGenerateRsp apiRsp = mnemonicApiService.generate(apiReq);

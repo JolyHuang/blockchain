@@ -5,7 +5,6 @@ import com.sharingif.blockchain.common.components.ole.TransferEventResponse;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.eth.service.EthereumService;
 import com.sharingif.blockchain.eth.service.TransactionEthService;
-import com.sharingif.blockchain.transaction.dao.TransactionEthDAO;
 import com.sharingif.blockchain.transaction.model.entity.BlockChainSync;
 import com.sharingif.blockchain.transaction.model.entity.CurrentBlockNumber;
 import com.sharingif.blockchain.transaction.model.entity.ETHAddressRegister;
@@ -23,6 +22,7 @@ import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.Transaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import rx.functions.Action0;
+import rx.functions.Action1;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
@@ -233,20 +233,26 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
 
         // 监听地址
         ethereumService.getWeb3j().replayTransactionsObservable(new DefaultBlockParameterNumber(startBlockNumber), DefaultBlockParameterName.LATEST)
-            .doOnCompleted(new Action0() {
-                @Override
-                public void call() {
-                    ethTransactionsObservableIsfinsh = true;
-                }
-            }).subscribe(tx -> {
+        .doOnError(new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                ethTransactionsObservableIsfinsh = true;
+            }
+        })
+        .doOnCompleted(new Action0() {
+            @Override
+            public void call() {
+                ethTransactionsObservableIsfinsh = true;
+            }
+        }).subscribe(tx -> {
 
-                handleCurrentBlockNumber(tx, currentBlockNumber);
+            handleCurrentBlockNumber(tx, currentBlockNumber);
 
-                TransactionEth transactionEth = convertBlockDateToTransactionEth(tx, currentBlockNumber);
+            TransactionEth transactionEth = convertBlockDateToTransactionEth(tx, currentBlockNumber);
 
-                if(transactionEth != null) {
-                    persistenceAndNoticeTransactionEth(transactionEth);
-                }
+            if(transactionEth != null) {
+                persistenceAndNoticeTransactionEth(transactionEth);
+            }
 
         });
     }

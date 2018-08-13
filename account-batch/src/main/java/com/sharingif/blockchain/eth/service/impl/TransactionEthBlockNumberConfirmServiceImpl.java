@@ -1,8 +1,11 @@
 package com.sharingif.blockchain.eth.service.impl;
 
+import com.sharingif.blockchain.common.components.ole.OleContract;
+import com.sharingif.blockchain.common.components.ole.TransferEventResponse;
 import com.sharingif.blockchain.eth.service.EthereumService;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.blockchain.eth.service.TransactionEthService;
+import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.slf4j.Logger;
@@ -11,9 +14,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.core.methods.response.Transaction;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,6 +37,7 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
     private int validBlockNumber;
     private TransactionEthService transactionEthService;
     private EthereumService ethereumService;
+    private OleContract oleContract;
 
     @Value("${eth.valid.block.number}")
     public void setValidBlockNumber(int validBlockNumber) {
@@ -45,10 +51,45 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
     public void setEthereumService(EthereumService ethereumService) {
         this.ethereumService = ethereumService;
     }
+    @Resource
+    public void setOleContract(OleContract oleContract) {
+        this.oleContract = oleContract;
+    }
 
     protected boolean validateTransaction(TransactionEth transactionEth, Transaction transaction) {
-        if(!transactionEth.getTxFrom().equals(transaction.getFrom())) {
+        boolean isContractTrans = !StringUtils.isTrimEmpty(transactionEth.getContractAddress());
+        TransferEventResponse transferEventResponse = null;
+        if (isContractTrans) {
+            TransactionReceipt transactionReceipt;
+            try {
+                transactionReceipt = ethereumService.getTransactionReceipt(transactionEth.getTxHash());
+
+                if(TransactionEth.RECEIPT_STATUS_FAIL.equals(transactionReceipt.getStatus())) {
+                    return false;
+                }
+            } catch (Throwable e) {
+                logger.error("validateTransaction get transaction receipt error,trans info:{}", transactionEth, e);
+                return false;
+            }
+
+            List<TransferEventResponse> transferEventResponseList = oleContract.getTransferEvents(transactionReceipt);
+            if(transferEventResponseList == null || transferEventResponseList.isEmpty()) {
+                return false;
+            }
+            transferEventResponse = transferEventResponseList.get(0);
+        }
+
+        if(!transactionEth.getTxFrom().toLowerCase().equals(transaction.getFrom().toLowerCase())) {
             return false;
+        }
+        if(isContractTrans) {
+            if(!transactionEth.getTxTo().toLowerCase().equals(transferEventResponse.to.toLowerCase())) {
+                return false;
+            }
+        } else {
+            if(!transactionEth.getTxTo().toLowerCase().equals(transaction.getTo().toLowerCase())) {
+                return false;
+            }
         }
         if(!transactionEth.getTxIndex().equals(transaction.getTransactionIndex())) {
             return false;
@@ -56,8 +97,14 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
         if(!transactionEth.getTxInput().equals(transaction.getInput())) {
             return false;
         }
-        if(transactionEth.getTxValue().compareTo(transaction.getValue()) != 0) {
-            return false;
+        if(isContractTrans) {
+            if(transactionEth.getTxValue().compareTo(new BigInteger(transferEventResponse.value.toString())) != 0) {
+                return false;
+            }
+        } else {
+            if(transactionEth.getTxValue().compareTo(transaction.getValue()) != 0) {
+                return false;
+            }
         }
 
         return true;

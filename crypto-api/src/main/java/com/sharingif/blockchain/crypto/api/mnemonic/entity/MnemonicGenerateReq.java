@@ -26,6 +26,10 @@ public class MnemonicGenerateReq {
      */
     private Locale locale;
     /**
+     * 助记词
+     */
+    private String mnemonic;
+    /**
      * 助记词长度
      */
     private int length;
@@ -40,6 +44,14 @@ public class MnemonicGenerateReq {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public String getMnemonic() {
+        return mnemonic;
+    }
+
+    public void setMnemonic(String mnemonic) {
+        this.mnemonic = mnemonic;
     }
 
     public int getLength() {
@@ -62,6 +74,7 @@ public class MnemonicGenerateReq {
     public String toString() {
         final StringBuilder sb = new StringBuilder("MnemonicGenerateReq{");
         sb.append("locale=").append(locale);
+        sb.append(", mnemonic='").append(mnemonic).append('\'');
         sb.append(", length=").append(length);
         sb.append(", password='").append(password).append('\'');
         sb.append('}');

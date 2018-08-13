@@ -8,6 +8,7 @@ import com.sharingif.blockchain.crypto.mnemonic.dao.MnemonicDAO;
 import com.sharingif.blockchain.crypto.mnemonic.entity.Mnemonic;
 import com.sharingif.blockchain.crypto.mnemonic.service.MnemonicService;
 import com.sharingif.cube.core.exception.validation.ValidationCubeException;
+import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.core.util.UUIDUtils;
 import com.sharingif.cube.security.confidentiality.encrypt.digest.SHA256Encryptor;
 import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
@@ -51,7 +52,12 @@ public class MnemonicServiceImpl extends BaseServiceImpl<Mnemonic, String> imple
     @Override
     public MnemonicGenerateRsp generate(MnemonicGenerateReq req) {
         // 生成助记词
-        com.sharingif.bips.bip0032.Mnemonic mnemonic = new com.sharingif.bips.bip0032.Mnemonic(req.getLocale(), req.getLength());
+        com.sharingif.bips.bip0032.Mnemonic mnemonic = null;
+        if(StringUtils.isTrimEmpty(req.getMnemonic())) {
+            mnemonic = new com.sharingif.bips.bip0032.Mnemonic(req.getLocale(), req.getLength());
+        } else {
+            mnemonic = new com.sharingif.bips.bip0032.Mnemonic(req.getLocale(), req.getMnemonic());
+        }
 
         String directory = UUIDUtils.generateUUID();
         String fileName = sha256Encryptor.encrypt(mnemonic.getMnemonic());
