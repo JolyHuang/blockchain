@@ -1,7 +1,5 @@
 package com.sharingif.blockchain.btc.service.impl;
 
-import com.neemre.btcdcli4j.core.BitcoindException;
-import com.neemre.btcdcli4j.core.CommunicationException;
 import com.neemre.btcdcli4j.core.client.BtcdClient;
 import com.neemre.btcdcli4j.core.domain.Block;
 import com.neemre.btcdcli4j.core.domain.RawTransaction;
@@ -75,7 +73,7 @@ public class BtcServiceImpl implements BtcService {
     @Override
     public RawTransaction getRawTransaction(String txId) {
         try {
-            return (RawTransaction)btcdClient.getRawTransaction(txId, true);
+            return (RawTransaction)btcdClient.getRawTransaction(txId, 1);
         } catch (Exception e) {
             logger.error("get raw transaction error", e);
             throw new CubeRuntimeException(e);
