@@ -29,7 +29,7 @@ public class OliveRawTransaction {
 
     static String contractAddress = "0xe49a2Faa1081C177721e2F579b55371Fea5b3019";
     static String methodName = "transfer";
-    static String toAddress = "0xe5753789ac148047e858d158d903af8408f2fa43";
+    static String toAddress = "0xd857e1c9fa9a0875a19345b42182c53d5c1c8fe3";
 
 
 
@@ -51,7 +51,7 @@ public class OliveRawTransaction {
 
     private static void transaction() throws ExecutionException, InterruptedException, IOException {
         Web3j web3j = Web3j.build(new HttpService("http://47.88.156.133:7236"));
-        BigInteger amount = Convert.toWei("100", Convert.Unit.ETHER).toBigInteger();
+        BigInteger amount = Convert.toWei("1000000", Convert.Unit.ETHER).toBigInteger();
 
         System.out.println(web3j.ethBlockNumber().send().getBlockNumber());
 

@@ -5,15 +5,13 @@ import com.sharingif.cube.core.util.DateUtils;
 import com.sharingif.cube.security.binary.HexCoder;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.*;
-import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.wallet.DeterministicKeyChain;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.UnreadableWalletException;
 import org.junit.Test;
-import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.MnemonicUtils;
-import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
@@ -23,15 +21,12 @@ import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.Transfer;
 import org.web3j.utils.Convert;
-import rx.Subscription;
-import rx.functions.Action0;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * TODO
@@ -204,9 +199,8 @@ public class TestWeb3j {
 //        System.out.println(credentials3.getAddress());
 //
 //
-        String seedCode = "wear position lyrics exit coach purchase various genre cushion oppose arctic nation";
+        String seedCode = "dog kiwi bus broken merge patient possible version cliff announce tobacco film";
 
-        // BitcoinJ1H7Vqj2VutV9L67hwQgtPk5c8UJXg3FHdB
         DeterministicSeed seed = new DeterministicSeed(seedCode, null, "", 0l);
         DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
         List<ChildNumber> keyPath = HDUtils.parsePath("M/44H/0H/0H/0/0");
@@ -215,8 +209,7 @@ public class TestWeb3j {
 //        Credentials credentials6 = Credentials.create(key.getPrivKey().toString(16));
 //        System.out.println(credentials6.getAddress());
 
-
-        System.out.println(key.toAddress(MainNetParams.get()));
+        System.out.println(key.toAddress(TestNet3Params.get()));
 
 //        BigInteger privKey = key.getPrivKey();
 //
@@ -240,6 +233,8 @@ public class TestWeb3j {
 //        System.out.println(credentials6.getAddress());
 
     }
+
+
 
     public static void getUserExternalAddress(final String pubKey, final NetworkParameters networkParameters, final long userIndex) {
 
@@ -323,8 +318,8 @@ public class TestWeb3j {
 
 
         TransactionReceipt transactionReceipt = Transfer.sendFunds(
-                web3j, credentials, "0xe5753789ac148047e858d158d903af8408f2fa43",
-                new BigDecimal("3"), Convert.Unit.ETHER).send();
+                web3j, credentials, "0xa0174debbf63ec9288d1b05daf0be426a2f40685",
+                new BigDecimal("1"), Convert.Unit.ETHER).send();
 
         System.out.println(transactionReceipt.getTransactionHash());
 
