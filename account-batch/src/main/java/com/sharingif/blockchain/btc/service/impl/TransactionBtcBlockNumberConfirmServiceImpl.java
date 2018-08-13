@@ -82,7 +82,7 @@ public class TransactionBtcBlockNumberConfirmServiceImpl implements Initializing
         try {
             rawTransaction = btcService.getRawTransaction(transactionBtcUtxo.getTxHash());
         } catch (Exception e) {
-            logger.error("btc validate transaction confirm block number error", e);
+            logger.error("btc validate transaction confirm block number error, transactionBtcUtxo:{}", transactionBtcUtxo, e);
             transactionBtcUtxoService.updateTxStatusToInvalid(transactionBtcUtxo.getId());
             return;
         }
@@ -94,6 +94,11 @@ public class TransactionBtcBlockNumberConfirmServiceImpl implements Initializing
         }
 
         if(confirmations > validBlockNumber) {
+            if(!validateTransaction(transactionBtcUtxo, rawTransaction)) {
+                logger.error("btc validate transaction content error, transactionBtcUtxo:{}", transactionBtcUtxo);
+                transactionBtcUtxoService.updateTxStatusToInvalid(transactionBtcUtxo.getId());
+            }
+
             transactionBtcUtxoService.updateTxStatusToBalanceUnconfirm(transactionBtcUtxo.getId(), confirmations);
             return;
         } else {

@@ -79,7 +79,7 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
         utxo.setTxHash(txHash);
         utxo.setBlockNumber(blockNumber);
         utxo.setActualFee(actualFee);
-        utxo.setTxTime(new Date(time));
+        utxo.setTxTime(new Date(time*1000));
         utxo.setConfirmBlockNumber(0);
         utxo.setTxStatus(TransactionBtcUtxo.TX_STATUS_UNTREATED);
         utxo.setTaskStatus(TransactionBtcUtxo.TASK_STATUS_UNTREATED);

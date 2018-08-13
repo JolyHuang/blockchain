@@ -77,13 +77,14 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
         try {
             transaction = ethereumService.getTransactionByHash(transactionEth.getTxHash());
         } catch (Exception e) {
-            logger.error("eth validate transaction confirm block number error", e);
+            logger.error("eth validate transaction confirm block number error, transactionEth:{}", transactionEth, e);
             transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
             return;
         }
 
         boolean validateTransactionStatus = validateTransaction(transactionEth, transaction);
         if(!validateTransactionStatus) {
+            this.logger.info("eth validate transaction content error, transactionEth:{}", transactionEth);
             transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
             return;
         }

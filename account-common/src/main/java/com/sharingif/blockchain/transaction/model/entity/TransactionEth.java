@@ -76,7 +76,7 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	 */
 	public static final String TX_STATUS_DEPOSIT_FAIL_NOTIFIED= "CZSBYTZ";
 	/**
-	 * 交易状态(QXSBYTZ:充值失败已通知)
+	 * 交易状态(QXSBYTZ:取现失败已通知)
 	 */
 	public static final String TX_STATUS_WITHDRAWAL_FAIL_NOTIFIED= "QXSBYTZ";
 

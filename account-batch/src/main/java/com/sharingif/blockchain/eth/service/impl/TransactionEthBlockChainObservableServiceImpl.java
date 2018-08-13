@@ -4,6 +4,7 @@ import com.sharingif.blockchain.common.components.ole.OleContract;
 import com.sharingif.blockchain.common.components.ole.TransferEventResponse;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.eth.service.EthereumService;
+import com.sharingif.blockchain.eth.service.TransactionEthService;
 import com.sharingif.blockchain.transaction.dao.TransactionEthDAO;
 import com.sharingif.blockchain.transaction.model.entity.BlockChainSync;
 import com.sharingif.blockchain.transaction.model.entity.CurrentBlockNumber;
@@ -43,7 +44,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private TransactionEthDAO transactionEthDAO;
+    private TransactionEthService transactionEthService;
     private BlockChainSyncService blockChainSyncService;
     private AddressRegisterService addressRegisterService;
     private EthereumService ethereumService;
@@ -51,16 +52,16 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
     private Boolean ethTransactionsObservableIsfinsh;
 
     @Resource
+    public void setTransactionEthService(TransactionEthService transactionEthService) {
+        this.transactionEthService = transactionEthService;
+    }
+    @Resource
     public void setBlockChainSyncService(BlockChainSyncService blockChainSyncService) {
         this.blockChainSyncService = blockChainSyncService;
     }
     @Resource
     public void setAddressRegisterService(AddressRegisterService addressRegisterService) {
         this.addressRegisterService = addressRegisterService;
-    }
-    @Resource
-    public void setTransactionEthDAO(TransactionEthDAO transactionEthDAO) {
-        this.transactionEthDAO = transactionEthDAO;
     }
     @Resource
     public void setEthereumService(EthereumService ethereumService) {
@@ -76,7 +77,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
      * 处理宕机重启
      */
     protected Boolean isDuplicationData(String txHash) {
-        TransactionEth transactionEth =transactionEthDAO.queryById(txHash);
+        TransactionEth transactionEth =transactionEthService.getById(txHash);
 
         if(transactionEth == null) {
             return false;
@@ -224,7 +225,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         if(isDuplicationData(transactionEth.getTxHash())) {
             return;
         }
-        transactionEthDAO.insert(transactionEth);
+        transactionEthService.add(transactionEth);
     }
 
     protected void ethTransactionsObservable(BigInteger startBlockNumber) {
