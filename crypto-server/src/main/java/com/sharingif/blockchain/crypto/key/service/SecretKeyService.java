@@ -22,4 +22,12 @@ public interface SecretKeyService extends IBaseService<SecretKey, String> {
      */
     Credentials getCredentials(String secretKeyId, String password);
 
+    /**
+     * 获取Credentials
+     * @param secretKey
+     * @param password
+     * @return
+     */
+    Credentials getCredentials(SecretKey secretKey, String password);
+
 }

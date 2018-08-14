@@ -52,6 +52,15 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
     }
 
     @Override
+    public PaginationRepertory<TransactionBtcUtxo> getOutUntreated(PaginationCondition<TransactionBtcUtxo> paginationCondition) {
+        paginationCondition.getCondition().setTxStatus(TransactionBtcUtxo.TX_STATUS_UNTREATED);
+        paginationCondition.getCondition().setTxType(TransactionBtcUtxo.TX_TYPE_OUT);
+        paginationCondition.getCondition().setTaskStatus(TransactionBtcUtxo.TASK_STATUS_UNTREATED);
+
+        return getPagination(paginationCondition);
+    }
+
+    @Override
     public PaginationRepertory<TransactionBtcUtxo> getUnconfirmedBlockNumber(PaginationCondition<TransactionBtcUtxo> paginationCondition) {
         paginationCondition.getCondition().setTxStatusArray(Arrays.asList(
                 TransactionBtcUtxo.TX_STATUS_DEPOSIT_PROCESSING_NOTIFIED
@@ -81,9 +90,27 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
     }
 
     @Override
+    public PaginationRepertory<TransactionBtcUtxo> getOutValid(PaginationCondition<TransactionBtcUtxo> paginationCondition) {
+        paginationCondition.getCondition().setTxStatus(TransactionBtcUtxo.TX_STATUS_VALID);
+        paginationCondition.getCondition().setTxType(TransactionBtcUtxo.TX_TYPE_OUT);
+        paginationCondition.getCondition().setTaskStatus(TransactionBtcUtxo.TASK_STATUS_UNTREATED);
+
+        return getPagination(paginationCondition);
+    }
+
+    @Override
     public PaginationRepertory<TransactionBtcUtxo> getInInvalid(PaginationCondition<TransactionBtcUtxo> paginationCondition) {
         paginationCondition.getCondition().setTxStatus(TransactionBtcUtxo.TX_STATUS_INVALID);
         paginationCondition.getCondition().setTxType(TransactionBtcUtxo.TX_TYPE_IN);
+        paginationCondition.getCondition().setTaskStatus(TransactionBtcUtxo.TASK_STATUS_UNTREATED);
+
+        return getPagination(paginationCondition);
+    }
+
+    @Override
+    public PaginationRepertory<TransactionBtcUtxo> getOutInvalid(PaginationCondition<TransactionBtcUtxo> paginationCondition) {
+        paginationCondition.getCondition().setTxStatus(TransactionBtcUtxo.TX_STATUS_INVALID);
+        paginationCondition.getCondition().setTxType(TransactionBtcUtxo.TX_TYPE_OUT);
         paginationCondition.getCondition().setTaskStatus(TransactionBtcUtxo.TASK_STATUS_UNTREATED);
 
         return getPagination(paginationCondition);
@@ -94,6 +121,15 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
         TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
         transactionBtcUtxo.setId(id);
         transactionBtcUtxo.setTxStatus(TransactionBtcUtxo.TX_STATUS_DEPOSIT_PROCESSING_NOTIFIED);
+
+        updateById(transactionBtcUtxo);
+    }
+
+    @Override
+    public void updateTxStatusToWithdrawalProcessingNotified(String id) {
+        TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
+        transactionBtcUtxo.setId(id);
+        transactionBtcUtxo.setTxStatus(TransactionBtcUtxo.TX_STATUS_WITHDRAWAL_PROCESSING_NOTIFIED);
 
         updateById(transactionBtcUtxo);
     }
@@ -146,6 +182,15 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
     }
 
     @Override
+    public void updateTxStatusToWithdrawalSuccessNotified(String id) {
+        TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
+        transactionBtcUtxo.setId(id);
+        transactionBtcUtxo.setTxStatus(TransactionBtcUtxo.TX_STATUS_WITHDRAWAL_SUCCESS_NOTIFIED);
+
+        updateById(transactionBtcUtxo);
+    }
+
+    @Override
     public void updateTxStatusToInvalid(String id) {
         TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
         transactionBtcUtxo.setId(id);
@@ -168,6 +213,15 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
         TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
         transactionBtcUtxo.setId(id);
         transactionBtcUtxo.setTxStatus(TransactionEth.TX_STATUS_DEPOSIT_FAIL_NOTIFIED);
+
+        updateById(transactionBtcUtxo);
+    }
+
+    @Override
+    public void updateTxStatusToWithdrawalFailNotified(String id) {
+        TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
+        transactionBtcUtxo.setId(id);
+        transactionBtcUtxo.setTxStatus(TransactionBtcUtxo.TX_STATUS_WITHDRAWAL_FAIL_NOTIFIED);
 
         updateById(transactionBtcUtxo);
     }

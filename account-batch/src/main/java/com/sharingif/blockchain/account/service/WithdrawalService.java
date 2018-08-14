@@ -10,11 +10,18 @@ import com.sharingif.cube.support.service.base.IBaseService;
 public interface WithdrawalService extends IBaseService<Withdrawal, String> {
 
     /**
-     * 获取未处理交易数据
+     * 获取未处理ETH交易数据
      * @param paginationCondition
      * @return
      */
     PaginationRepertory<Withdrawal> getEthUntreated(PaginationCondition<Withdrawal> paginationCondition);
+
+    /**
+     * 获取未处理BTC交易数据
+     * @param paginationCondition
+     * @return
+     */
+    PaginationRepertory<Withdrawal> getBtcUntreated(PaginationCondition<Withdrawal> paginationCondition);
 
     /**
      * 修改状态为处理中

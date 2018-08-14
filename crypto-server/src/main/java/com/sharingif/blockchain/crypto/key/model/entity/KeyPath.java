@@ -19,6 +19,10 @@ public class KeyPath {
     private String bitcoinjParentPath;
     private String bitcoinjPath;
 
+    public KeyPath(String path) {
+        this.path = path;
+    }
+
     public KeyPath(BIP44AddressIndexReq req, int addressIndex) {
         BIP44GenerateReq bip44GenerateReq = new BIP44GenerateReq();
         bip44GenerateReq.setMnemonicId(req.getMnemonicId());
@@ -90,5 +94,23 @@ public class KeyPath {
 
     public String getBitcoinjPath() {
         return bitcoinjPath;
+    }
+
+    public Integer getCoinType() {
+        String[] pathArray = this.path.split("/");
+
+        return new Integer(pathArray[2].replace("'",""));
+    }
+
+    public Integer getAccount() {
+        String[] pathArray = this.path.split("/");
+
+        return new Integer(pathArray[3].replace("'",""));
+    }
+
+    public Integer getChange() {
+        String[] pathArray = this.path.split("/");
+
+        return new Integer(pathArray[4]);
     }
 }

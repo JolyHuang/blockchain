@@ -7,7 +7,7 @@ import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.springframework.stereotype.Service;
 
 /**
- * 取现处理中通知
+ * 取现成功通知
  *
  * @author Joly
  * @version v1.0

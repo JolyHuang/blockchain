@@ -180,7 +180,7 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
                 }
 
             } catch (Exception e) {
-                logger.error("withdrawal untreated status error", e);
+                logger.error("eth withdrawal untreated status error", e);
             }
         }
     }

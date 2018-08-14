@@ -35,6 +35,11 @@ public class SecretKeyServiceImpl extends BaseServiceImpl<SecretKey, String> imp
     public Credentials getCredentials(String secretKeyId, String password) {
         SecretKey secretKey = secretKeyDAO.queryById(secretKeyId);
 
+        return getCredentials(secretKey, password);
+    }
+
+    @Override
+    public Credentials getCredentials(SecretKey secretKey, String password) {
         try {
             Credentials credentials = WalletUtils.loadCredentials(
                     password

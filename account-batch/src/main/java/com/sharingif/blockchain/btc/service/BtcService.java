@@ -1,9 +1,11 @@
 package com.sharingif.blockchain.btc.service;
 
 import com.neemre.btcdcli4j.core.domain.Block;
+import com.neemre.btcdcli4j.core.domain.Output;
 import com.neemre.btcdcli4j.core.domain.RawTransaction;
 
 import java.math.BigInteger;
+import java.util.List;
 
 /**
  * BtcService
@@ -56,5 +58,28 @@ public interface BtcService {
      * @return
      */
     BigInteger getReceivedByAddress(String address, Integer confirmations);
+
+    /**
+     * 签名交易
+     * @param rawTransaction
+     * @return
+     */
+    String signRawTransaction(String rawTransaction);
+
+    /**
+     * 发送签名交易
+     * @param signRawTransaction
+     * @return
+     */
+    String sendRawTransaction(String signRawTransaction);
+
+    /**
+     * 获取指定额度的output
+     * @param address
+     * @param fee
+     * @param amount
+     * @return
+     */
+    List<Output> getListUnspent(String address, BigInteger amount, BigInteger fee);
 
 }

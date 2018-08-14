@@ -4,13 +4,13 @@ import com.sharingif.blockchain.crypto.api.key.entity.*;
 import com.sharingif.blockchain.crypto.app.components.Keystore;
 import com.sharingif.blockchain.crypto.app.constants.CoinType;
 import com.sharingif.blockchain.crypto.app.constants.ErrorConstants;
+import com.sharingif.blockchain.crypto.btc.service.BtcService;
 import com.sharingif.blockchain.crypto.key.dao.ExtendedKeyDAO;
 import com.sharingif.blockchain.crypto.key.dao.SecretKeyDAO;
 import com.sharingif.blockchain.crypto.key.model.entity.ExtendedKey;
 import com.sharingif.blockchain.crypto.key.model.entity.KeyPath;
 import com.sharingif.blockchain.crypto.key.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.key.service.BIP44Service;
-import com.sharingif.blockchain.crypto.key.service.BtcService;
 import com.sharingif.blockchain.crypto.mnemonic.service.MnemonicService;
 import com.sharingif.cube.core.exception.validation.ValidationCubeException;
 import com.sharingif.cube.security.confidentiality.encrypt.digest.SHA256Encryptor;
@@ -209,7 +209,7 @@ public class BIP44ServiceImpl implements BIP44Service {
             secretKey = addressIndexETH(addressIndexDeterministicKey, extendedKey, keyPath, req.getPassword());
         }
 
-        if(CoinType.BTC.getBipCoinType() == req.getCoinType() || CoinType.BIP_BTC_TEST.getBipCoinType() == req.getCoinType()) {
+        if(CoinType.BTC.getBipCoinType() == req.getCoinType() || CoinType.BTC_TEST.getBipCoinType() == req.getCoinType()) {
             secretKey = addressIndexBTC(addressIndexDeterministicKey, extendedKey, keyPath, req.getPassword(), networkParameters);
         }
 

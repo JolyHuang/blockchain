@@ -36,6 +36,15 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, String> i
 	}
 
 	@Override
+	public PaginationRepertory<Withdrawal> getBtcUntreated(PaginationCondition<Withdrawal> paginationCondition) {
+		paginationCondition.getCondition().setCoinType(CoinType.BTC.name());
+		paginationCondition.getCondition().setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
+		paginationCondition.getCondition().setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
+
+		return getPagination(paginationCondition);
+	}
+
+	@Override
 	public void updateStatusToProcessing(String id) {
 		Withdrawal withdrawal = new Withdrawal();
 		withdrawal.setId(id);

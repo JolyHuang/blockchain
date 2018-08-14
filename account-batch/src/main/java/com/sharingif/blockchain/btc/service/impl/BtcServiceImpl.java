@@ -2,16 +2,23 @@ package com.sharingif.blockchain.btc.service.impl;
 
 import com.neemre.btcdcli4j.core.client.BtcdClient;
 import com.neemre.btcdcli4j.core.domain.Block;
+import com.neemre.btcdcli4j.core.domain.Output;
 import com.neemre.btcdcli4j.core.domain.RawTransaction;
+import com.neemre.btcdcli4j.core.domain.SignatureResult;
 import com.sharingif.blockchain.btc.service.BtcService;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
 import com.sharingif.cube.core.exception.CubeRuntimeException;
+import com.sharingif.cube.core.exception.UnknownCubeException;
+import com.sharingif.cube.core.exception.validation.ValidationCubeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * BtcServiceImpl
@@ -87,6 +94,57 @@ public class BtcServiceImpl implements BtcService {
             logger.error("get received by address error", e);
             throw new CubeRuntimeException(e);
         }
+    }
+
+    public String signRawTransaction(String rawTransaction) {
+        SignatureResult signatureResult;
+        try {
+            signatureResult = btcdClient.signRawTransaction(rawTransaction);
+        } catch (Exception e) {
+            logger.error("sign raw transaction error", e);
+            throw new CubeRuntimeException(e);
+        }
+
+        if(!signatureResult.getComplete()) {
+            logger.error("signature result error, signatureResult:{}", signatureResult);
+            throw new UnknownCubeException();
+        }
+
+        return signatureResult.getHex();
+    }
+
+    public String sendRawTransaction(String signRawTransaction) {
+        try {
+            return btcdClient.sendRawTransaction(signRawTransaction);
+        } catch (Exception e) {
+            logger.error("send raw transaction error", e);
+            throw new CubeRuntimeException(e);
+        }
+    }
+
+    public List<Output> getListUnspent(String address, BigInteger amount, BigInteger fee) {
+        BigInteger totalAmount = amount.add(fee);
+
+        List<Output> outputs = null;
+        try {
+            outputs = btcdClient.listUnspent(2,9999999, Arrays.asList(address));
+        } catch (Exception e) {
+            logger.error("get getlistUnspent error", e);
+            throw new CubeRuntimeException(e);
+        }
+
+        BigInteger outputAmount = BigInteger.ZERO;
+        List<Output> amountOutputs = new ArrayList<Output>();
+        for(Output output : outputs) {
+            amountOutputs.add(output);
+            outputAmount = outputAmount.add(output.getAmount().multiply(TransactionBtcUtxo.BTC_UNIT).toBigInteger());
+            if(outputAmount.compareTo(totalAmount) >= 0) {
+                return amountOutputs;
+            }
+        }
+
+        logger.error("insufficient balance, address:{},amount:{}", address, amount);
+        throw new ValidationCubeException("insufficient balance");
     }
 
 }

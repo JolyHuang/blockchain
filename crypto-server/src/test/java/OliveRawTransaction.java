@@ -29,7 +29,7 @@ public class OliveRawTransaction {
 
     static String contractAddress = "0xe49a2Faa1081C177721e2F579b55371Fea5b3019";
     static String methodName = "transfer";
-    static String toAddress = "0xd857e1c9fa9a0875a19345b42182c53d5c1c8fe3";
+    static String toAddress = "0x5027d423404e02d88f4538e897b837a7f3a601ab";
 
 
 
@@ -70,7 +70,7 @@ public class OliveRawTransaction {
         RawTransaction rawTransaction  = RawTransaction.createTransaction(
                 nonce
                 ,Convert.toWei("0.000000012", Convert.Unit.ETHER).toBigInteger()
-                ,new BigInteger("1000000")
+                ,new BigInteger("100000")
                 ,contractAddress
                 ,encodedFunction
         );

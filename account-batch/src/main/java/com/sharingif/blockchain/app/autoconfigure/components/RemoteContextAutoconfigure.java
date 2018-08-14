@@ -65,6 +65,7 @@ public class RemoteContextAutoconfigure {
     ) {
         List<String> services = new ArrayList<String>();
 
+        services.add("com.sharingif.blockchain.crypto.api.btc.service.BtcApiService");
         services.add("com.sharingif.blockchain.crypto.api.eth.service.EthApiService");
         services.add("com.sharingif.blockchain.crypto.api.eth.service.EthErc20ContractApiService");
 
