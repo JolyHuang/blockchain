@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * Bootstrap
@@ -43,6 +44,7 @@ public class Bootstrap {
                 }).run(args);
     }
 
+    @EnableTransactionManagement
     @EnableAutoConfiguration
     @ComponentScan(
             basePackages = "com.sharingif.blockchain.crypto.*.dao,com.sharingif.blockchain.crypto.*.service,com.sharingif.blockchain.crypto.app.autoconfigure,com.sharingif.cube.spring.boot"
