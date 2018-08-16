@@ -105,25 +105,18 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
             transactionBtcUtxoService.updateTxStatusToBalanceError(transactionBtcUtxo.getId());
         }
 
-        BigInteger blockBalance = btcService.getReceivedByAddress(address, transactionBtcUtxo.getConfirmBlockNumber());
         BigInteger txBalance = transactionBtcUtxo.getTxValue();
-        BigInteger currentBalance = account.getBalance().subtract(txBalance);
+        accountService.outBalance(
+                account.getId()
+                ,transactionBtcUtxo.getTxFrom()
+                ,transactionBtcUtxo.getTxTo()
+                ,CoinType.BTC.name()
+                ,transactionBtcUtxo.getId()
+                ,transactionBtcUtxo.getTxTime()
+                ,txBalance
+        );
 
-        if(currentBalance.compareTo(blockBalance) >= 0) {
-            transactionBtcUtxoService.updateTxStatusToValid(transactionBtcUtxo.getId());
-            accountService.outBalance(
-                    account.getId()
-                    ,transactionBtcUtxo.getTxFrom()
-                    ,transactionBtcUtxo.getTxTo()
-                    ,CoinType.BTC.name()
-                    ,transactionBtcUtxo.getId()
-                    ,transactionBtcUtxo.getTxTime()
-                    ,txBalance
-            );
-
-        } else {
-            transactionBtcUtxoService.updateTxStatusToBalanceError(transactionBtcUtxo.getId());
-        }
+        transactionBtcUtxoService.updateTxStatusToValid(transactionBtcUtxo.getId());
     }
 
     protected void confirmBalance(TransactionBtcUtxo transactionBtcUtxo) {

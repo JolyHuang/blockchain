@@ -92,61 +92,47 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
     }
 
     protected void ethOut(String address, Account account, TransactionEth transactionEth) {
-        BigInteger blockBalance = ethereumService.getBalance(address);
         BigInteger txBalance = transactionEth.getTxValue();
         BigInteger actualFee = transactionEth.getActualFee();
-        BigInteger currentBalance = account.getBalance().subtract(txBalance).subtract(actualFee);
 
-        if(currentBalance.compareTo(blockBalance) >= 0) {
-            transactionEthService.updateTxStatusToValid(transactionEth.getId());
-            accountService.outBalance(
-                    account.getId()
-                    ,transactionEth.getTxFrom()
-                    ,transactionEth.getTxTo()
-                    ,transactionEth.getCoinType()
-                    ,transactionEth.getId()
-                    ,transactionEth.getTxTime()
-                    ,txBalance
-                    ,actualFee
-            );
+        accountService.outBalance(
+                account.getId()
+                ,transactionEth.getTxFrom()
+                ,transactionEth.getTxTo()
+                ,transactionEth.getCoinType()
+                ,transactionEth.getId()
+                ,transactionEth.getTxTime()
+                ,txBalance
+                ,actualFee
+        );
 
-        } else {
-            transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
-        }
+        transactionEthService.updateTxStatusToValid(transactionEth.getId());
     }
 
     protected void contractOut(String address, Account account, TransactionEth transactionEth) {
         // 处理ETH手续费
-        BigInteger ethBlockBalance = ethereumService.getBalance(address);
         Account ethAccount = accountService.getNormalAccountByAddress(address, CoinType.ETH.name());
-        BigInteger actualFee = transactionEth.getActualFee();
-        BigInteger currentEthBalance = ethAccount.getBalance().subtract(actualFee);
-        if(currentEthBalance.compareTo(ethBlockBalance) != 0) {
+        if(ethAccount == null) {
             transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
-            return;
         }
+        BigInteger actualFee = transactionEth.getActualFee();
 
         // 处理合约
-        BigInteger blockContractBalance = oleContract.balanceOf(address);
         BigInteger txBalance = transactionEth.getTxValue();
-        BigInteger currentContractBalance = account.getBalance().subtract(txBalance);
-        if(currentContractBalance.compareTo(blockContractBalance) >= 0) {
-            transactionEthService.updateTxStatusToValid(transactionEth.getId());
-            accountService.outBalance(
-                    ethAccount.getId()
-                    ,account.getId()
-                    ,transactionEth.getTxFrom()
-                    ,transactionEth.getTxTo()
-                    ,transactionEth.getCoinType()
-                    ,transactionEth.getId()
-                    ,transactionEth.getTxTime()
-                    ,txBalance
-                    ,actualFee
-            );
+        accountService.outBalance(
+                ethAccount.getId()
+                ,account.getId()
+                ,transactionEth.getTxFrom()
+                ,transactionEth.getTxTo()
+                ,transactionEth.getCoinType()
+                ,transactionEth.getId()
+                ,transactionEth.getTxTime()
+                ,txBalance
+                ,actualFee
+        );
 
-        } else {
-            transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
-        }
+        transactionEthService.updateTxStatusToValid(transactionEth.getId());
+
     }
 
     @Transactional
