@@ -232,6 +232,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         .doOnError(new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
+                logger.error("ethTransactionsObservable doOnError", throwable);
                 ethTransactionsObservableIsfinsh = true;
             }
         })
@@ -245,12 +246,6 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
             handleCurrentBlockNumber(tx, currentBlockNumber);
 
             ethTransactionsObservable(tx, currentBlockNumber);
-
-//            TransactionEth transactionEth = convertBlockDateToTransactionEth(tx, currentBlockNumber);
-//
-//            if(transactionEth != null) {
-//                persistenceAndNoticeTransactionEth(transactionEth);
-//            }
 
         });
     }
