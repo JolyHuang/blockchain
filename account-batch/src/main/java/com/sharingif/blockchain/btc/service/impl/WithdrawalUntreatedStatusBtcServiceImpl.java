@@ -77,7 +77,7 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
         SecretKey secretKey = secretKeyService.getById(secretKeyId);
         String password = secretKeyService.decryptPassword(secretKey.getPassword());
 
-        BigInteger fess = new BigInteger("19200");
+        BigInteger fess = new BigInteger("30000");
 
         List<Output> outputList = btcService.getListUnspent(secretKey.getAddress(), withdrawal.getAmount(), fess);
 

@@ -138,7 +138,7 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
         }
 
         BigInteger nonce =  ethereumService.ethGetTransactionCountPending(secretKey.getAddress());
-        BigInteger gasPrice = ethereumService.getGasPrice();
+        BigInteger gasPrice = ethereumService.getGasPrice().add(new BigInteger("3000000000"));
         String password = secretKeyService.decryptPassword(secretKey.getPassword());
 
         String txHash = null;
