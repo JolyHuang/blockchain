@@ -65,14 +65,13 @@ public abstract class AbstractTransactionEthNoticeServiceImpl implements Initial
     protected void doTransactionEth(TransactionEth transactionEth) {
         try {
             sendNotice(transactionEth);
-
-            // 修改交易状态
-            updateTxStatus(transactionEth.getId());
         } catch (Exception e) {
             logger.error("transaction eth info:{}", transactionEth, e);
-            transactionEthService.updateTaskStatusToFail(transactionEth.getId());
-            throw e;
+            return;
         }
+
+        // 修改交易状态
+        updateTxStatus(transactionEth.getId());
     }
 
     protected void doPaginationRepertory(PaginationRepertory<TransactionEth> paginationRepertory) {

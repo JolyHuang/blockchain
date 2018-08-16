@@ -75,26 +75,32 @@ public abstract class AbstractTransactionBtcWithdrawalNoticeServiceImpl extends 
 
     @Transactional
     protected void doTransaction(TransactionBtcUtxo transactionBtcUtxo) {
+        AddressNotice addressNotice = null;
+        Withdrawal withdrawal = null;
         try {
             // 获取通知地址
-            AddressNotice addressNotice = getAddressNoticeService().getWithdrawalNoticeAddress(transactionBtcUtxo.getTxTo(), CoinType.BTC.name());
+            addressNotice = getAddressNoticeService().getWithdrawalNoticeAddress(transactionBtcUtxo.getTxTo(), CoinType.BTC.name());
             // 获取取现id
-            Withdrawal withdrawal = withdrawalService.getWithdrawalByTxHash(transactionBtcUtxo.getTxHash());
+            withdrawal = withdrawalService.getWithdrawalByTxHash(transactionBtcUtxo.getTxHash());
             if(withdrawal == null) {
                 logger.error("getWithdrawalByTxHash error, transactionBtcUtxo:{}", transactionBtcUtxo);
                 throw new UnknownCubeException();
             }
-
-            sendNotice(addressNotice, withdrawal, transactionBtcUtxo);
-
-            // 修改交易状态
-            updateTxStatus(withdrawal, transactionBtcUtxo.getId());
-
         } catch (Exception e) {
             logger.error("transaction btc info:{}", transactionBtcUtxo, e);
             getTransactionBtcUtxoService().updateTaskStatusToFail(transactionBtcUtxo.getId());
             throw e;
         }
+
+        try {
+            sendNotice(addressNotice, withdrawal, transactionBtcUtxo);
+        } catch (Exception e) {
+            logger.error("withdrawal transaction btc send notice error, info:{}", transactionBtcUtxo, e);
+            return;
+        }
+
+        // 修改交易状态
+        updateTxStatus(withdrawal, transactionBtcUtxo.getId());
     }
 
     @Deprecated

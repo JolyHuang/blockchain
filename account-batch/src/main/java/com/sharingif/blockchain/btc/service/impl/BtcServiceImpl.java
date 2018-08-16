@@ -160,7 +160,7 @@ public class BtcServiceImpl implements BtcService {
             }
         }
 
-        logger.error("insufficient balance, address:{},amount:{}", address, amount);
+        logger.error("insufficient balance, address:{},amount:{},transfer amount:{}", address, outputAmount, totalAmount);
         throw new ValidationCubeException("insufficient balance");
     }
 

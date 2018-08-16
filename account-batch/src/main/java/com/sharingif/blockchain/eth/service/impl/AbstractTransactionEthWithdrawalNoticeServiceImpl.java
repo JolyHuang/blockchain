@@ -59,26 +59,32 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
 
     @Transactional
     protected void doTransactionEth(TransactionEth transactionEth) {
+        AddressNotice addressNotice = null;
+        Withdrawal withdrawal = null;
         try {
             // 获取通知地址
-            AddressNotice addressNotice = getAddressNoticeService().getWithdrawalNoticeAddress(transactionEth.getTxTo(), transactionEth.getCoinType());
+            addressNotice = getAddressNoticeService().getWithdrawalNoticeAddress(transactionEth.getTxTo(), transactionEth.getCoinType());
             // 获取取现id
-            Withdrawal withdrawal = withdrawalService.getWithdrawalByTxHash(transactionEth.getTxHash());
+            withdrawal = withdrawalService.getWithdrawalByTxHash(transactionEth.getTxHash());
             if(withdrawal == null) {
                 logger.error("getWithdrawalByTxHash error, transactionEth:{}", transactionEth);
                 throw new UnknownCubeException();
             }
-
-            sendNotice(addressNotice, withdrawal, transactionEth);
-
-            // 修改交易状态
-            updateTxStatus(withdrawal, transactionEth.getId());
-
         } catch (Exception e) {
             logger.error("transaction eth info:{}", transactionEth, e);
             getTransactionEthService().updateTaskStatusToFail(transactionEth.getId());
             throw e;
         }
+
+        try {
+            sendNotice(addressNotice, withdrawal, transactionEth);
+        } catch (Exception e) {
+            logger.error("withdrawal transaction eth send notice error, info:{}", transactionEth, e);
+            return;
+        }
+
+        // 修改交易状态
+        updateTxStatus(withdrawal, transactionEth.getId());
     }
 
     @Deprecated

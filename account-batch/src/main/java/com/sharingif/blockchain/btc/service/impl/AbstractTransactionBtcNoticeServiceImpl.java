@@ -65,14 +65,13 @@ public abstract class AbstractTransactionBtcNoticeServiceImpl implements Initial
     protected void doTransaction(TransactionBtcUtxo transactionBtcUtxo) {
         try {
             sendNotice(transactionBtcUtxo);
-
-            // 修改交易状态
-            updateTxStatus(transactionBtcUtxo.getId());
         } catch (Exception e) {
             logger.error("transaction btc info:{}", transactionBtcUtxo, e);
-            transactionBtcUtxoService.updateTaskStatusToFail(transactionBtcUtxo.getId());
-            throw e;
+            return;
         }
+
+        // 修改交易状态
+        updateTxStatus(transactionBtcUtxo.getId());
     }
 
     protected void doPaginationRepertory(PaginationRepertory<TransactionBtcUtxo> paginationRepertory) {
