@@ -1,7 +1,6 @@
 package com.sharingif.blockchain.btc.service.impl;
 
 import com.sharingif.blockchain.account.model.entity.Withdrawal;
-import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
@@ -21,11 +20,6 @@ public class TransactionBtcWithdrawalProcessingNoticeServiceImpl extends Abstrac
     @Override
     PaginationRepertory<TransactionBtcUtxo> getPaginationRepertory(PaginationCondition<TransactionBtcUtxo> paginationCondition) {
         return getTransactionBtcUtxoService().getOutUntreated(paginationCondition);
-    }
-
-    @Override
-    protected void sendNotice(AddressNotice addressNotice, Withdrawal withdrawal, TransactionBtcUtxo transactionBtcUtxo) {
-        // 处理中不需要发送通知
     }
 
     @Override

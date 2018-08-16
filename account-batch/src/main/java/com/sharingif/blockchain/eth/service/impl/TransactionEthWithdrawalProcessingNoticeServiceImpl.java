@@ -25,11 +25,6 @@ public class TransactionEthWithdrawalProcessingNoticeServiceImpl extends Abstrac
     }
 
     @Override
-    protected void sendNotice(AddressNotice addressNotice, Withdrawal withdrawal, TransactionEth transactionEth) {
-        // 处理中不需要发送通知
-    }
-
-    @Override
     void updateTxStatus(Withdrawal withdrawal, String id) {
         getTransactionEthService().updateTxStatusToWithdrawalProcessingNotified(id);
     }
