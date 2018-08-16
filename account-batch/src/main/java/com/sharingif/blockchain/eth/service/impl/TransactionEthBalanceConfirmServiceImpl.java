@@ -97,7 +97,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         BigInteger actualFee = transactionEth.getActualFee();
         BigInteger currentBalance = account.getBalance().subtract(txBalance).subtract(actualFee);
 
-        if(currentBalance.compareTo(blockBalance) <= 0) {
+        if(currentBalance.compareTo(blockBalance) >= 0) {
             transactionEthService.updateTxStatusToValid(transactionEth.getId());
             accountService.outBalance(
                     account.getId()
@@ -130,7 +130,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         BigInteger blockContractBalance = oleContract.balanceOf(address);
         BigInteger txBalance = transactionEth.getTxValue();
         BigInteger currentContractBalance = account.getBalance().subtract(txBalance);
-        if(currentContractBalance.compareTo(blockContractBalance) == 0) {
+        if(currentContractBalance.compareTo(blockContractBalance) >= 0) {
             transactionEthService.updateTxStatusToValid(transactionEth.getId());
             accountService.outBalance(
                     ethAccount.getId()

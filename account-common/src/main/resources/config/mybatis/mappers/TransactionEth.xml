@@ -235,7 +235,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	    DELETE FROM
 	    	TRANSACTION_ETH 
 	    WHERE
-	    TX_HASH = #{id} 
+	    ID = #{id} 
     </delete>
     
     <delete id="deleteByCondition">
@@ -253,7 +253,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	        <include refid="transactionEthSetColumns" />
 		</set>
 	    WHERE
-	    TX_HASH = #{txHash} 
+	    ID = #{id} 
 	</update>
 	
     <select id="queryById" resultMap="transactionEthResultMap">
@@ -284,7 +284,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		FROM
 			TRANSACTION_ETH 
 		WHERE 
-			TX_HASH = #{id} 
+			ID = #{id} 
 	</select>
 	
 	<select id="queryList" resultMap="transactionEthResultMap">
@@ -318,7 +318,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			1=1
 			<include refid="transactionEthColumns" />
 		ORDER BY
-			TX_HASH
+			ID
 	</select>
 	
 	<select id="queryAll" resultMap="transactionEthResultMap">
@@ -349,7 +349,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		FROM
 			TRANSACTION_ETH 
 		ORDER BY
-			TX_HASH
+			ID
 	</select>
 	
 	<select id="queryPaginationListCount" resultType="Integer">
@@ -393,7 +393,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			1=1
 			<include refid="transactionEthColumns" />
 		ORDER BY
-			TX_HASH
+			ID
 	</select>
 
 	<select id="queryPaginationTxStatusInListCount" resultType="Integer">
@@ -403,7 +403,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			TRANSACTION_ETH
 		WHERE
 			1=1
-		AND
+			AND
 			TX_STATUS IN
 			<foreach collection="txStatusArray" item="txStatus" index="index"
 					 open="(" close=")" separator=",">

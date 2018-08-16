@@ -113,6 +113,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         if(isDuplicationData(transactionEth.getTxHash(), transactionEth.getBlockNumber(), transactionEth.getTxFrom(), transactionEth.getTxTo(), transactionEth.getTxType())) {
             return;
         }
+        transactionEth.setId(null);
         transactionEthService.add(transactionEth);
     }
 
@@ -127,6 +128,8 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
     }
 
     protected void handlerEthContractTransactions(TransactionEth transactionEth, ETHAddressRegister ethAddressRegister, TransactionReceipt transactionReceipt){
+        Map<String, String> subCoinTypeMap = ethAddressRegister.getSubCoinTypeMap(transactionEth.getTxTo());
+
         List<TransferEventResponse> transferEventResponseList = oleContract.getTransferEvents(transactionReceipt);
         if(transferEventResponseList == null || transferEventResponseList.isEmpty()) {
             return;
@@ -138,7 +141,6 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         transactionEth.setTxValue(new BigInteger(transferEventResponse.value.toString()));
         transactionEth.setCoinType(oleContract.symbol());
 
-        Map<String, String> subCoinTypeMap = ethAddressRegister.getSubCoinTypeMap(transactionEth.getTxTo());
 
         if(ethAddressRegister.isSubCoinType(subCoinTypeMap, transactionEth.getTxFrom())) {
             handlerOut(transactionEth);
@@ -242,11 +244,17 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
                 ethTransactionsObservableIsfinsh = true;
             }
         }).subscribe(tx -> {
+            try {
 
-            handleCurrentBlockNumber(tx, currentBlockNumber);
+                handleCurrentBlockNumber(tx, currentBlockNumber);
 
-            ethTransactionsObservable(tx, currentBlockNumber);
+                ethTransactionsObservable(tx, currentBlockNumber);
 
+            } catch (Throwable e) {
+                ethTransactionsObservableIsfinsh = true;
+                logger.error("do ethTransactionsObservable error", e);
+                throw e;
+            }
         });
     }
 

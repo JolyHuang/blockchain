@@ -109,7 +109,7 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
         BigInteger txBalance = transactionBtcUtxo.getTxValue();
         BigInteger currentBalance = account.getBalance().subtract(txBalance);
 
-        if(currentBalance.compareTo(blockBalance) <= 0) {
+        if(currentBalance.compareTo(blockBalance) >= 0) {
             transactionBtcUtxoService.updateTxStatusToValid(transactionBtcUtxo.getId());
             accountService.outBalance(
                     account.getId()
