@@ -335,8 +335,10 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 
 	<select id="queryPaginationTxStatusInList" parameterType="PaginationCondition" resultMap="transactionBtcUtxoResultMap">
 		SELECT
-			ID
+		ID
 			,TX_HASH
+			,VIN_TX_HASH
+			,VIN_TX_INDEX
 			,BLOCK_NUMBER
 			,TX_FROM
 			,TX_TO

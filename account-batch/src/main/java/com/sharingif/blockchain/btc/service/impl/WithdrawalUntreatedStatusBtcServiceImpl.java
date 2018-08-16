@@ -43,17 +43,12 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private String btcNetType;
     private WithdrawalService withdrawalService;
     private AccountSysPrmService accountSysPrmService;
     private SecretKeyService secretKeyService;
     private BtcService btcService;
     private BtcApiService btcApiService;
 
-    @Value("${btc.net.type}")
-    public void setBtcNetType(String btcNetType) {
-        this.btcNetType = btcNetType;
-    }
     @Resource
     public void setWithdrawalService(WithdrawalService withdrawalService) {
         this.withdrawalService = withdrawalService;
@@ -76,13 +71,9 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
     }
 
     protected void withdrawalUntreatedStatus(Withdrawal withdrawal) {
-        String coinType = withdrawal.getCoinType();
-        int bipCoinType = CoinTypeConvert.convertToBipCoinType(coinType);
-        if(Constants.BTC_NET_TYPE_TEST.equals(btcNetType)) {
-            bipCoinType = CoinType.BIP_BTC_TEST.getBipCoinType();
-        }
+        int bipCoinType = btcService.getBipCoinType();
 
-        String secretKeyId = accountSysPrmService.withdrawalAccount(bipCoinType);
+        String secretKeyId = accountSysPrmService.getWithdrawalAccount(bipCoinType);
         SecretKey secretKey = secretKeyService.getById(secretKeyId);
         String password = secretKeyService.decryptPassword(secretKey.getPassword());
 
@@ -92,8 +83,8 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
 
         BtcTransferReq req = new BtcTransferReq();
         req.setSecretKeyId(secretKey.getId());
-        req.setPassword(secretKey.getPassword());
-        req.setToAddress(password);
+        req.setPassword(password);
+        req.setToAddress(withdrawal.getAddress());
         req.setAmount(withdrawal.getAmount());
         req.setFee(fess);
         List<BtcTransferListReq> btcTransferListReqList = new ArrayList<BtcTransferListReq>(outputList.size());
@@ -105,6 +96,7 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
             btcTransferListReq.setAmount(output.getAmount().multiply(TransactionBtcUtxo.BTC_UNIT).toBigInteger());
             btcTransferListReqList.add(btcTransferListReq);
         }
+        req.setOutputList(btcTransferListReqList);
         BtcTransferRsp rsp = btcApiService.transfer(req);
 
         String signRawTransaction = btcService.signRawTransaction(rsp.getRawTransaction());

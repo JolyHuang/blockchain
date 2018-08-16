@@ -43,12 +43,11 @@ public class BtcServiceImpl implements BtcService {
 
     @Override
     public NetworkParameters getNetworkParameters(int coinType) {
-        NetworkParameters networkParameters = MainNetParams.get();
         if(coinType == CoinType.BTC_TEST.getBipCoinType()) {
-            networkParameters = TestNet3Params.get();
+            return TestNet3Params.get();
         }
 
-        return networkParameters;
+        return MainNetParams.get();
     }
 
     @Override
@@ -56,7 +55,7 @@ public class BtcServiceImpl implements BtcService {
         SecretKey secretKey = secretKeyService.getById(req.getSecretKeyId());
         Credentials credentials = secretKeyService.getCredentials(secretKey, req.getPassword());
         BigInteger privateKey = credentials.getEcKeyPair().getPrivateKey();
-        KeyPath keyPath = new KeyPath(secretKey.getFilePath());
+        KeyPath keyPath = new KeyPath(secretKey.getKeyPath());
 
         boolean mainNet = keyPath.getCoinType() == CoinType.BTC.getBipCoinType() ? true : false;
 

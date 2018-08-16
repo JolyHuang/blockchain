@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * TransactionBtcUtxoServiceImpl
@@ -34,10 +35,12 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
 
 
     @Override
-    public TransactionBtcUtxo getTransactionBtcUtxo(String txHash, BigInteger blockNumber) {
+    public TransactionBtcUtxo getTransactionBtcUtxo(String txHash, BigInteger blockNumber, String from, String to) {
         TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
         transactionBtcUtxo.setTxHash(txHash);
         transactionBtcUtxo.setBlockNumber(blockNumber);
+        transactionBtcUtxo.setTxFrom(from);
+        transactionBtcUtxo.setTxTo(to);
 
         return transactionBtcUtxoDAO.query(transactionBtcUtxo);
     }
@@ -225,4 +228,14 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
 
         updateById(transactionBtcUtxo);
     }
+
+    @Override
+    public List<TransactionBtcUtxo> getWithdrawalTransactionBtcUtxo(String address) {
+        TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
+        transactionBtcUtxo.setTxFrom(address);
+        transactionBtcUtxo.setTxType(TransactionBtcUtxo.TX_TYPE_OUT);
+
+        return transactionBtcUtxoDAO.queryList(transactionBtcUtxo);
+    }
+
 }

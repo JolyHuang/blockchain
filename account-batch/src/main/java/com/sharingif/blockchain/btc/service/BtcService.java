@@ -18,6 +18,12 @@ import java.util.List;
 public interface BtcService {
 
     /**
+     * 查询bip币种类型
+     * @return
+     */
+    int getBipCoinType();
+
+    /**
      * 获取区块数
      * @return
      */

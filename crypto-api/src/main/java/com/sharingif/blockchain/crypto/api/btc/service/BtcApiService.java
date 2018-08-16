@@ -13,6 +13,7 @@ import com.sharingif.cube.core.handler.bind.annotation.RequestMethod;
  * @since v1.0
  * 2018/8/14 下午3:56
  */
+@RequestMapping(value="btc")
 public interface BtcApiService {
 
     /**

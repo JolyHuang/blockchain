@@ -6,6 +6,7 @@ import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import com.sharingif.cube.support.service.base.IBaseService;
 
 import java.math.BigInteger;
+import java.util.List;
 
 /**
  * TransactionBtcUtxoService
@@ -21,9 +22,11 @@ public interface TransactionBtcUtxoService extends IBaseService<TransactionBtcUt
      * 根据交易hash、区块号查询
      * @param txHash
      * @param blockNumber
+     * @param from
+     * @param to
      * @return
      */
-    TransactionBtcUtxo getTransactionBtcUtxo(String txHash, BigInteger blockNumber);
+    TransactionBtcUtxo getTransactionBtcUtxo(String txHash, BigInteger blockNumber, String from, String to);
 
     /**
      * 获取充值未处理交易数据
@@ -145,7 +148,7 @@ public interface TransactionBtcUtxoService extends IBaseService<TransactionBtcUt
 
     /**
      * 修改交易状态为取现失败已通知
-     * @param txHash
+     * @param id
      */
     void updateTxStatusToWithdrawalFailNotified(String id);
 
@@ -154,5 +157,12 @@ public interface TransactionBtcUtxoService extends IBaseService<TransactionBtcUt
      * @param id
      */
     void updateTaskStatusToFail(String id);
+
+    /**
+     * 根据地址查询取现交易
+     * @param address
+     * @return
+     */
+    List<TransactionBtcUtxo> getWithdrawalTransactionBtcUtxo(String address);
 
 }

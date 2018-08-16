@@ -4,6 +4,7 @@ import com.sharingif.blockchain.account.model.entity.Withdrawal;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
+import org.springframework.stereotype.Service;
 
 /**
  * 取现成功通知
@@ -13,6 +14,7 @@ import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
  * @since v1.0
  * 2018/8/14 下午4:54
  */
+@Service
 public class TransactionBtcWithdrawalSuccessNoticeServiceImpl extends AbstractTransactionBtcWithdrawalNoticeServiceImpl {
 
     @Override

@@ -8,6 +8,7 @@ import com.sharingif.blockchain.account.service.AccountService;
 import com.sharingif.blockchain.account.service.AccountSysPrmService;
 import com.sharingif.blockchain.account.api.transaction.entity.RegisterReq;
 import com.sharingif.blockchain.app.constants.Constants;
+import com.sharingif.blockchain.btc.service.BtcService;
 import com.sharingif.blockchain.common.components.ole.OleContract;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.common.constants.CoinTypeConvert;
@@ -43,7 +44,6 @@ public class BIP44ServiceImpl implements BIP44Service {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private String btcNetType;
     private ExtendedKeyDAO extendedKeyDAO;
     private SecretKeyDAO secretKeyDAO;
     private MnemonicService mnemonicService;
@@ -53,11 +53,9 @@ public class BIP44ServiceImpl implements BIP44Service {
     private AccountService accountService;
     private TextEncryptor passwordTextEncryptor;
     private OleContract oleContract;
+    private BtcService btcService;
 
-    @Value("${btc.net.type}")
-    public void setBtcNetType(String btcNetType) {
-        this.btcNetType = btcNetType;
-    }
+
     @Resource
     public void setExtendedKeyDAO(ExtendedKeyDAO extendedKeyDAO) {
         this.extendedKeyDAO = extendedKeyDAO;
@@ -93,6 +91,10 @@ public class BIP44ServiceImpl implements BIP44Service {
     @Resource
     public void setOleContract(OleContract oleContract) {
         this.oleContract = oleContract;
+    }
+    @Resource
+    public void setBtcService(BtcService btcService) {
+        this.btcService = btcService;
     }
 
     @Override
@@ -137,8 +139,8 @@ public class BIP44ServiceImpl implements BIP44Service {
         String changeExtendedKeyId = req.getChangeExtendedKeyId();
         if(StringUtils.isTrimEmpty(changeExtendedKeyId)) {
             int coinType = req.getCoinType();
-            if(coinType == CoinType.BTC.getBipCoinType() && Constants.BTC_NET_TYPE_TEST.equals(btcNetType)) {
-                coinType = CoinType.BIP_BTC_TEST.getBipCoinType();
+            if(coinType == CoinType.BTC.getBipCoinType()) {
+                coinType = btcService.getBipCoinType();
             }
             changeExtendedKeyId = accountSysPrmService.extendedKey(coinType);
         }

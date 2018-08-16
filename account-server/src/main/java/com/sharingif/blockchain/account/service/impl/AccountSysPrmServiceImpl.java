@@ -56,7 +56,7 @@ public class AccountSysPrmServiceImpl extends BaseServiceImpl<AccountSysPrm, Str
     }
 
     @Override
-    public String withdrawalAccount(int coinType) {
+    public String getWithdrawalAccount(int coinType) {
         AccountSysPrm accountSysPrm = new AccountSysPrm();
         accountSysPrm.setPrmName(AccountSysPrm.WITHDRAWAL_SECRET_KEY_PREFIX+coinType);
         accountSysPrm.setPrmStatus(AccountSysPrm.PRM_STATUS_VALID);

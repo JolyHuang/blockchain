@@ -71,7 +71,7 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
     }
 
     protected void addTransactionBtcUtxo(String txHash, BigInteger blockNumber, Long time, BigInteger actualFee, TransactionBtcUtxo utxo) {
-        TransactionBtcUtxo queryTransactionBtcUtxo = transactionBtcUtxoService.getTransactionBtcUtxo(txHash, blockNumber);
+        TransactionBtcUtxo queryTransactionBtcUtxo = transactionBtcUtxoService.getTransactionBtcUtxo(txHash, blockNumber, utxo.getTxFrom(), utxo.getTxTo());
         if(queryTransactionBtcUtxo != null) {
             return;
         }
@@ -114,7 +114,28 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
         return utxo;
     }
 
-    protected void handlerIn(UtxoRawInput utxoRawInput, String txHash, BigInteger blockNumber, Long time, BigInteger actualFee, Map<String, String> ethAddressRegisterMap, List<RawOutput> vOut) {
+    protected void handlerIn(RawOutput rawOutput, String txHash, BigInteger blockNumber, Long time, BigInteger actualFee, Map<String, String> ethAddressRegisterMap, List<UtxoRawInput> vIn) {
+        TransactionBtcUtxo utxo = handleUTXO(rawOutput, ethAddressRegisterMap);
+        if(utxo == null) {
+            return;
+        }
+
+        utxo.setTxType(TransactionBtcUtxo.TX_TYPE_IN);
+
+        for(UtxoRawInput utxoRawInput : vIn) {
+            RawOutput inRawOutput = utxoRawInput.getRawOutput();
+            List<String> addresses = inRawOutput.getScriptPubKey().getAddresses();
+            String addresse = addresses.get(0);
+            utxo.setTxFrom(addresse);
+            if(!addresse.equals(utxo.getTxTo())) {
+                break;
+            }
+        }
+
+        addTransactionBtcUtxo(txHash, blockNumber, time, actualFee, utxo);
+    }
+
+    protected void handlerOut(UtxoRawInput utxoRawInput, String txHash, BigInteger blockNumber, Long time, BigInteger actualFee, Map<String, String> ethAddressRegisterMap, List<RawOutput> vOut) {
         TransactionBtcUtxo utxo = handleUTXO(utxoRawInput.getRawOutput(), ethAddressRegisterMap);
         if(utxo == null) {
             return;
@@ -128,29 +149,8 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
         for(RawOutput rawOutput : vOut) {
             List<String> addresses = rawOutput.getScriptPubKey().getAddresses();
             String addresse = addresses.get(0);
+            utxo.setTxTo(addresse);
             if(!addresse.equals(utxo.getTxFrom())) {
-                utxo.setTxTo(addresse);
-                break;
-            }
-        }
-
-        addTransactionBtcUtxo(txHash, blockNumber, time, actualFee, utxo);
-    }
-
-    protected void handlerOut(RawOutput rawOutput, String txHash, BigInteger blockNumber, Long time, BigInteger actualFee, Map<String, String> ethAddressRegisterMap, List<UtxoRawInput> vIn) {
-        TransactionBtcUtxo utxo = handleUTXO(rawOutput, ethAddressRegisterMap);
-        if(utxo == null) {
-            return;
-        }
-
-        utxo.setTxType(TransactionBtcUtxo.TX_TYPE_IN);
-
-        for(UtxoRawInput utxoRawInput : vIn) {
-            RawOutput inRawOutput = utxoRawInput.getRawOutput();
-            List<String> addresses = inRawOutput.getScriptPubKey().getAddresses();
-            String addresse = addresses.get(0);
-            if(!addresse.equals(utxo.getTxTo())) {
-                utxo.setTxFrom(addresse);
                 break;
             }
         }
@@ -207,13 +207,14 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
 
         // 判断交易vin中是否存在观察地址，如果有存入数据库
         for(UtxoRawInput utxoRawInput : vIn) {
-            handlerIn(utxoRawInput, txHash, blockNumber, time, actualFee, ethAddressRegisterMap, vOut);
+            handlerOut(utxoRawInput, txHash, blockNumber, time, actualFee, ethAddressRegisterMap, vOut);
         }
 
         // 判断交易out中是否存在观察地址，如果有存入数据库
         for(RawOutput rawOutput : vOut) {
-            handlerOut(rawOutput, txHash, blockNumber, time, actualFee, ethAddressRegisterMap, vIn);
+            handlerIn(rawOutput, txHash, blockNumber, time, actualFee, ethAddressRegisterMap, vIn);
         }
+
     }
 
     protected List<List<String>> splitTxList(List<String> txList) {

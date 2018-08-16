@@ -1,9 +1,12 @@
 package com.sharingif.blockchain.btc.service.impl;
 
 import co.olivecoin.wallet.api.blockchain.entity.TransactionEthWithdrawalApiReq;
+import com.neemre.btcdcli4j.core.domain.RawOutput;
+import com.neemre.btcdcli4j.core.domain.RawTransaction;
 import com.sharingif.blockchain.account.model.entity.Withdrawal;
 import com.sharingif.blockchain.account.service.WithdrawalService;
 import com.sharingif.blockchain.app.components.UrlBody;
+import com.sharingif.blockchain.btc.service.BtcService;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
@@ -11,6 +14,8 @@ import com.sharingif.cube.core.exception.UnknownCubeException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 提现通知服务
@@ -23,6 +28,7 @@ import javax.annotation.Resource;
 public abstract class AbstractTransactionBtcWithdrawalNoticeServiceImpl extends AbstractTransactionBtcNoticeServiceImpl {
 
     private WithdrawalService withdrawalService;
+    private BtcService btcService;
 
     public WithdrawalService getWithdrawalService() {
         return withdrawalService;
@@ -31,16 +37,32 @@ public abstract class AbstractTransactionBtcWithdrawalNoticeServiceImpl extends 
     public void setWithdrawalService(WithdrawalService withdrawalService) {
         this.withdrawalService = withdrawalService;
     }
+    @Resource
+    public void setBtcService(BtcService btcService) {
+        this.btcService = btcService;
+    }
 
     protected TransactionEthWithdrawalApiReq convertTransactionEthWithdrawalApiReq(String withdrawalId, TransactionBtcUtxo transactionBtcUtxo) {
         TransactionEthWithdrawalApiReq transactionEthWithdrawalApiReq = new TransactionEthWithdrawalApiReq();
+
+        RawTransaction rawTransaction = btcService.getRawTransaction(transactionBtcUtxo.getTxHash());
+        List<RawOutput> vOut = rawTransaction.getVOut();
+        for(RawOutput rawOutput : vOut) {
+            List<String> addresses = rawOutput.getScriptPubKey().getAddresses();
+            String addresse = addresses.get(0);
+            if(addresse.equals(transactionBtcUtxo.getTxTo())) {
+                BigDecimal value = rawOutput.getValue();
+                transactionEthWithdrawalApiReq.setTxValue(value.multiply(TransactionBtcUtxo.BTC_UNIT).toBigInteger());
+                break;
+            }
+        }
+
         transactionEthWithdrawalApiReq.setWithdrawalId(withdrawalId);
         transactionEthWithdrawalApiReq.setTxHash(transactionBtcUtxo.getTxHash());
         transactionEthWithdrawalApiReq.setBlockNumber(transactionBtcUtxo.getBlockNumber());
         transactionEthWithdrawalApiReq.setTxFrom(transactionBtcUtxo.getTxFrom());
         transactionEthWithdrawalApiReq.setTxTo(transactionBtcUtxo.getTxTo());
         transactionEthWithdrawalApiReq.setCoinType(CoinType.BTC.name());
-        transactionEthWithdrawalApiReq.setTxValue(transactionBtcUtxo.getTxValue());
         transactionEthWithdrawalApiReq.setTxIndex(transactionBtcUtxo.getTxIndex());
         transactionEthWithdrawalApiReq.setActualFee(transactionBtcUtxo.getActualFee());
         transactionEthWithdrawalApiReq.setTxTime(transactionBtcUtxo.getTxTime());

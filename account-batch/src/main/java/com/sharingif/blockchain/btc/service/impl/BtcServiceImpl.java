@@ -5,13 +5,16 @@ import com.neemre.btcdcli4j.core.domain.Block;
 import com.neemre.btcdcli4j.core.domain.Output;
 import com.neemre.btcdcli4j.core.domain.RawTransaction;
 import com.neemre.btcdcli4j.core.domain.SignatureResult;
+import com.sharingif.blockchain.app.constants.Constants;
 import com.sharingif.blockchain.btc.service.BtcService;
+import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
 import com.sharingif.cube.core.exception.CubeRuntimeException;
 import com.sharingif.cube.core.exception.UnknownCubeException;
 import com.sharingif.cube.core.exception.validation.ValidationCubeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -33,11 +36,25 @@ public class BtcServiceImpl implements BtcService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private String btcNetType;
     private BtcdClient btcdClient;
 
+    @Value("${btc.net.type}")
+    public void setBtcNetType(String btcNetType) {
+        this.btcNetType = btcNetType;
+    }
     @Resource
     public void setBtcdClient(BtcdClient btcdClient) {
         this.btcdClient = btcdClient;
+    }
+
+    @Override
+    public int getBipCoinType() {
+        if(Constants.BTC_NET_TYPE_TEST.equals(btcNetType)) {
+            return CoinType.BIP_BTC_TEST.getBipCoinType();
+        }
+
+        return CoinType.BTC.getBipCoinType();
     }
 
     @Override

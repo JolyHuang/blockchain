@@ -27,7 +27,7 @@ public interface AccountSysPrmService extends IBaseService<AccountSysPrm, String
      * @param coinType
      * @return
      */
-    String withdrawalAccount(int coinType);
+    String getWithdrawalAccount(int coinType);
 
     /**
      * 设置当前change ExtendedKey

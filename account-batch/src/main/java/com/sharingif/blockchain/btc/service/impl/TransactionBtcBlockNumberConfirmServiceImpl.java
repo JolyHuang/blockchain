@@ -1,5 +1,6 @@
 package com.sharingif.blockchain.btc.service.impl;
 
+import com.neemre.btcdcli4j.core.domain.RawInput;
 import com.neemre.btcdcli4j.core.domain.RawOutput;
 import com.neemre.btcdcli4j.core.domain.RawTransaction;
 import com.sharingif.blockchain.btc.service.BtcService;
@@ -69,7 +70,12 @@ public class TransactionBtcBlockNumberConfirmServiceImpl implements Initializing
             }
         }
 
-        if(TransactionBtcUtxo.TX_TYPE_IN.equals(transactionBtcUtxo.getTxType())) {
+        if(TransactionBtcUtxo.TX_TYPE_OUT.equals(transactionBtcUtxo.getTxType())) {
+            RawInput rawInput = rawTransaction.getVIn().get(transactionBtcUtxo.getVinTxIndex());
+
+            if(!transactionBtcUtxo.getVinTxHash().equals(rawInput.getTxId())) {
+                return false;
+            }
         }
 
 

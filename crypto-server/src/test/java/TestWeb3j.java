@@ -199,17 +199,18 @@ public class TestWeb3j {
 //        System.out.println(credentials3.getAddress());
 //
 //
-        String seedCode = "dog kiwi bus broken merge patient possible version cliff announce tobacco film";
+        String seedCode = "drift pear title else wire velvet issue kiss outdoor travel honey exist";
 
         DeterministicSeed seed = new DeterministicSeed(seedCode, null, "", 0l);
         DeterministicKeyChain chain = DeterministicKeyChain.builder().seed(seed).build();
-        List<ChildNumber> keyPath = HDUtils.parsePath("M/44H/0H/0H/0/0");
+        List<ChildNumber> keyPath = HDUtils.parsePath("M/44H/1H/0H/0/0");
         DeterministicKey key = chain.getKeyByPath(keyPath, true);
 
 //        Credentials credentials6 = Credentials.create(key.getPrivKey().toString(16));
 //        System.out.println(credentials6.getAddress());
 
         System.out.println(key.toAddress(TestNet3Params.get()));
+        System.out.println(key.getPrivateKeyAsWiF(TestNet3Params.get()));
 
 //        BigInteger privKey = key.getPrivKey();
 //
@@ -318,7 +319,7 @@ public class TestWeb3j {
 
 
         TransactionReceipt transactionReceipt = Transfer.sendFunds(
-                web3j, credentials, "0xa0174debbf63ec9288d1b05daf0be426a2f40685",
+                web3j, credentials, "0xffa20936ade98c9f375d2676b304bfacb46937e4",
                 new BigDecimal("1"), Convert.Unit.ETHER).send();
 
         System.out.println(transactionReceipt.getTransactionHash());

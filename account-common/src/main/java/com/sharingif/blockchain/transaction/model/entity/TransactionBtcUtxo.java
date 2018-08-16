@@ -53,19 +53,19 @@ public class TransactionBtcUtxo implements java.io.Serializable, IObjectDateOper
 	 */
 	public static final String TX_STATUS_VALID = "YX";
 	/**
-	 * 交易状态(QXCGYTZ:充值成功已通知)
-	 */
-	public static final String TX_STATUS_WITHDRAWAL_SUCCESS_NOTIFIED= "QXCGYTZ";
-	/**
 	 * 交易状态(CZCGYTZ:充值成功已通知)
 	 */
 	public static final String TX_STATUS_DEPOSIT_SUCCESS_NOTIFIED= "CZCGYTZ";
+	/**
+	 * 交易状态(QXCGYTZ:取现成功已通知)
+	 */
+	public static final String TX_STATUS_WITHDRAWAL_SUCCESS_NOTIFIED= "QXCGYTZ";
 	/**
 	 * 交易状态(CZSBYTZ:充值失败已通知)
 	 */
 	public static final String TX_STATUS_DEPOSIT_FAIL_NOTIFIED= "CZSBYTZ";
 	/**
-	 * 交易状态(QXSBYTZ:充值失败已通知)
+	 * 交易状态(QXSBYTZ:取现失败已通知)
 	 */
 	public static final String TX_STATUS_WITHDRAWAL_FAIL_NOTIFIED= "QXSBYTZ";
 

@@ -1,6 +1,8 @@
 package com.sharingif.blockchain.eth.service.impl;
 
+import com.sharingif.blockchain.account.model.entity.Account;
 import com.sharingif.blockchain.account.model.entity.Withdrawal;
+import com.sharingif.blockchain.account.service.AccountService;
 import com.sharingif.blockchain.account.service.AccountSysPrmService;
 import com.sharingif.blockchain.account.service.AddressNonceService;
 import com.sharingif.blockchain.account.service.WithdrawalService;
@@ -15,6 +17,7 @@ import com.sharingif.blockchain.crypto.api.eth.service.EthErc20ContractApiServic
 import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.service.SecretKeyService;
 import com.sharingif.blockchain.eth.service.EthereumService;
+import com.sharingif.cube.core.exception.validation.ValidationCubeException;
 import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
@@ -48,6 +51,7 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
     private SecretKeyService secretKeyService;
     private EthereumService ethereumService;
     private OleContract oleContract;
+    private AccountService accountService;
 
     @Resource
     public void setWithdrawalService(WithdrawalService withdrawalService) {
@@ -80,6 +84,10 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
     @Resource
     public void setOleContract(OleContract oleContract) {
         this.oleContract = oleContract;
+    }
+    @Resource
+    public void setAccountService(AccountService accountService) {
+        this.accountService = accountService;
     }
 
     private String ethWithdrawal(String secretKeyId, BigInteger nonce, BigInteger gasPrice, String password, Withdrawal withdrawal) {
@@ -115,8 +123,20 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
     }
 
     protected void withdrawalUntreatedStatus(Withdrawal withdrawal) {
-        String secretKeyId = accountSysPrmService.withdrawalAccount(CoinTypeConvert.convertToBipCoinType(withdrawal.getCoinType()));
+        String secretKeyId = accountSysPrmService.getWithdrawalAccount(CoinTypeConvert.convertToBipCoinType(withdrawal.getCoinType()));
         SecretKey secretKey = secretKeyService.getById(secretKeyId);
+
+        String accountCoinType = withdrawal.getSubCoinType();
+        if(StringUtils.isTrimEmpty(accountCoinType)) {
+            accountCoinType = withdrawal.getCoinType();
+        }
+        Account account = accountService.getNormalAccountByAddress(secretKey.getAddress(), accountCoinType);
+        if(account.getBalance().compareTo(withdrawal.getAmount()) < 0) {
+            logger.error("insufficient balance, account:{}", account);
+
+            return;
+        }
+
         BigInteger nonce =  ethereumService.ethGetTransactionCountPending(secretKey.getAddress());
         BigInteger gasPrice = ethereumService.getGasPrice();
         String password = secretKeyService.decryptPassword(secretKey.getPassword());
