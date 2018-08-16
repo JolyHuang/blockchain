@@ -25,6 +25,11 @@ public class TransactionBtcWithdrawalSuccessNoticeServiceImpl extends AbstractTr
     @Override
     void updateTxStatus(Withdrawal withdrawal, String id) {
         getTransactionBtcUtxoService().updateTxStatusToWithdrawalSuccessNotified(id);
+
+        Withdrawal queryWithdrawal = getWithdrawalService().getById(id);
+        if(queryWithdrawal !=null && Withdrawal.STATUS_WITHDRAWAL_FAIL.equals(queryWithdrawal.getStatus())) {
+            return;
+        }
         getWithdrawalService().updateStatusToSuccess(withdrawal.getId());
     }
 

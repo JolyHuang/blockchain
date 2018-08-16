@@ -22,8 +22,8 @@ public class TransactionEthDepositSuccessNoticeServiceImpl extends AbstractTrans
     }
 
     @Override
-    void updateTxStatus(String txHash) {
-        getTransactionEthService().updateTxStatusToDepositSuccessNotified(txHash);
+    void updateTxStatus(String id) {
+        getTransactionEthService().updateTxStatusToDepositSuccessNotified(id);
     }
 
     @Override

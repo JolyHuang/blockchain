@@ -22,8 +22,8 @@ public class TransactionEthDepositFailNoticeServiceImpl extends AbstractTransact
     }
 
     @Override
-    void updateTxStatus(String txHash) {
-        getTransactionEthService().updateTxStatusToDepositFailNotified(txHash);
+    void updateTxStatus(String id) {
+        getTransactionEthService().updateTxStatusToDepositFailNotified(id);
     }
 
     @Override

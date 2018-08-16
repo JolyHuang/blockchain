@@ -74,19 +74,6 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
     }
 
     /**
-     * 处理宕机重启
-     */
-    protected Boolean isDuplicationData(String txHash) {
-        TransactionEth transactionEth =transactionEthService.getById(txHash);
-
-        if(transactionEth == null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * 处理当前区块信息
      */
     protected void handleCurrentBlockNumber(Transaction tx, CurrentBlockNumber currentBlockNumber) {
@@ -105,23 +92,76 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         }
     }
 
-    protected boolean isListenETHTrans(TransactionEth transactionEth, ETHAddressRegister ethAddressRegister) {
+    /**
+     * 处理宕机重启
+     */
+    protected Boolean isDuplicationData(String txHash, BigInteger blockNumber, String from, String to, String txType) {
+        TransactionEth transactionEth =transactionEthService.getTransactionEth(txHash, blockNumber, from, to, txType);
+
+        if(transactionEth == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 保存区块数据
+     */
+    @Transactional
+    protected void persistenceAndNoticeTransactionEth(TransactionEth transactionEth) {
+        if(isDuplicationData(transactionEth.getTxHash(), transactionEth.getBlockNumber(), transactionEth.getTxFrom(), transactionEth.getTxTo(), transactionEth.getTxType())) {
+            return;
+        }
+        transactionEthService.add(transactionEth);
+    }
+
+    protected void handlerIn(TransactionEth transactionEth) {
+        transactionEth.setTxType(TransactionEth.TX_TYPE_IN);
+        persistenceAndNoticeTransactionEth(transactionEth);
+    }
+
+    protected void handlerOut(TransactionEth transactionEth) {
+        transactionEth.setTxType(TransactionEth.TX_TYPE_OUT);
+        persistenceAndNoticeTransactionEth(transactionEth);
+    }
+
+    protected void handlerEthContractTransactions(TransactionEth transactionEth, ETHAddressRegister ethAddressRegister, TransactionReceipt transactionReceipt){
+        List<TransferEventResponse> transferEventResponseList = oleContract.getTransferEvents(transactionReceipt);
+        if(transferEventResponseList == null || transferEventResponseList.isEmpty()) {
+            return;
+        }
+        TransferEventResponse transferEventResponse = transferEventResponseList.get(0);
+
+        transactionEth.setContractAddress(transactionEth.getTxTo());
+        transactionEth.setTxTo(transferEventResponse.to);
+        transactionEth.setTxValue(new BigInteger(transferEventResponse.value.toString()));
+        transactionEth.setCoinType(oleContract.symbol());
+
+        Map<String, String> subCoinTypeMap = ethAddressRegister.getSubCoinTypeMap(transactionEth.getTxTo());
+
+        if(ethAddressRegister.isSubCoinType(subCoinTypeMap, transactionEth.getTxFrom())) {
+            handlerOut(transactionEth);
+        }
+
+        if(ethAddressRegister.isSubCoinType(subCoinTypeMap, transactionEth.getTxTo())) {
+            handlerIn(transactionEth);
+        }
+    }
+
+    protected void handlerEthTransactions(TransactionEth transactionEth, ETHAddressRegister ethAddressRegister){
         if(ethAddressRegister.isETHRegisterAddress(transactionEth.getTxFrom())) {
             transactionEth.setTxType(TransactionEth.TX_TYPE_OUT);
-
-            return true;
+            handlerOut(transactionEth);
         }
 
         if(transactionEth.getTxTo() != null && ethAddressRegister.isETHRegisterAddress(transactionEth.getTxTo())) {
             transactionEth.setTxType(TransactionEth.TX_TYPE_IN);
-
-            return true;
+            handlerIn(transactionEth);
         }
-
-        return false;
     }
 
-    protected boolean isListenContractTrans(TransactionEth transactionEth, ETHAddressRegister ethAddressRegister, TransactionReceipt transactionReceipt) {
+    protected boolean isListenContractTrans(TransactionEth transactionEth, ETHAddressRegister ethAddressRegister) {
 
         if(transactionEth.getTxTo() == null) {
             return false;
@@ -132,47 +172,21 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
             return false;
         }
 
-        List<TransferEventResponse> transferEventResponseList = oleContract.getTransferEvents(transactionReceipt);
-        if(transferEventResponseList == null || transferEventResponseList.isEmpty()) {
-            return false;
-        }
-        TransferEventResponse transferEventResponse = transferEventResponseList.get(0);
-
-        transactionEth.setContractAddress(transactionEth.getTxTo());
-        transactionEth.setTxTo(transferEventResponse.to);
-        transactionEth.setTxValue(new BigInteger(transferEventResponse.value.toString()));
-        transactionEth.setCoinType(oleContract.symbol());
-
-        if(ethAddressRegister.isSubCoinType(subCoinTypeMap, transactionEth.getTxFrom())) {
-            transactionEth.setTxType(TransactionEth.TX_TYPE_OUT);
-            return true;
-        }
-
-        if(ethAddressRegister.isSubCoinType(subCoinTypeMap, transactionEth.getTxTo())) {
-            transactionEth.setTxType(TransactionEth.TX_TYPE_IN);
-            return true;
-        }
-
-
-        return false;
+        return true;
     }
 
-    protected boolean isListenTrans(TransactionEth transactionEth, TransactionReceipt transactionReceipt) {
-
+    protected void ethTransactionsObservable(TransactionEth transactionEth, TransactionReceipt transactionReceipt){
         // 查询需要监听的数据
         ETHAddressRegister ethAddressRegister = addressRegisterService.getETHAddressRegister();
-
-        boolean isListenContractTrans = isListenContractTrans(transactionEth, ethAddressRegister, transactionReceipt);
-
-        if(isListenContractTrans) {
-            return true;
+        if(isListenContractTrans(transactionEth, ethAddressRegister)) {
+            handlerEthContractTransactions(transactionEth, ethAddressRegister, transactionReceipt);
+            return;
         }
 
-        return isListenETHTrans(transactionEth, ethAddressRegister);
+        handlerEthTransactions(transactionEth, ethAddressRegister);
     }
 
-    protected TransactionEth convertBlockDateToTransactionEth(Transaction tx, CurrentBlockNumber currentBlockNumber) {
-
+    protected void ethTransactionsObservable(Transaction tx, CurrentBlockNumber currentBlockNumber) {
         TransactionEth transactionEth = new TransactionEth();
         transactionEth.setTxHash(tx.getHash());
         transactionEth.setBlockNumber(tx.getBlockNumber());
@@ -186,25 +200,18 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         transactionEth.setTxValue(tx.getValue());
         transactionEth.setCoinType(CoinType.ETH.name());
 
-
         TransactionReceipt transactionReceipt;
         try {
             transactionReceipt = ethereumService.getTransactionReceipt(transactionEth.getTxHash());
 
             if(TransactionEth.RECEIPT_STATUS_FAIL.equals(transactionReceipt.getStatus())) {
-                return null;
+                return;
             }
         } catch (Throwable e) {
             logger.error("get transaction receipt error,trans info:{}", transactionEth, e);
-            return null;
+            return;
         }
 
-        boolean isListenTrans = isListenTrans(transactionEth, transactionReceipt);
-        if(!isListenTrans) {
-            return null;
-        }
-
-        // 区块时间
         Date timestamp = currentBlockNumber.getTimestamp();
         transactionEth.setGasUsed(transactionReceipt.getGasUsed());
         transactionEth.setTxReceiptStatus(TransactionEth.convertTxReceiptStatus(transactionReceipt.getStatus()));
@@ -214,18 +221,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         transactionEth.setTaskStatus(TransactionEth.TASK_STATUS_UNTREATED);
         transactionEth.setActualFee(transactionEth.getGasUsed().multiply(transactionEth.getGasPrice()));
 
-        return transactionEth;
-    }
-
-    /**
-     * 保存区块数据
-     */
-    @Transactional
-    protected void persistenceAndNoticeTransactionEth(TransactionEth transactionEth) {
-        if(isDuplicationData(transactionEth.getTxHash())) {
-            return;
-        }
-        transactionEthService.add(transactionEth);
+        ethTransactionsObservable(transactionEth, transactionReceipt);
     }
 
     protected void ethTransactionsObservable(BigInteger startBlockNumber) {
@@ -248,11 +244,13 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
 
             handleCurrentBlockNumber(tx, currentBlockNumber);
 
-            TransactionEth transactionEth = convertBlockDateToTransactionEth(tx, currentBlockNumber);
+            ethTransactionsObservable(tx, currentBlockNumber);
 
-            if(transactionEth != null) {
-                persistenceAndNoticeTransactionEth(transactionEth);
-            }
+//            TransactionEth transactionEth = convertBlockDateToTransactionEth(tx, currentBlockNumber);
+//
+//            if(transactionEth != null) {
+//                persistenceAndNoticeTransactionEth(transactionEth);
+//            }
 
         });
     }

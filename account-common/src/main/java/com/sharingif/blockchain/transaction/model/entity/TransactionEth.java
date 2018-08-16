@@ -2,10 +2,12 @@ package com.sharingif.blockchain.transaction.model.entity;
 
 
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
+import com.sharingif.cube.components.sequence.Sequence;
 import com.sharingif.cube.core.util.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -105,9 +107,15 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 	 * 交易类型(1:转出)
 	 */
 	public static final String TX_TYPE_OUT = "1";
-	
+
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
 	//columns START
+    /**
+     * id			db_column: ID 
+     */	
+	@NotBlank @Length(max=32)
+	@Sequence(ref="uuidSequenceGenerator")
+	private java.lang.String id;
 	/**
 	 * 交易hash			db_column: TX_HASH
 	 */
@@ -222,6 +230,12 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 
 	private List<String> txStatusArray;
 
+	public void setId(java.lang.String id) {
+		this.id = id;
+	}
+	public java.lang.String getId() {
+		return this.id;
+	}
 	public void setTxHash(java.lang.String txHash) {
 		this.txHash = txHash;
 	}
@@ -371,32 +385,35 @@ public class TransactionEth implements java.io.Serializable, IObjectDateOperatio
 		return  (RECEIPT_STATUS_SUCCESS.equals(status) ? TX_RECEIPT_STATUS_SUCCESS : TX_RECEIPT_STATUS_FAIL);
 	}
 
+	@Override
 	public String toString() {
-		return new StringBuilder("TransactionEth [")
-			.append("TxHash=").append(getTxHash()).append(", ")
-					.append("BlockNumber=").append(getBlockNumber()).append(", ")
-					.append("TxFrom=").append(getTxFrom()).append(", ")
-					.append("TxTo=").append(getTxTo()).append(", ")
-					.append("ContractAddress=").append(getContractAddress()).append(", ")
-					.append("CoinType=").append(getCoinType()).append(", ")
-					.append("TxInput=").append(getTxInput()).append(", ")
-					.append("TxValue=").append(getTxValue()).append(", ")
-					.append("TxIndex=").append(getTxIndex()).append(", ")
-					.append("GasLimit=").append(getGasLimit()).append(", ")
-					.append("GasUsed=").append(getGasUsed()).append(", ")
-					.append("GasPrice=").append(getGasPrice()).append(", ")
-					.append("ActualFee=").append(getActualFee()).append(", ")
-					.append("Nonce=").append(getNonce()).append(", ")
-					.append("TxReceiptStatus=").append(getTxReceiptStatus()).append(", ")
-					.append("TxTime=").append(getTxTime()).append(", ")
-					.append("ConfirmBlockNumber=").append(getConfirmBlockNumber()).append(", ")
-					.append("TxType=").append(getTxType()).append(", ")
-					.append("TxStatus=").append(getTxStatus()).append(", ")
-					.append("TaskStatus=").append(getTaskStatus()).append(", ")
-					.append("CreateTime=").append(getCreateTime()).append(", ")
-					.append("ModifyTime=").append(getModifyTime())
-		.append("]").toString();
+		final StringBuilder sb = new StringBuilder("TransactionEth{");
+		sb.append("id='").append(id).append('\'');
+		sb.append(", txHash='").append(txHash).append('\'');
+		sb.append(", blockNumber=").append(blockNumber);
+		sb.append(", txFrom='").append(txFrom).append('\'');
+		sb.append(", txTo='").append(txTo).append('\'');
+		sb.append(", contractAddress='").append(contractAddress).append('\'');
+		sb.append(", coinType='").append(coinType).append('\'');
+		sb.append(", txInput='").append(txInput).append('\'');
+		sb.append(", txValue=").append(txValue);
+		sb.append(", txIndex=").append(txIndex);
+		sb.append(", gasLimit=").append(gasLimit);
+		sb.append(", gasUsed=").append(gasUsed);
+		sb.append(", gasPrice=").append(gasPrice);
+		sb.append(", actualFee=").append(actualFee);
+		sb.append(", nonce=").append(nonce);
+		sb.append(", txReceiptStatus='").append(txReceiptStatus).append('\'');
+		sb.append(", txTime=").append(txTime);
+		sb.append(", confirmBlockNumber=").append(confirmBlockNumber);
+		sb.append(", txStatus='").append(txStatus).append('\'');
+		sb.append(", txType='").append(txType).append('\'');
+		sb.append(", taskStatus='").append(taskStatus).append('\'');
+		sb.append(", createTime=").append(createTime);
+		sb.append(", modifyTime=").append(modifyTime);
+		sb.append(", txStatusArray=").append(txStatusArray);
+		sb.append('}');
+		return sb.toString();
 	}
-	
 }
 

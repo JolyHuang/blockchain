@@ -125,22 +125,22 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
             transaction = ethereumService.getTransactionByHash(transactionEth.getTxHash());
         } catch (Exception e) {
             logger.error("eth validate transaction confirm block number error, transactionEth:{}", transactionEth, e);
-            transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
+            transactionEthService.updateTxStatusToInvalid(transactionEth.getId());
             return;
         }
 
         boolean validateTransactionStatus = validateTransaction(transactionEth, transaction);
         if(!validateTransactionStatus) {
             this.logger.info("eth validate transaction content error, transactionEth:{}", transactionEth);
-            transactionEthService.updateTxStatusToInvalid(transactionEth.getTxHash());
+            transactionEthService.updateTxStatusToInvalid(transactionEth.getId());
             return;
         }
 
         if(currentBlockNumber.compareTo(blockNumber.add(new BigInteger(String.valueOf(validBlockNumber)))) > 0) {
-            transactionEthService.updateTxStatusToBalanceUnconfirm(transactionEth.getTxHash(), currentBlockNumber.subtract(transaction.getBlockNumber()).intValue());
+            transactionEthService.updateTxStatusToBalanceUnconfirm(transactionEth.getId(), currentBlockNumber.subtract(transaction.getBlockNumber()).intValue());
             return;
         } else {
-            transactionEthService.updateConfirmBlockNumber(transactionEth.getTxHash(), currentBlockNumber.subtract(transaction.getBlockNumber()).intValue());
+            transactionEthService.updateConfirmBlockNumber(transactionEth.getId(), currentBlockNumber.subtract(transaction.getBlockNumber()).intValue());
             return;
         }
     }

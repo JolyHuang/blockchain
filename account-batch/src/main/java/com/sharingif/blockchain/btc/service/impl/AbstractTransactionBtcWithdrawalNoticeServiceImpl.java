@@ -92,7 +92,7 @@ public abstract class AbstractTransactionBtcWithdrawalNoticeServiceImpl extends 
 
         } catch (Exception e) {
             logger.error("transaction btc info:{}", transactionBtcUtxo, e);
-            getTransactionBtcUtxoService().updateTaskStatusToFail(transactionBtcUtxo.getTxHash());
+            getTransactionBtcUtxoService().updateTaskStatusToFail(transactionBtcUtxo.getId());
             throw e;
         }
     }

@@ -24,8 +24,8 @@ public class TransactionEthWithdrawalFailNoticeServiceImpl extends AbstractTrans
     }
 
     @Override
-    void updateTxStatus(Withdrawal withdrawal, String txHash) {
-        getTransactionEthService().updateTxStatusToWithdrawalFailNotified(txHash);
+    void updateTxStatus(Withdrawal withdrawal, String id) {
+        getTransactionEthService().updateTxStatusToWithdrawalFailNotified(id);
         getWithdrawalService().updateStatusToFail(withdrawal.getId());
     }
 

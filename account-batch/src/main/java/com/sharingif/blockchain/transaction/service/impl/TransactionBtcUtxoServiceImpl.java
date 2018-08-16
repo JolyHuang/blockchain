@@ -35,12 +35,13 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
 
 
     @Override
-    public TransactionBtcUtxo getTransactionBtcUtxo(String txHash, BigInteger blockNumber, String from, String to) {
+    public TransactionBtcUtxo getTransactionBtcUtxo(String txHash, BigInteger blockNumber, String from, String to, String txType) {
         TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
         transactionBtcUtxo.setTxHash(txHash);
         transactionBtcUtxo.setBlockNumber(blockNumber);
         transactionBtcUtxo.setTxFrom(from);
         transactionBtcUtxo.setTxTo(to);
+        transactionBtcUtxo.setTxType(txType);
 
         return transactionBtcUtxoDAO.query(transactionBtcUtxo);
     }

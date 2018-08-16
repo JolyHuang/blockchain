@@ -67,10 +67,10 @@ public abstract class AbstractTransactionEthNoticeServiceImpl implements Initial
             sendNotice(transactionEth);
 
             // 修改交易状态
-            updateTxStatus(transactionEth.getTxHash());
+            updateTxStatus(transactionEth.getId());
         } catch (Exception e) {
             logger.error("transaction eth info:{}", transactionEth, e);
-            transactionEthService.updateTaskStatusToFail(transactionEth.getTxHash());
+            transactionEthService.updateTaskStatusToFail(transactionEth.getId());
             throw e;
         }
     }
@@ -121,7 +121,7 @@ public abstract class AbstractTransactionEthNoticeServiceImpl implements Initial
 
     abstract PaginationRepertory<TransactionEth> getPaginationRepertory(PaginationCondition<TransactionEth> paginationCondition);
 
-    abstract void updateTxStatus(String txHash);
+    abstract void updateTxStatus(String id);
 
     abstract void sendNotice(TransactionEth transactionEth);
 

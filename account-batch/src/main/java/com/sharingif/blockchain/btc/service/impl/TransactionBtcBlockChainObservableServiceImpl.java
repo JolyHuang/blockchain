@@ -71,7 +71,7 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
     }
 
     protected void addTransactionBtcUtxo(String txHash, BigInteger blockNumber, Long time, BigInteger actualFee, TransactionBtcUtxo utxo) {
-        TransactionBtcUtxo queryTransactionBtcUtxo = transactionBtcUtxoService.getTransactionBtcUtxo(txHash, blockNumber, utxo.getTxFrom(), utxo.getTxTo());
+        TransactionBtcUtxo queryTransactionBtcUtxo = transactionBtcUtxoService.getTransactionBtcUtxo(txHash, blockNumber, utxo.getTxFrom(), utxo.getTxTo(), utxo.getTxType());
         if(queryTransactionBtcUtxo != null) {
             return;
         }

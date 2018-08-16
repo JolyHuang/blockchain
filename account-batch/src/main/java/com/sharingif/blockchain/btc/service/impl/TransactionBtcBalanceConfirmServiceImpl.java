@@ -84,7 +84,7 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
                     ,transactionBtcUtxo.getTxFrom()
                     ,transactionBtcUtxo.getTxTo()
                     ,CoinType.BTC.name()
-                    ,transactionBtcUtxo.getTxHash()
+                    ,transactionBtcUtxo.getId()
                     ,transactionBtcUtxo.getTxTime()
                     ,txBalance
             );
@@ -116,7 +116,7 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
                     ,transactionBtcUtxo.getTxFrom()
                     ,transactionBtcUtxo.getTxTo()
                     ,CoinType.BTC.name()
-                    ,transactionBtcUtxo.getTxHash()
+                    ,transactionBtcUtxo.getId()
                     ,transactionBtcUtxo.getTxTime()
                     ,txBalance
             );

@@ -30,8 +30,8 @@ public class TransactionEthWithdrawalProcessingNoticeServiceImpl extends Abstrac
     }
 
     @Override
-    void updateTxStatus(Withdrawal withdrawal, String txHash) {
-        getTransactionEthService().updateTxStatusToWithdrawalProcessingNotified(txHash);
+    void updateTxStatus(Withdrawal withdrawal, String id) {
+        getTransactionEthService().updateTxStatusToWithdrawalProcessingNotified(id);
     }
 
     @Override

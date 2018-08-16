@@ -9,6 +9,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 
 	<!-- 用于select查询公用抽取的列 -->
 	<sql id="transactionEthColumns">
+    	<if test="null!=id">
+    		and ID = #{id}
+    	</if>
     	<if test="null!=txHash">
     		and TX_HASH = #{txHash}
     	</if>
@@ -78,6 +81,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	</sql>
 	
 	<sql id="transactionEthSetColumns">
+		    <if test="null!=id">
+		    ID = #{id},
+		    </if>
 		    <if test="null!=txHash">
 		    TX_HASH = #{txHash},
 		    </if>
@@ -147,6 +153,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	</sql>
 
 	<resultMap id="transactionEthResultMap" type="com.sharingif.blockchain.transaction.model.entity.TransactionEth">
+        <result property="id" column="ID"/>
         <result property="txHash" column="TX_HASH"/>
         <result property="blockNumber" column="BLOCK_NUMBER"/>
         <result property="txFrom" column="TX_FROM"/>
@@ -174,7 +181,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
 	<insert id="insert">
         INSERT INTO TRANSACTION_ETH (
-        	TX_HASH
+        	ID
+        	,TX_HASH
         	,BLOCK_NUMBER
         	,TX_FROM
         	,TX_TO
@@ -197,7 +205,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,CREATE_TIME
         	,MODIFY_TIME
         ) VALUES (
-        	#{txHash}
+        	#{id}
+        	,#{txHash}
         	,#{blockNumber}
         	,#{txFrom}
         	,#{txTo}
@@ -221,35 +230,36 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,#{modifyTime}
         )
 	</insert>
-
+	
 	<delete id="deleteById">
 	    DELETE FROM
-	    	TRANSACTION_ETH
+	    	TRANSACTION_ETH 
 	    WHERE
-	    TX_HASH = #{id}
+	    TX_HASH = #{id} 
     </delete>
-
+    
     <delete id="deleteByCondition">
 	    DELETE FROM
-	    	TRANSACTION_ETH
+	    	TRANSACTION_ETH 
 	    WHERE
 	    	1=1
 		    <include refid="transactionEthColumns" />
     </delete>
-
+    
 	<update id="updateById">
 	    UPDATE
-	    	TRANSACTION_ETH
+	    	TRANSACTION_ETH 
         <set>
 	        <include refid="transactionEthSetColumns" />
 		</set>
 	    WHERE
-	    TX_HASH = #{txHash}
+	    TX_HASH = #{txHash} 
 	</update>
-
+	
     <select id="queryById" resultMap="transactionEthResultMap">
 		SELECT
-			TX_HASH
+			ID
+			,TX_HASH
 			,BLOCK_NUMBER
 			,TX_FROM
 			,TX_TO
@@ -272,14 +282,15 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
-			TRANSACTION_ETH
-		WHERE
-			TX_HASH = #{id}
+			TRANSACTION_ETH 
+		WHERE 
+			TX_HASH = #{id} 
 	</select>
-
+	
 	<select id="queryList" resultMap="transactionEthResultMap">
 		SELECT
-			TX_HASH
+			ID
+			,TX_HASH
 			,BLOCK_NUMBER
 			,TX_FROM
 			,TX_TO
@@ -309,10 +320,11 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		ORDER BY
 			TX_HASH
 	</select>
-
+	
 	<select id="queryAll" resultMap="transactionEthResultMap">
 		SELECT
-			TX_HASH
+			ID
+			,TX_HASH
 			,BLOCK_NUMBER
 			,TX_FROM
 			,TX_TO
@@ -335,24 +347,25 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,CREATE_TIME
 			,MODIFY_TIME
 		FROM
-			TRANSACTION_ETH
+			TRANSACTION_ETH 
 		ORDER BY
 			TX_HASH
 	</select>
-
+	
 	<select id="queryPaginationListCount" resultType="Integer">
 		SELECT
 			COUNT(0)
 		FROM
-			TRANSACTION_ETH
+			TRANSACTION_ETH 
 		WHERE
-			1=1
+			1=1 
 			<include refid="transactionEthColumns" />
 	</select>
-
+	
 	<select id="queryPaginationList" parameterType="PaginationCondition" resultMap="transactionEthResultMap">
 		SELECT
-			TX_HASH
+			ID
+			,TX_HASH
 			,BLOCK_NUMBER
 			,TX_FROM
 			,TX_TO
@@ -390,7 +403,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			TRANSACTION_ETH
 		WHERE
 			1=1
-			AND
+		AND
 			TX_STATUS IN
 			<foreach collection="txStatusArray" item="txStatus" index="index"
 					 open="(" close=")" separator=",">
@@ -400,7 +413,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 
 	<select id="queryPaginationTxStatusInList" parameterType="PaginationCondition" resultMap="transactionEthResultMap">
 		SELECT
-			TX_HASH
+			ID
+			,TX_HASH
 			,BLOCK_NUMBER
 			,TX_FROM
 			,TX_TO
@@ -431,7 +445,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 					 open="(" close=")" separator=",">
 				#{txStatus}
 			</foreach>
-		ORDER BY
+			ORDER BY
 			CREATE_TIME
 	</select>
 	

@@ -72,18 +72,18 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
             sendNotice(addressNotice, withdrawal, transactionEth);
 
             // 修改交易状态
-            updateTxStatus(withdrawal, transactionEth.getTxHash());
+            updateTxStatus(withdrawal, transactionEth.getId());
 
         } catch (Exception e) {
             logger.error("transaction eth info:{}", transactionEth, e);
-            getTransactionEthService().updateTaskStatusToFail(transactionEth.getTxHash());
+            getTransactionEthService().updateTaskStatusToFail(transactionEth.getId());
             throw e;
         }
     }
 
     @Deprecated
     @Override
-    void updateTxStatus(String txHash) {
+    void updateTxStatus(String id) {
 
     }
 
@@ -106,6 +106,6 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
         }
     }
 
-    abstract void updateTxStatus(Withdrawal withdrawal, String txHash);
+    abstract void updateTxStatus(Withdrawal withdrawal, String id);
 
 }

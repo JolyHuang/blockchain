@@ -19,14 +19,15 @@ import java.util.List;
 public interface TransactionBtcUtxoService extends IBaseService<TransactionBtcUtxo, String> {
 
     /**
-     * 根据交易hash、区块号查询
+     * 查询交易数据
      * @param txHash
      * @param blockNumber
      * @param from
      * @param to
+     * @param txType
      * @return
      */
-    TransactionBtcUtxo getTransactionBtcUtxo(String txHash, BigInteger blockNumber, String from, String to);
+    TransactionBtcUtxo getTransactionBtcUtxo(String txHash, BigInteger blockNumber, String from, String to, String txType);
 
     /**
      * 获取充值未处理交易数据

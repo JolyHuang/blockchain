@@ -70,7 +70,7 @@ CREATE TABLE ACCOUNT_JNL
   COIN_TYPE             VARCHAR(20) COMMENT '币种',
   BALANCE               DECIMAL(65,0) NOT NULL COMMENT '金额',
   TYPE                  CHAR(2) COMMENT '类型(00:转入、01:转出)',
-  TX_HASH               VARCHAR(200) COMMENT '交易hash',
+  TX_HASH               VARCHAR(32) COMMENT '交易id',
   TRANS_TIME            TIMESTAMP NULL COMMENT '交易时间',
   CREATE_TIME           TIMESTAMP NULL COMMENT '创建时间',
   MODIFY_TIME           TIMESTAMP NULL COMMENT '修改时间',
@@ -148,6 +148,7 @@ ALTER TABLE BLOCK_CHAIN_SYNC COMMENT '区块同步表';
 
 CREATE TABLE TRANSACTION_ETH
 (
+  ID                    CHAR(32) NOT NULL COMMENT 'id',
   TX_HASH               VARCHAR(100) NOT NULL COMMENT '交易hash',
   BLOCK_NUMBER          BIGINT COMMENT '区块号',
   TX_FROM               VARCHAR(100) COMMENT 'FORM地址',

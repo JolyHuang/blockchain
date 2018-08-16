@@ -61,7 +61,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         Account account = accountService.getNormalAccountByAddress(address, coinType);
 
         if(account == null) {
-            transactionEthService.updateTxStatusToBalanceError(transactionEth.getTxHash());
+            transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
         }
 
         // 判断是ETH还是token,token暂时只支持ole
@@ -79,14 +79,14 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
                     ,transactionEth.getTxFrom()
                     ,transactionEth.getTxTo()
                     ,coinType
-                    ,transactionEth.getTxHash()
+                    ,transactionEth.getId()
                     ,transactionEth.getTxTime()
                     ,txBalance
             );
-            transactionEthService.updateTxStatusToValid(transactionEth.getTxHash());
+            transactionEthService.updateTxStatusToValid(transactionEth.getId());
 
         } else {
-            transactionEthService.updateTxStatusToBalanceError(transactionEth.getTxHash());
+            transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
         }
 
     }
@@ -98,20 +98,20 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         BigInteger currentBalance = account.getBalance().subtract(txBalance).subtract(actualFee);
 
         if(currentBalance.compareTo(blockBalance) <= 0) {
-            transactionEthService.updateTxStatusToValid(transactionEth.getTxHash());
+            transactionEthService.updateTxStatusToValid(transactionEth.getId());
             accountService.outBalance(
                     account.getId()
                     ,transactionEth.getTxFrom()
                     ,transactionEth.getTxTo()
                     ,transactionEth.getCoinType()
-                    ,transactionEth.getTxHash()
+                    ,transactionEth.getId()
                     ,transactionEth.getTxTime()
                     ,txBalance
                     ,actualFee
             );
 
         } else {
-            transactionEthService.updateTxStatusToBalanceError(transactionEth.getTxHash());
+            transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
         }
     }
 
@@ -122,7 +122,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         BigInteger actualFee = transactionEth.getActualFee();
         BigInteger currentEthBalance = ethAccount.getBalance().subtract(actualFee);
         if(currentEthBalance.compareTo(ethBlockBalance) != 0) {
-            transactionEthService.updateTxStatusToBalanceError(transactionEth.getTxHash());
+            transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
             return;
         }
 
@@ -131,21 +131,21 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         BigInteger txBalance = transactionEth.getTxValue();
         BigInteger currentContractBalance = account.getBalance().subtract(txBalance);
         if(currentContractBalance.compareTo(blockContractBalance) == 0) {
-            transactionEthService.updateTxStatusToValid(transactionEth.getTxHash());
+            transactionEthService.updateTxStatusToValid(transactionEth.getId());
             accountService.outBalance(
                     ethAccount.getId()
                     ,account.getId()
                     ,transactionEth.getTxFrom()
                     ,transactionEth.getTxTo()
                     ,transactionEth.getCoinType()
-                    ,transactionEth.getTxHash()
+                    ,transactionEth.getId()
                     ,transactionEth.getTxTime()
                     ,txBalance
                     ,actualFee
             );
 
         } else {
-            transactionEthService.updateTxStatusToBalanceError(transactionEth.getTxHash());
+            transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
         }
     }
 
@@ -155,7 +155,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         Account account = accountService.getNormalAccountByAddress(address, transactionEth.getCoinType());
 
         if(account == null) {
-            transactionEthService.updateTxStatusToBalanceError(transactionEth.getTxHash());
+            transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
         }
 
         // 判断是ETH还是token,token暂时只支持ole

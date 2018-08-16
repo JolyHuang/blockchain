@@ -6,8 +6,21 @@ import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import com.sharingif.cube.support.service.base.IBaseService;
 
+import java.math.BigInteger;
+
 
 public interface TransactionEthService extends IBaseService<TransactionEth, String> {
+
+    /**
+     * 查询交易数据
+     * @param txHash
+     * @param blockNumber
+     * @param from
+     * @param to
+     * @param txType
+     * @return
+     */
+    TransactionEth getTransactionEth(String txHash, BigInteger blockNumber, String from, String to, String txType);
 
     /**
      * 获取充值未处理交易数据
@@ -68,76 +81,76 @@ public interface TransactionEthService extends IBaseService<TransactionEth, Stri
 
     /**
      * 修改交易状态充值处理中已通知
-     * @param txHash
+     * @param id
      */
-    void updateTxStatusToDepositProcessingNotified(String txHash);
+    void updateTxStatusToDepositProcessingNotified(String id);
 
     /**
      * 修改交易状态取现处理中已通知
-     * @param txHash
+     * @param id
      */
-    void updateTxStatusToWithdrawalProcessingNotified(String txHash);
+    void updateTxStatusToWithdrawalProcessingNotified(String id);
 
     /**
      * 修改交易状态为余额未确认、确认区块数
-     * @param txHash
+     * @param id
      * @param confirmBlockNumber
      */
-    void updateTxStatusToBalanceUnconfirm(String txHash, int confirmBlockNumber);
+    void updateTxStatusToBalanceUnconfirm(String id, int confirmBlockNumber);
 
     /**
      * 修改交易状态为余额确认异常
-     * @param txHash
+     * @param id
      */
-    void updateTxStatusToBalanceError(String txHash);
+    void updateTxStatusToBalanceError(String id);
 
     /**
      * 修改交易确认区块数
-     * @param txHash
+     * @param id
      * @param confirmBlockNumber
      */
-    void updateConfirmBlockNumber(String txHash, int confirmBlockNumber);
+    void updateConfirmBlockNumber(String id, int confirmBlockNumber);
 
     /**
      * 修改交易状态为无效
-     * @param txHash
+     * @param id
      */
-    void updateTxStatusToInvalid(String txHash);
+    void updateTxStatusToInvalid(String id);
 
     /**
      * 修改交易状态为有效
-     * @param txHash
+     * @param id
      */
-    void updateTxStatusToValid(String txHash);
+    void updateTxStatusToValid(String id);
 
     /**
      * 修改交易状态为充值成功已通知
-     * @param txHash
+     * @param id
      */
-    void updateTxStatusToDepositSuccessNotified(String txHash);
+    void updateTxStatusToDepositSuccessNotified(String id);
 
     /**
      * 修改交易状态为取现成功已通知
-     * @param txHash
+     * @param id
      */
-    void updateTxStatusToWithdrawalSuccessNotified(String txHash);
+    void updateTxStatusToWithdrawalSuccessNotified(String id);
 
     /**
      * 修改交易状态为充值失败已通知
-     * @param txHash
+     * @param id
      */
-    void updateTxStatusToDepositFailNotified(String txHash);
+    void updateTxStatusToDepositFailNotified(String id);
 
     /**
      * 修改交易状态为取现失败已通知
-     * @param txHash
+     * @param id
      */
-    void updateTxStatusToWithdrawalFailNotified(String txHash);
+    void updateTxStatusToWithdrawalFailNotified(String id);
 
     /**
      * 修改处理状态为处理失败
-     * @param txHash
+     * @param id
      */
-    void updateTaskStatusToFail(String txHash);
+    void updateTaskStatusToFail(String id);
 
 }

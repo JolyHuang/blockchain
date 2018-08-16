@@ -22,8 +22,8 @@ public class TransactionEthDepositProcessingNoticeServiceImpl extends AbstractTr
     }
 
     @Override
-    void updateTxStatus(String txHash) {
-        getTransactionEthService().updateTxStatusToDepositProcessingNotified(txHash);
+    void updateTxStatus(String id) {
+        getTransactionEthService().updateTxStatusToDepositProcessingNotified(id);
     }
 
     @Override
