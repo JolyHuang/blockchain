@@ -27,6 +27,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	<if test="null!=balance">
     		and BALANCE = #{balance}
     	</if>
+    	<if test="null!=frozenAmount">
+    		and FROZEN_AMOUNT = #{frozenAmount}
+    	</if>
     	<if test="null!=status">
     		and STATUS = #{status}
     	</if>
@@ -57,6 +60,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    <if test="null!=balance">
 		    BALANCE = #{balance},
 		    </if>
+		    <if test="null!=frozenAmount">
+		    FROZEN_AMOUNT = #{frozenAmount},
+		    </if>
 		    <if test="null!=status">
 		    STATUS = #{status},
 		    </if>
@@ -75,6 +81,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         <result property="totalIn" column="TOTAL_IN"/>
         <result property="totalOut" column="TOTAL_OUT"/>
         <result property="balance" column="BALANCE"/>
+        <result property="frozenAmount" column="FROZEN_AMOUNT"/>
         <result property="status" column="STATUS"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="modifyTime" column="MODIFY_TIME"/>
@@ -89,6 +96,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,TOTAL_IN
         	,TOTAL_OUT
         	,BALANCE
+        	,FROZEN_AMOUNT
         	,STATUS
         	,CREATE_TIME
         	,MODIFY_TIME
@@ -99,6 +107,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,#{totalIn}
         	,#{totalOut}
         	,#{balance}
+        	,#{frozenAmount}
         	,#{status}
         	,#{createTime}
         	,#{modifyTime}
@@ -138,6 +147,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TOTAL_IN
 			,TOTAL_OUT
 			,BALANCE
+			,FROZEN_AMOUNT
 			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
@@ -155,6 +165,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TOTAL_IN
 			,TOTAL_OUT
 			,BALANCE
+			,FROZEN_AMOUNT
 			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
@@ -175,6 +186,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TOTAL_IN
 			,TOTAL_OUT
 			,BALANCE
+			,FROZEN_AMOUNT
 			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
@@ -202,6 +214,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TOTAL_IN
 			,TOTAL_OUT
 			,BALANCE
+			,FROZEN_AMOUNT
 			,STATUS
 			,CREATE_TIME
 			,MODIFY_TIME
@@ -213,6 +226,75 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		ORDER BY
 			ID
 	</select>
+
+	<update id="updateFreezingBalanceById">
+		UPDATE
+			ACCOUNT
+		SET
+			BALANCE = BALANCE - #{balance}
+			,FROZEN_AMOUNT = FROZEN_AMOUNT + #{balance}
+		WHERE
+				ID = #{id}
+			AND
+				BALANCE >= #{balance}
+	</update>
+
+	<update id="updateUnfreezeBalanceById">
+		UPDATE
+			ACCOUNT
+		SET
+			BALANCE = BALANCE + #{balance}
+			,FROZEN_AMOUNT = FROZEN_AMOUNT - #{balance}
+		WHERE
+				ID = #{id}
+			AND
+				FROZEN_AMOUNT >= #{balance}
+	</update>
+
+	<update id="updateTotalInAndBalanceById">
+		UPDATE
+			ACCOUNT
+		SET
+		  	TOTAL_IN = TOTAL_IN + #{balance}
+			,BALANCE = BALANCE + #{balance}
+		WHERE
+		  	ID = #{id}
+	</update>
+
+	<update id="updateTotalOutAndBalanceById">
+		UPDATE
+			ACCOUNT
+		SET
+		  	TOTAL_OUT = TOTAL_OUT + #{balance}
+			,BALANCE = BALANCE - #{balance}
+		WHERE
+		  	ID = #{id}
+	</update>
+
+	<update id="updateTotalOutAndFrozenAmountById">
+		UPDATE
+			ACCOUNT
+		SET
+		  	TOTAL_OUT = TOTAL_OUT + #{balance}
+		  	,FROZEN_AMOUNT = FROZEN_AMOUNT - #{balance}
+		WHERE
+		  		ID = #{id}
+		  	AND
+				FROZEN_AMOUNT >= #{balance}
+	</update>
+
+	<update id="updateTotalOutFrozenAmountBalanceById">
+		UPDATE
+			ACCOUNT
+		SET
+		  	TOTAL_OUT = TOTAL_OUT + #{totalOut}
+		  	,FROZEN_AMOUNT = FROZEN_AMOUNT - #{frozenAmount}
+		  	,BALANCE = BALANCE + #{balance}
+		WHERE
+		  		ID = #{id}
+		  	AND
+				FROZEN_AMOUNT >= #{frozenAmount}
+	</update>
 	
 </mapper>
 

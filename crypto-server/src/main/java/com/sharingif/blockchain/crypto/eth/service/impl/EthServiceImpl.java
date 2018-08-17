@@ -43,7 +43,7 @@ public class EthServiceImpl implements EthService {
         RawTransaction rawTransaction  = RawTransaction.createEtherTransaction(
                 req.getNonce()
                 ,req.getGasPrice()
-                , Transfer.GAS_LIMIT
+                ,Transfer.GAS_LIMIT
                 ,req.getToAddress()
                 ,req.getAmount()
         );

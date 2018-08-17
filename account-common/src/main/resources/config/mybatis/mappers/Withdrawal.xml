@@ -27,6 +27,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	<if test="null!=amount">
     		and AMOUNT = #{amount}
     	</if>
+    	<if test="null!=fee">
+    		and FEE = #{fee}
+    	</if>
     	<if test="null!=txHash">
     		and TX_HASH = #{txHash}
     	</if>
@@ -63,6 +66,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    <if test="null!=amount">
 		    AMOUNT = #{amount},
 		    </if>
+		    <if test="null!=fee">
+		    FEE = #{fee},
+		    </if>
 		    <if test="null!=txHash">
 		    TX_HASH = #{txHash},
 		    </if>
@@ -87,6 +93,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         <result property="subCoinType" column="SUB_COIN_TYPE"/>
         <result property="address" column="ADDRESS"/>
         <result property="amount" column="AMOUNT"/>
+        <result property="fee" column="FEE"/>
         <result property="txHash" column="TX_HASH"/>
         <result property="status" column="STATUS"/>
         <result property="taskStatus" column="TASK_STATUS"/>
@@ -103,6 +110,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,SUB_COIN_TYPE
         	,ADDRESS
         	,AMOUNT
+        	,FEE
         	,TX_HASH
         	,STATUS
         	,TASK_STATUS
@@ -115,6 +123,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,#{subCoinType}
         	,#{address}
         	,#{amount}
+        	,#{fee}
         	,#{txHash}
         	,#{status}
         	,#{taskStatus}
@@ -156,6 +165,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,SUB_COIN_TYPE
 			,ADDRESS
 			,AMOUNT
+			,FEE
 			,TX_HASH
 			,STATUS
 			,TASK_STATUS
@@ -175,6 +185,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,SUB_COIN_TYPE
 			,ADDRESS
 			,AMOUNT
+			,FEE
 			,TX_HASH
 			,STATUS
 			,TASK_STATUS
@@ -197,6 +208,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,SUB_COIN_TYPE
 			,ADDRESS
 			,AMOUNT
+			,FEE
 			,TX_HASH
 			,STATUS
 			,TASK_STATUS
@@ -226,6 +238,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,SUB_COIN_TYPE
 			,ADDRESS
 			,AMOUNT
+			,FEE
 			,TX_HASH
 			,STATUS
 			,TASK_STATUS

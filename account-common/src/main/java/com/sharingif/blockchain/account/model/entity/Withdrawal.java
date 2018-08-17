@@ -1,13 +1,16 @@
 package com.sharingif.blockchain.account.model.entity;
 
 
+import javax.validation.constraints.*;
+
 import com.sharingif.blockchain.account.api.account.entity.WithdrawalApplyReq;
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
 import com.sharingif.cube.components.sequence.Sequence;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.*;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 
 
 public class Withdrawal implements java.io.Serializable, IObjectDateOperationHistory {
@@ -80,6 +83,11 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
 	
 	private BigInteger amount;
     /**
+     * 手续费			db_column: FEE 
+     */	
+	
+	private BigInteger fee;
+    /**
      * 交易hash			db_column: TX_HASH 
      */	
 	@Length(max=100)
@@ -98,12 +106,12 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
      * 创建时间			db_column: CREATE_TIME 
      */	
 	
-	private java.util.Date createTime;
+	private Date createTime;
     /**
      * 修改时间			db_column: MODIFY_TIME 
      */	
 	
-	private java.util.Date modifyTime;
+	private Date modifyTime;
 	//columns END
 
 	public void setId(java.lang.String id) {
@@ -142,6 +150,12 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
 	public BigInteger getAmount() {
 		return this.amount;
 	}
+	public void setFee(BigInteger fee) {
+		this.fee = fee;
+	}
+	public BigInteger getFee() {
+		return this.fee;
+	}
 	public void setTxHash(java.lang.String txHash) {
 		this.txHash = txHash;
 	}
@@ -160,16 +174,16 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
 	public java.lang.String getTaskStatus() {
 		return this.taskStatus;
 	}
-	public void setCreateTime(java.util.Date createTime) {
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
-	public java.util.Date getCreateTime() {
+	public Date getCreateTime() {
 		return this.createTime;
 	}
-	public void setModifyTime(java.util.Date modifyTime) {
+	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
 	}
-	public java.util.Date getModifyTime() {
+	public Date getModifyTime() {
 		return this.modifyTime;
 	}
 
@@ -191,6 +205,7 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
 					.append("SubCoinType=").append(getSubCoinType()).append(", ")
 					.append("Address=").append(getAddress()).append(", ")
 					.append("Amount=").append(getAmount()).append(", ")
+					.append("Fee=").append(getFee()).append(", ")
 					.append("TxHash=").append(getTxHash()).append(", ")
 					.append("Status=").append(getStatus()).append(", ")
 					.append("TaskStatus=").append(getTaskStatus()).append(", ")

@@ -2,6 +2,7 @@ package com.sharingif.blockchain.btc.service.impl;
 
 import com.neemre.btcdcli4j.core.domain.Output;
 import com.sharingif.blockchain.account.model.entity.Withdrawal;
+import com.sharingif.blockchain.account.service.AccountService;
 import com.sharingif.blockchain.account.service.AccountSysPrmService;
 import com.sharingif.blockchain.account.service.WithdrawalService;
 import com.sharingif.blockchain.app.constants.Constants;
@@ -48,6 +49,7 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
     private SecretKeyService secretKeyService;
     private BtcService btcService;
     private BtcApiService btcApiService;
+    private AccountService accountService;
 
     @Resource
     public void setWithdrawalService(WithdrawalService withdrawalService) {
@@ -69,6 +71,10 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
     public void setBtcApiService(BtcApiService btcApiService) {
         this.btcApiService = btcApiService;
     }
+    @Resource
+    public void setAccountService(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     protected void withdrawalUntreatedStatus(Withdrawal withdrawal) {
         int bipCoinType = btcService.getBipCoinType();
@@ -77,16 +83,18 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
         SecretKey secretKey = secretKeyService.getById(secretKeyId);
         String password = secretKeyService.decryptPassword(secretKey.getPassword());
 
-        BigInteger fess = new BigInteger("30000");
+        BigInteger fee = new BigInteger("30000");
+        accountService.freezingBalance(secretKey.getAddress(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
+        withdrawalService.updateFee(withdrawal.getId(), fee);
 
-        List<Output> outputList = btcService.getListUnspent(secretKey.getAddress(), withdrawal.getAmount(), fess);
+        List<Output> outputList = btcService.getListUnspent(secretKey.getAddress(), withdrawal.getAmount(), fee);
 
         BtcTransferReq req = new BtcTransferReq();
         req.setSecretKeyId(secretKey.getId());
         req.setPassword(password);
         req.setToAddress(withdrawal.getAddress());
         req.setAmount(withdrawal.getAmount());
-        req.setFee(fess);
+        req.setFee(fee);
         List<BtcTransferListReq> btcTransferListReqList = new ArrayList<BtcTransferListReq>(outputList.size());
         for(Output output : outputList) {
             BtcTransferListReq btcTransferListReq = new BtcTransferListReq();

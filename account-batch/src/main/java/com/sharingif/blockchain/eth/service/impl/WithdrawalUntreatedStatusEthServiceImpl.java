@@ -1,6 +1,5 @@
 package com.sharingif.blockchain.eth.service.impl;
 
-import com.sharingif.blockchain.account.model.entity.Account;
 import com.sharingif.blockchain.account.model.entity.Withdrawal;
 import com.sharingif.blockchain.account.service.AccountService;
 import com.sharingif.blockchain.account.service.AccountSysPrmService;
@@ -17,7 +16,6 @@ import com.sharingif.blockchain.crypto.api.eth.service.EthErc20ContractApiServic
 import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.service.SecretKeyService;
 import com.sharingif.blockchain.eth.service.EthereumService;
-import com.sharingif.cube.core.exception.validation.ValidationCubeException;
 import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
@@ -25,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
+import org.web3j.tx.Transfer;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
@@ -90,14 +89,18 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
         this.accountService = accountService;
     }
 
-    private String ethWithdrawal(String secretKeyId, BigInteger nonce, BigInteger gasPrice, String password, Withdrawal withdrawal) {
+    private String ethWithdrawal(SecretKey secretKey, BigInteger nonce, BigInteger gasPrice, String password, Withdrawal withdrawal) {
         EthTransferReq req = new EthTransferReq();
         req.setNonce(nonce);
         req.setToAddress(withdrawal.getAddress());
         req.setAmount(withdrawal.getAmount());
         req.setGasPrice(gasPrice);
-        req.setSecretKeyId(secretKeyId);
+        req.setSecretKeyId(secretKey.getId());
         req.setPassword(password);
+
+        BigInteger fee = req.getGasPrice().multiply(Transfer.GAS_LIMIT);
+        accountService.freezingBalance(secretKey.getAddress(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
+        withdrawalService.updateFee(withdrawal.getId(), fee);
 
         EthTransferRsp rsp = ethApiService.transfer(req);
         String txHash = ethereumService.ethSendRawTransaction(rsp.getHexValue());
@@ -105,7 +108,7 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
         return txHash;
     }
 
-    private String ethContractWithdrawal(String secretKeyId, BigInteger nonce, BigInteger gasPrice, String password, Withdrawal withdrawal) {
+    private String ethContractWithdrawal(SecretKey secretKey, BigInteger nonce, BigInteger gasPrice, String password, Withdrawal withdrawal) {
         Erc20TransferReq req = new Erc20TransferReq();
         req.setNonce(nonce);
         req.setToAddress(withdrawal.getAddress());
@@ -113,8 +116,16 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
         req.setAmount(withdrawal.getAmount());
         req.setGasPrice(gasPrice);
         req.setGasLimit(new BigInteger("100000"));
-        req.setSecretKeyId(secretKeyId);
+        req.setSecretKeyId(secretKey.getId());
         req.setPassword(password);
+
+        // ETH手续费
+        BigInteger fee = req.getGasPrice().multiply(req.getGasLimit());
+        withdrawalService.updateFee(withdrawal.getId(), fee);
+        accountService.freezingBalance(secretKey.getAddress(), withdrawal.getCoinType(), fee);
+
+        // 合约账户
+        accountService.freezingBalance(secretKey.getAddress(), withdrawal.getSubCoinType(), withdrawal.getAmount());
 
         Erc20TransferRsp rsp = ethErc20ContractApiService.transfer(req);
         String txHash = ethereumService.ethSendRawTransaction(rsp.getHexValue());
@@ -126,16 +137,7 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
         String secretKeyId = accountSysPrmService.getWithdrawalAccount(CoinTypeConvert.convertToBipCoinType(withdrawal.getCoinType()));
         SecretKey secretKey = secretKeyService.getById(secretKeyId);
 
-        String accountCoinType = withdrawal.getSubCoinType();
-        if(StringUtils.isTrimEmpty(accountCoinType)) {
-            accountCoinType = withdrawal.getCoinType();
-        }
-        Account account = accountService.getNormalAccountByAddress(secretKey.getAddress(), accountCoinType);
-        if(account.getBalance().compareTo(withdrawal.getAmount()) < 0) {
-            logger.error("insufficient balance, account:{}", account);
 
-            return;
-        }
 
         BigInteger nonce =  ethereumService.ethGetTransactionCountPending(secretKey.getAddress());
         BigInteger gasPrice = ethereumService.getGasPrice().add(new BigInteger("3000000000"));
@@ -144,9 +146,9 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
         String txHash = null;
         try{
             if(StringUtils.isTrimEmpty(withdrawal.getSubCoinType())) {
-                txHash = ethWithdrawal(secretKeyId, nonce, gasPrice, password, withdrawal);
+                txHash = ethWithdrawal(secretKey, nonce, gasPrice, password, withdrawal);
             } else {
-                txHash = ethContractWithdrawal(secretKeyId, nonce, gasPrice, password, withdrawal);
+                txHash = ethContractWithdrawal(secretKey, nonce, gasPrice, password, withdrawal);
             }
         } catch (Exception e) {
             logger.error("eth withdrawa error", e);

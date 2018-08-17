@@ -50,12 +50,13 @@ ALTER TABLE SECRET_KEY COMMENT '密钥表';
 CREATE TABLE ACCOUNT
 (
   ID                    CHAR(32) NOT NULL COMMENT 'id',
-  ADDRESS               VARCHAR(100) COMMENT '地址',
-  COIN_TYPE             VARCHAR(20) COMMENT '币种',
-  TOTAL_IN              DECIMAL(65,0) COMMENT '入账总额',
-  TOTAL_OUT             DECIMAL(65,0) COMMENT '出账总额',
+  ADDRESS               VARCHAR(100) NOT NULL COMMENT '地址',
+  COIN_TYPE             VARCHAR(20) NOT NULL COMMENT '币种',
+  TOTAL_IN              DECIMAL(65,0) NOT NULL COMMENT '入账总额',
+  TOTAL_OUT             DECIMAL(65,0) NOT NULL COMMENT '出账总额',
   BALANCE               DECIMAL(65,0) NOT NULL COMMENT '余额',
-  STATUS                VARCHAR(10) COMMENT '账户状态(CZSD:充值锁定、ZZSD:转出锁定、NORMAL:正常)',
+  FROZEN_AMOUNT         DECIMAL(65,0) NOT NULL COMMENT '冻结金额',
+  STATUS                VARCHAR(10) NOT NULL COMMENT '账户状态(CZSD:充值锁定、ZZSD:转出锁定、NORMAL:正常)',
   CREATE_TIME           TIMESTAMP NULL COMMENT '创建时间',
   MODIFY_TIME           TIMESTAMP NULL COMMENT '修改时间',
   PRIMARY KEY (ID)
@@ -112,6 +113,7 @@ CREATE TABLE WITHDRAWAL
   SUB_COIN_TYPE         VARCHAR(20) COMMENT '子币种',
   ADDRESS               VARCHAR(100) NOT NULL COMMENT '地址',
   AMOUNT                DECIMAL(65,0) COMMENT '金额',
+  FEE                   DECIMAL(65,0) COMMENT '手续费',
   TX_HASH               VARCHAR(100) COMMENT '交易hash',
   STATUS                VARCHAR(20) NOT NULL COMMENT '处理状态(CZWCL:充值未处理、CZCLZ:充值处理中、SUCCESS:充值成功、FAIL:充值失败)',
   TASK_STATUS           VARCHAR(20) NOT NULL COMMENT '处理状态(WCL:未处理、CLZ:处理中、SUCCESS:处理成功、FAIL:处理失败)',

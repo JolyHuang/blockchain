@@ -6,6 +6,8 @@ import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import com.sharingif.cube.support.service.base.IBaseService;
 
+import java.math.BigInteger;
+
 
 public interface WithdrawalService extends IBaseService<Withdrawal, String> {
 
@@ -60,5 +62,12 @@ public interface WithdrawalService extends IBaseService<Withdrawal, String> {
      * @return
      */
     Withdrawal getWithdrawalByTxHash(String txHash);
+
+    /**
+     * 修改手续费
+     * @param id
+     * @param fee
+     */
+    void updateFee(String id, BigInteger fee);
 
 }

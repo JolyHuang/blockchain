@@ -11,6 +11,7 @@ import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
 
 @Service
 public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, String> implements WithdrawalService {
@@ -97,6 +98,15 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, String> i
 		withdrawal.setTxHash(txHash);
 
 		return withdrawalDAO.query(withdrawal);
+	}
+
+	@Override
+	public void updateFee(String id, BigInteger fee) {
+		Withdrawal withdrawal = new Withdrawal();
+		withdrawal.setId(id);
+		withdrawal.setFee(fee);
+
+		withdrawalDAO.updateById(withdrawal);
 	}
 
 }

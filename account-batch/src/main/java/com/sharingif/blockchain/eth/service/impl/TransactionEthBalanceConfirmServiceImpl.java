@@ -1,7 +1,9 @@
 package com.sharingif.blockchain.eth.service.impl;
 
 import com.sharingif.blockchain.account.model.entity.Account;
+import com.sharingif.blockchain.account.model.entity.Withdrawal;
 import com.sharingif.blockchain.account.service.AccountService;
+import com.sharingif.blockchain.account.service.WithdrawalService;
 import com.sharingif.blockchain.common.components.ole.OleContract;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.eth.service.EthereumService;
@@ -36,6 +38,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
     private EthereumService ethereumService;
     private AccountService accountService;
     private OleContract oleContract;
+    private WithdrawalService withdrawalService;
 
     @Resource
     public void setTransactionEthService(TransactionEthService transactionEthService) {
@@ -52,6 +55,10 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
     @Resource
     public void setOleContract(OleContract oleContract) {
         this.oleContract = oleContract;
+    }
+    @Resource
+    public void setWithdrawalService(WithdrawalService withdrawalService) {
+        this.withdrawalService = withdrawalService;
     }
 
     @Transactional
@@ -117,9 +124,13 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         }
         BigInteger actualFee = transactionEth.getActualFee();
 
+        Withdrawal withdrawal = withdrawalService.getWithdrawalByTxHash(transactionEth.getTxHash());
+        BigInteger withdrawalFee = withdrawal.getFee();
+        withdrawalService.updateFee(withdrawal.getId(), actualFee);
+
         // 处理合约
         BigInteger txBalance = transactionEth.getTxValue();
-        accountService.outBalance(
+        accountService.outContractBalance(
                 ethAccount.getId()
                 ,account.getId()
                 ,transactionEth.getTxFrom()
@@ -128,6 +139,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
                 ,transactionEth.getId()
                 ,transactionEth.getTxTime()
                 ,txBalance
+                ,withdrawalFee
                 ,actualFee
         );
 

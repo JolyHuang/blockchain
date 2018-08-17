@@ -1,7 +1,9 @@
 package com.sharingif.blockchain.btc.service.impl;
 
 import com.sharingif.blockchain.account.model.entity.Account;
+import com.sharingif.blockchain.account.model.entity.Withdrawal;
 import com.sharingif.blockchain.account.service.AccountService;
+import com.sharingif.blockchain.account.service.WithdrawalService;
 import com.sharingif.blockchain.btc.service.BtcService;
 import com.sharingif.blockchain.btc.service.TransactionBtcUtxoService;
 import com.sharingif.blockchain.common.constants.CoinType;
@@ -36,6 +38,7 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
     private TransactionBtcUtxoService transactionBtcUtxoService;
     private AccountService accountService;
     private BtcService btcService;
+    private WithdrawalService withdrawalService;
 
     @Resource
     public void setTransactionBtcUtxoService(TransactionBtcUtxoService transactionBtcUtxoService) {
@@ -48,6 +51,10 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
     @Resource
     public void setBtcService(BtcService btcService) {
         this.btcService = btcService;
+    }
+    @Resource
+    public void setWithdrawalService(WithdrawalService withdrawalService) {
+        this.withdrawalService = withdrawalService;
     }
 
     @Transactional
@@ -105,6 +112,9 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
             transactionBtcUtxoService.updateTxStatusToBalanceError(transactionBtcUtxo.getId());
         }
 
+        Withdrawal withdrawal = withdrawalService.getWithdrawalByTxHash(transactionBtcUtxo.getTxHash());
+        BigInteger txFee = withdrawal.getFee();
+
         BigInteger txBalance = transactionBtcUtxo.getTxValue();
         accountService.outBalance(
                 account.getId()
@@ -114,6 +124,7 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
                 ,transactionBtcUtxo.getId()
                 ,transactionBtcUtxo.getTxTime()
                 ,txBalance
+                ,txFee
         );
 
         transactionBtcUtxoService.updateTxStatusToValid(transactionBtcUtxo.getId());

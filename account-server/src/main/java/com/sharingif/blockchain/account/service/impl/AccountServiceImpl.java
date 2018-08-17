@@ -40,6 +40,7 @@ public class AccountServiceImpl extends BaseServiceImpl<Account, java.lang.Strin
 		account.setTotalIn(BigInteger.ZERO);
 		account.setTotalOut(BigInteger.ZERO);
 		account.setBalance(BigInteger.ZERO);
+		account.setFrozenAmount(BigInteger.ZERO);
 		account.setStatus(Account.STATUS_NORMAL);
 
 		accountDAO.insert(account);
