@@ -6,6 +6,8 @@ import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 
+import java.math.BigInteger;
+
 /**
  * 充值通知服务
  *
@@ -35,8 +37,18 @@ public abstract class AbstractTransactionEthDepositNoticeServiceImpl extends Abs
         transactionEthApiReq.setTxReceiptStatus(transactionEth.getTxReceiptStatus());
         transactionEthApiReq.setTxTime(transactionEth.getTxTime());
         transactionEthApiReq.setConfirmBlockNumber(transactionEth.getConfirmBlockNumber());
-        transactionEthApiReq.setTxStatus(transactionEth.getTxStatus());
         transactionEthApiReq.setTxType(transactionEth.getTxType());
+
+        if(TransactionEth.TX_STATUS_VALID.equals(transactionEth.getTxStatus())) {
+            if(TransactionEth.TX_RECEIPT_STATUS_SUCCESS.equals(transactionEth.getTxReceiptStatus())) {
+                transactionEthApiReq.setTxStatus(TransactionEth.TX_STATUS_VALID);
+            } else {
+                transactionEthApiReq.setTxStatus(TransactionEth.TX_STATUS_INVALID);
+            }
+        } else {
+            transactionEthApiReq.setTxValue(BigInteger.ZERO);
+            transactionEthApiReq.setTxStatus(TransactionEth.TX_STATUS_INVALID);
+        }
 
         return transactionEthApiReq;
     }

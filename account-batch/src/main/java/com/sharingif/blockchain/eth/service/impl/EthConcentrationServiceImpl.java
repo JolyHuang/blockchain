@@ -6,7 +6,6 @@ import com.sharingif.blockchain.account.service.AccountService;
 import com.sharingif.blockchain.account.service.AccountSysPrmService;
 import com.sharingif.blockchain.account.service.WithdrawalService;
 import com.sharingif.blockchain.common.constants.CoinType;
-import com.sharingif.blockchain.common.constants.CoinTypeConvert;
 import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.service.SecretKeyService;
 import com.sharingif.blockchain.eth.service.EthereumService;
@@ -20,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.web3j.tx.Transfer;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,6 +36,8 @@ import java.util.concurrent.TimeUnit;
 public class EthConcentrationServiceImpl implements InitializingBean {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private static final BigInteger QUERY_ETH_BALANCE = new BigDecimal("0.1").multiply(new BigDecimal(String.valueOf(Math.pow(10,18)))).toBigInteger();
 
     private int concentrationTimeIntervalSeconds;
     private BigInteger ethConcentrationMinimumAmount;
@@ -114,6 +117,11 @@ public class EthConcentrationServiceImpl implements InitializingBean {
         String secretKeyId = accountSysPrmService.getWithdrawalAccount(bipCoinType);
         SecretKey secretKey = secretKeyService.getById(secretKeyId);
 
+        List<Withdrawal> untreatedWithdrawalList = withdrawalService.getUntreatedWithdrawal(secretKey.getAddress());
+        if(untreatedWithdrawalList !=null ){
+            return;
+        }
+
         BigInteger gasPrice = ethereumService.getGasPrice();
         BigInteger gasLimit = new BigInteger("100000");
         BigInteger oleFee = gasPrice.multiply(gasLimit);
@@ -138,7 +146,7 @@ public class EthConcentrationServiceImpl implements InitializingBean {
         PaginationCondition<Account> paginationCondition = new PaginationCondition<Account>();
         Account account = new Account();
         account.setCoinType(CoinType.ETH.name());
-        account.setBalance(new BigInteger("10000000000000000"));
+        account.setBalance(QUERY_ETH_BALANCE);
         paginationCondition.setCurrentPage(1);
         paginationCondition.setPageSize(100);
         paginationCondition.setCondition(account);

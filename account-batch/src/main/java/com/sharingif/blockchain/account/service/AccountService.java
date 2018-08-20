@@ -71,18 +71,29 @@ public interface AccountService extends IBaseService<Account, java.lang.String> 
     void inBalance(String id, String from, String to, String coinType, String txHash, Date txTime, BigInteger balance);
 
     /**
+     * 失败交易手续费出账金额
+     * @param id
+     */
+    void outBalanceReceiptStatusFail(String id, String from, String to, String coinType, String txId, Date txTime, BigInteger balance, BigInteger withdrawalFee, BigInteger actualFee);
+
+    /**
+     * 合约失败交易手续费出账金额
+     */
+    void outContractBalanceReceiptStatusFail(String ethAccountId, String contractAccountId, String from, String to, String coinType, String txId, Date txTime, BigInteger balance, BigInteger withdrawalFee, BigInteger actualFee);
+
+    /**
      * 出账金额
      * @param id
      * @param balance
      */
-    void outBalance(String id, String from, String to, String coinType, String txHash, Date txTime, BigInteger balance, BigInteger actualFee);
+    void outBalance(String id, String from, String to, String coinType, String txId, Date txTime, BigInteger balance, BigInteger actualFee);
 
     /**
-     * 出账金额
+     * 合约出账金额
      * @param ethAccountId
      * @param balance
      */
-    void outContractBalance(String ethAccountId, String contractAccountId, String from, String to, String coinType, String txHash, Date txTime, BigInteger balance, BigInteger withdrawalFee, BigInteger actualFee);
+    void outContractBalance(String ethAccountId, String contractAccountId, String from, String to, String coinType, String txId, Date txTime, BigInteger balance, BigInteger withdrawalFee, BigInteger actualFee);
 
     /**
      * 根据币种、余额获取账号列表

@@ -1,14 +1,12 @@
 package com.sharingif.blockchain.account.model.entity;
 
 
-import javax.validation.constraints.*;
-
 import com.sharingif.blockchain.account.api.account.entity.WithdrawalApplyReq;
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
 import com.sharingif.cube.components.sequence.Sequence;
-import org.hibernate.validator.constraints.*;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 

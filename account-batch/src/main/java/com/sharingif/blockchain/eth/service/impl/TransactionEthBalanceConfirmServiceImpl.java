@@ -63,6 +63,14 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
 
     @Transactional
     protected void in(TransactionEth transactionEth) {
+        if(TransactionEth.TX_RECEIPT_STATUS_FAIL.equals(transactionEth.getTxReceiptStatus())) {
+            logger.info("eth in receipt status is valid, transactionEth:{}", transactionEth);
+
+            transactionEthService.updateTxStatusToValid(transactionEth.getId());
+
+            return;
+        }
+
         String address = transactionEth.getTxTo();
         String coinType = transactionEth.getCoinType();
         Account account = accountService.getNormalAccountByAddress(address, coinType);
@@ -98,9 +106,33 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
 
     }
 
-    protected void ethOut(String address, Account account, TransactionEth transactionEth) {
+    protected void ethOut(Account account, TransactionEth transactionEth) {
         BigInteger txBalance = transactionEth.getTxValue();
         BigInteger actualFee = transactionEth.getActualFee();
+
+        if(TransactionEth.TX_RECEIPT_STATUS_FAIL.equals(transactionEth.getTxReceiptStatus())) {
+            logger.info("eth out receipt status is valid, transactionEth:{}", transactionEth);
+
+            Withdrawal withdrawal = withdrawalService.getWithdrawalByTxHash(transactionEth.getTxHash());
+            BigInteger withdrawalFee = withdrawal.getFee();
+            withdrawalService.updateFee(withdrawal.getId(), actualFee);
+
+            accountService.outBalanceReceiptStatusFail(
+                    account.getId()
+                    ,transactionEth.getTxFrom()
+                    ,transactionEth.getTxTo()
+                    ,transactionEth.getCoinType()
+                    ,transactionEth.getId()
+                    ,transactionEth.getTxTime()
+                    ,txBalance
+                    ,withdrawalFee
+                    ,actualFee
+            );
+
+            transactionEthService.updateTxStatusToValid(transactionEth.getId());
+
+            return;
+        }
 
         accountService.outBalance(
                 account.getId()
@@ -123,13 +155,34 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
             transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
         }
         BigInteger actualFee = transactionEth.getActualFee();
+        // 合约金额
+        BigInteger txBalance = transactionEth.getTxValue();
 
         Withdrawal withdrawal = withdrawalService.getWithdrawalByTxHash(transactionEth.getTxHash());
         BigInteger withdrawalFee = withdrawal.getFee();
         withdrawalService.updateFee(withdrawal.getId(), actualFee);
 
-        // 处理合约
-        BigInteger txBalance = transactionEth.getTxValue();
+        if(TransactionEth.TX_RECEIPT_STATUS_FAIL.equals(transactionEth.getTxReceiptStatus())) {
+            logger.info("contract out receipt status is valid, transactionEth:{}", transactionEth);
+
+            accountService.outContractBalanceReceiptStatusFail(
+                    ethAccount.getId()
+                    ,account.getId()
+                    ,transactionEth.getTxFrom()
+                    ,transactionEth.getTxTo()
+                    ,transactionEth.getCoinType()
+                    ,transactionEth.getId()
+                    ,transactionEth.getTxTime()
+                    ,txBalance
+                    ,withdrawalFee
+                    ,actualFee
+            );
+
+            transactionEthService.updateTxStatusToValid(transactionEth.getId());
+
+            return;
+        }
+
         accountService.outContractBalance(
                 ethAccount.getId()
                 ,account.getId()
@@ -149,6 +202,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
 
     @Transactional
     protected void out(TransactionEth transactionEth) {
+
         String address = transactionEth.getTxFrom();
         Account account = accountService.getNormalAccountByAddress(address, transactionEth.getCoinType());
 
@@ -160,7 +214,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         // 如果是ETH需要处理转账值和手续费
         // 如果是token需要处理eth账户和token账户
         if(CoinType.ETH.name().equals(transactionEth.getCoinType())) {
-            ethOut(address, account, transactionEth);
+            ethOut(account, transactionEth);
         } else {
             contractOut(address, account, transactionEth);
         }

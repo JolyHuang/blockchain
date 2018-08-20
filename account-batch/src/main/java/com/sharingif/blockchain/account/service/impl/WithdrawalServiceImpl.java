@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
+import java.util.List;
 
 @Service
 public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, String> implements WithdrawalService {
@@ -107,6 +108,15 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, String> i
 		withdrawal.setFee(fee);
 
 		withdrawalDAO.updateById(withdrawal);
+	}
+
+	@Override
+	public List<Withdrawal> getUntreatedWithdrawal(String address) {
+		Withdrawal withdrawal = new Withdrawal();
+		withdrawal.setAddress(address);
+		withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
+
+		return withdrawalDAO.queryList(withdrawal);
 	}
 
 }

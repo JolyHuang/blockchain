@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -76,6 +77,11 @@ public class BtcConcentrationServiceImpl implements InitializingBean {
         int bipCoinType = btcService.getBipCoinType();
         String secretKeyId = accountSysPrmService.getWithdrawalAccount(bipCoinType);
         SecretKey secretKey = secretKeyService.getById(secretKeyId);
+
+        List<Withdrawal> untreatedWithdrawalList = withdrawalService.getUntreatedWithdrawal(secretKey.getAddress());
+        if(untreatedWithdrawalList !=null ){
+            return;
+        }
 
         BigInteger fee = new BigInteger("20000");
         BigInteger amount = account.getBalance().subtract(fee);

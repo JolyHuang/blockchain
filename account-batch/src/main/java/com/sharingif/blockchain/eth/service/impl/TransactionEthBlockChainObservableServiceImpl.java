@@ -205,10 +205,6 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         TransactionReceipt transactionReceipt;
         try {
             transactionReceipt = ethereumService.getTransactionReceipt(transactionEth.getTxHash());
-
-            if(TransactionEth.RECEIPT_STATUS_FAIL.equals(transactionReceipt.getStatus())) {
-                return;
-            }
         } catch (Throwable e) {
             logger.error("get transaction receipt error,trans info:{}", transactionEth, e);
             return;
