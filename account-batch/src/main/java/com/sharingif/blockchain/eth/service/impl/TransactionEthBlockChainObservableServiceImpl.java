@@ -16,6 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
 import org.web3j.protocol.core.methods.response.EthBlock;
@@ -130,15 +133,17 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
     protected void handlerEthContractTransactions(TransactionEth transactionEth, ETHAddressRegister ethAddressRegister, TransactionReceipt transactionReceipt){
         Map<String, String> subCoinTypeMap = ethAddressRegister.getSubCoinTypeMap(transactionEth.getTxTo());
 
-        List<TransferEventResponse> transferEventResponseList = oleContract.getTransferEvents(transactionReceipt);
-        if(transferEventResponseList == null || transferEventResponseList.isEmpty()) {
+        List<Type> transferResponseList = oleContract.getTransfer(transactionEth.getTxInput());
+        if(transferResponseList == null || transferResponseList.isEmpty()) {
             return;
         }
-        TransferEventResponse transferEventResponse = transferEventResponseList.get(0);
+
+        Address address = (Address)transferResponseList.get(0);
+        Uint256 amount = (Uint256)transferResponseList.get(1);
 
         transactionEth.setContractAddress(transactionEth.getTxTo());
-        transactionEth.setTxTo(transferEventResponse.to);
-        transactionEth.setTxValue(new BigInteger(transferEventResponse.value.toString()));
+        transactionEth.setTxTo(address.getValue());
+        transactionEth.setTxValue(amount.getValue());
         transactionEth.setCoinType(oleContract.symbol());
 
 

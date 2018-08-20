@@ -13,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.protocol.core.methods.response.Transaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
@@ -58,7 +61,7 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
 
     protected boolean validateTransaction(TransactionEth transactionEth, Transaction transaction) {
         boolean isContractTrans = !StringUtils.isTrimEmpty(transactionEth.getContractAddress());
-        TransferEventResponse transferEventResponse = null;
+        List<Type> transferResponseList = null;
         if (isContractTrans) {
             TransactionReceipt transactionReceipt;
             try {
@@ -72,18 +75,20 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
                 return false;
             }
 
-            List<TransferEventResponse> transferEventResponseList = oleContract.getTransferEvents(transactionReceipt);
-            if(transferEventResponseList == null || transferEventResponseList.isEmpty()) {
+            transferResponseList = oleContract.getTransfer(transactionEth.getTxInput());
+            if(transferResponseList == null || transferResponseList.isEmpty()) {
                 return false;
             }
-            transferEventResponse = transferEventResponseList.get(0);
         }
+
+        Address address = (Address)transferResponseList.get(0);
+        Uint256 amount = (Uint256)transferResponseList.get(1);
 
         if(!transactionEth.getTxFrom().toLowerCase().equals(transaction.getFrom().toLowerCase())) {
             return false;
         }
         if(isContractTrans) {
-            if(!transactionEth.getTxTo().toLowerCase().equals(transferEventResponse.to.toLowerCase())) {
+            if(!transactionEth.getTxTo().toLowerCase().equals(address.getValue().toLowerCase())) {
                 return false;
             }
         } else {
@@ -98,7 +103,7 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
             return false;
         }
         if(isContractTrans) {
-            if(transactionEth.getTxValue().compareTo(new BigInteger(transferEventResponse.value.toString())) != 0) {
+            if(transactionEth.getTxValue().compareTo(amount.getValue()) != 0) {
                 return false;
             }
         } else {
