@@ -2,6 +2,8 @@ package com.sharingif.blockchain.account.service;
 
 
 import com.sharingif.blockchain.account.model.entity.Account;
+import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
+import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import com.sharingif.cube.support.service.base.IBaseService;
 
 import java.math.BigInteger;
@@ -82,6 +84,11 @@ public interface AccountService extends IBaseService<Account, java.lang.String> 
      */
     void outContractBalance(String ethAccountId, String contractAccountId, String from, String to, String coinType, String txHash, Date txTime, BigInteger balance, BigInteger withdrawalFee, BigInteger actualFee);
 
-
+    /**
+     * 根据币种、余额获取账号列表
+     * @param paginationCondition
+     * @return
+     */
+    PaginationRepertory<Account> getPaginationListByStatusCoinTypeBalance(PaginationCondition<Account> paginationCondition);
 	
 }

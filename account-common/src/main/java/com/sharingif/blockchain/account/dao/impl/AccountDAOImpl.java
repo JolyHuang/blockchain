@@ -1,6 +1,8 @@
 package com.sharingif.blockchain.account.dao.impl;
 
 
+import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
+import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.springframework.stereotype.Repository;
 
 
@@ -68,5 +70,10 @@ public class AccountDAOImpl extends BaseDAOImpl<Account,java.lang.String> implem
         account.setBalance(balance);
 
         return update("updateTotalOutFrozenAmountBalanceById", account);
+    }
+
+    @Override
+    public PaginationRepertory<Account> queryPaginationListByStatusCoinTypeBalance(PaginationCondition<Account> paginationCondition) {
+        return this.queryPagination("queryPaginationListByStatusCoinTypeBalance",  paginationCondition);
     }
 }

@@ -7,6 +7,8 @@ import com.sharingif.blockchain.account.service.AccountJnlService;
 import com.sharingif.blockchain.account.service.AccountService;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.cube.core.exception.validation.ValidationCubeException;
+import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
+import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -141,6 +143,12 @@ public class AccountServiceImpl extends BaseServiceImpl<Account, java.lang.Strin
 			logger.error("insufficient freeze balance, accountId:{},balance:{}", contractAccountId, balance);
 			throw new ValidationCubeException("insufficient freeze balance");
 		}
+	}
+
+	@Override
+	public PaginationRepertory<Account> getPaginationListByStatusCoinTypeBalance(PaginationCondition<Account> paginationCondition) {
+		paginationCondition.getCondition().setStatus(Account.STATUS_NORMAL);
+		return accountDAO.queryPaginationListByStatusCoinTypeBalance(paginationCondition);
 	}
 
 

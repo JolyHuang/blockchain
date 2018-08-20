@@ -295,6 +295,43 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		  	AND
 				FROZEN_AMOUNT >= #{frozenAmount}
 	</update>
+
+	<select id="queryPaginationListByStatusCoinTypeBalanceCount" resultType="Integer">
+		SELECT
+			COUNT(0)
+		FROM
+			ACCOUNT
+		WHERE
+		  		STATUS = #{status}
+		  	AND
+		  		COIN_TYPE = #{coinType}
+		  	AND
+		  		BALANCE >= #{balance}
+	</select>
+
+	<select id="queryPaginationListByStatusCoinTypeBalance" parameterType="PaginationCondition" resultMap="accountResultMap">
+		SELECT
+			ID
+			,ADDRESS
+			,COIN_TYPE
+			,TOTAL_IN
+			,TOTAL_OUT
+			,BALANCE
+			,FROZEN_AMOUNT
+			,STATUS
+			,CREATE_TIME
+			,MODIFY_TIME
+		FROM
+			ACCOUNT
+		WHERE
+				STATUS = #{status}
+		  	AND
+		  		COIN_TYPE = #{coinType}
+		  	AND
+		  		BALANCE >= #{balance}
+		ORDER BY
+			MODIFY_TIME DESC
+	</select>
 	
 </mapper>
 
