@@ -5,10 +5,7 @@ import com.sharingif.blockchain.account.model.entity.Withdrawal;
 import com.sharingif.blockchain.account.service.AccountService;
 import com.sharingif.blockchain.account.service.AccountSysPrmService;
 import com.sharingif.blockchain.account.service.WithdrawalService;
-import com.sharingif.blockchain.app.constants.Constants;
 import com.sharingif.blockchain.btc.service.BtcService;
-import com.sharingif.blockchain.common.constants.CoinType;
-import com.sharingif.blockchain.common.constants.CoinTypeConvert;
 import com.sharingif.blockchain.crypto.api.btc.entity.BtcTransferListReq;
 import com.sharingif.blockchain.crypto.api.btc.entity.BtcTransferReq;
 import com.sharingif.blockchain.crypto.api.btc.entity.BtcTransferRsp;
@@ -22,7 +19,6 @@ import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -83,7 +79,10 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
         SecretKey secretKey = secretKeyService.getById(secretKeyId);
         String password = secretKeyService.decryptPassword(secretKey.getPassword());
 
-        BigInteger fee = new BigInteger("30000");
+        BigInteger fee = withdrawal.getFee();
+        if(fee == null || fee.compareTo(BigInteger.ZERO) == 0)  {
+            fee = new BigInteger("30000");
+        }
         accountService.freezingBalance(secretKey.getAddress(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
         withdrawalService.updateFee(withdrawal.getId(), fee);
 

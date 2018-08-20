@@ -98,6 +98,7 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
         req.setSecretKeyId(secretKey.getId());
         req.setPassword(password);
 
+
         BigInteger fee = req.getGasPrice().multiply(Transfer.GAS_LIMIT);
         accountService.freezingBalance(secretKey.getAddress(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
         withdrawalService.updateFee(withdrawal.getId(), fee);
@@ -140,7 +141,10 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
 
 
         BigInteger nonce =  ethereumService.ethGetTransactionCountPending(secretKey.getAddress());
-        BigInteger gasPrice = ethereumService.getGasPrice().add(new BigInteger("3000000000"));
+        BigInteger gasPrice = withdrawal.getFee();
+        if(gasPrice == null || gasPrice.compareTo(BigInteger.ZERO) == 0) {
+            gasPrice = ethereumService.getGasPrice().add(new BigInteger("3000000000"));
+        }
         String password = secretKeyService.decryptPassword(secretKey.getPassword());
 
         String txHash = null;
