@@ -148,7 +148,7 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
                 txHash = ethContractWithdrawal(secretKey, nonce, gasPrice, password, withdrawal);
             }
         } catch (Exception e) {
-            logger.error("eth withdrawa error", e);
+            logger.error("eth withdrawa error, withdrawal:{}", withdrawal, e);
             withdrawalService.updateTaskStatusToFail(withdrawal.getId());
             return;
         }

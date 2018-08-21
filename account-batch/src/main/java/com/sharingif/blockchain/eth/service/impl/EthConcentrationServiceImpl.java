@@ -135,7 +135,7 @@ public class EthConcentrationServiceImpl implements InitializingBean {
             return;
         }
 
-        BigInteger gasPrice = ethereumService.getGasPrice();
+        BigInteger gasPrice = ethereumService.getGasPrice().add(new BigInteger("1000000000"));
         BigInteger gasLimit = new BigInteger(Constants.ETH_TRANSFOR_GAS_LIMIT);
         BigInteger oleFee = gasPrice.multiply(gasLimit);
 
