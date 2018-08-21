@@ -15,4 +15,9 @@ public class Constants {
      */
     public static final String BTC_NET_TYPE_TEST = "test";
 
+    /**
+     * eth 合约转账最小gas
+     */
+    public static final String ETH_TRANSFOR_GAS_LIMIT = "100000";
+
 }
