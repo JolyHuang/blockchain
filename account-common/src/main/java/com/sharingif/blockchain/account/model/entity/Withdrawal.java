@@ -14,19 +14,19 @@ import java.util.Date;
 public class Withdrawal implements java.io.Serializable, IObjectDateOperationHistory {
 
 	/**
-	 * 处理状态(CZWCL:充值未处理)
+	 * 处理状态(QXWCL:取现未处理)
 	 */
-	public static final String STATUS_WITHDRAWAL_UNTREATED = "CZWCL";
+	public static final String STATUS_WITHDRAWAL_UNTREATED = "QXWCL";
 	/**
-	 * 处理状态(CZCLZ:充值处理中)
+	 * 处理状态(QXCLZ:取现处理中)
 	 */
-	public static final String STATUS_WITHDRAWAL_PROCESSING = "CZCLZ";
+	public static final String STATUS_WITHDRAWAL_PROCESSING = "QXCLZ";
 	/**
-	 * 处理状态(SUCCESS:充值成功)
+	 * 处理状态(SUCCESS:取现成功)
 	 */
 	public static final String STATUS_WITHDRAWAL_SUCCESS = "SUCCESS";
 	/**
-	 * 处理状态(FAIL:充值失败)
+	 * 处理状态(FAIL:取现失败)
 	 */
 	public static final String STATUS_WITHDRAWAL_FAIL = "FAIL";
 

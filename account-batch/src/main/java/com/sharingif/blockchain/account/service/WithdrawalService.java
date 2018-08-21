@@ -45,7 +45,13 @@ public interface WithdrawalService extends IBaseService<Withdrawal, String> {
     void updateStatusToFail(String id);
 
     /**
-     * 修改处理状态为失败
+     * 修改任务状态为处理中
+     * @param id
+     */
+    void updateTaskStatusToProcessing(String id);
+
+    /**
+     * 修改任务状态为失败
      * @param id
      */
     void updateTaskStatusToFail(String id);

@@ -83,7 +83,7 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
         if(fee == null || fee.compareTo(BigInteger.ZERO) == 0)  {
             fee = new BigInteger("30000");
         }
-        accountService.freezingBalance(secretKey.getAddress(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
+        accountService.freezingBalance(withdrawal.getAddress(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
         withdrawalService.updateFee(withdrawal.getId(), fee);
 
         List<Output> outputList = btcService.getListUnspent(secretKey.getAddress(), withdrawal.getAmount(), fee);
@@ -107,6 +107,7 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
         BtcTransferRsp rsp = btcApiService.transfer(req);
 
         String signRawTransaction = btcService.signRawTransaction(rsp.getRawTransaction());
+        withdrawalService.updateTaskStatusToProcessing(withdrawal.getId());
         String txHash = btcService.sendRawTransaction(signRawTransaction);
         if(StringUtils.isTrimEmpty(txHash)) {
             withdrawalService.updateTaskStatusToFail(withdrawal.getId());

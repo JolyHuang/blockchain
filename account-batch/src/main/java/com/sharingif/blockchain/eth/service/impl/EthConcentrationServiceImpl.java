@@ -9,6 +9,7 @@ import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.service.SecretKeyService;
 import com.sharingif.blockchain.eth.service.EthereumService;
+import com.sharingif.cube.core.util.UUIDUtils;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.slf4j.Logger;
@@ -81,32 +82,37 @@ public class EthConcentrationServiceImpl implements InitializingBean {
         this.ethereumService = ethereumService;
     }
 
-    protected void oleConcentration(SecretKey secretKey, Account account, BigInteger gasPrice, BigInteger oleFee) {
+    protected boolean oleConcentration(SecretKey secretKey, Account account, BigInteger gasPrice, BigInteger oleFee) {
         Account oleAccount = accountService.getNormalAccountByAddress(account.getAddress(), CoinType.OLE.name());
         if(oleAccount.getBalance().compareTo(oleConcentrationMinimumAmount) <0 || account.getBalance().compareTo(oleFee) <0 ) {
-            return;
+            return false;
         }
 
         Withdrawal withdrawal = new Withdrawal();
-        withdrawal.setCoinType(CoinType.OLE.name());
-        withdrawal.setAddress(secretKey.getAddress());
+        withdrawal.setWithdrawalId(UUIDUtils.generateUUID());
+        withdrawal.setCoinType(CoinType.ETH.name());
+        withdrawal.setSubCoinType(CoinType.OLE.name());
+        withdrawal.setAddress(account.getAddress());
         withdrawal.setFee(gasPrice);
         withdrawal.setAmount(oleAccount.getBalance());
         withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
         withdrawal.setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
         withdrawalService.add(withdrawal);
+
+        return true;
     }
 
-    protected void ethConcentration(SecretKey secretKey, Account account, BigInteger gasPrice, BigInteger oleFee) {
-        if(account.getBalance().compareTo(ethConcentrationMinimumAmount.add(gasPrice.multiply(Transfer.GAS_LIMIT)).add(oleFee)) <0 ) {
+    protected void ethConcentration(SecretKey secretKey, Account account, BigInteger gasPrice) {
+        if(account.getBalance().compareTo(ethConcentrationMinimumAmount.add(gasPrice.multiply(Transfer.GAS_LIMIT))) <0 ) {
             return;
         }
 
         Withdrawal withdrawal = new Withdrawal();
+        withdrawal.setWithdrawalId(UUIDUtils.generateUUID());
         withdrawal.setCoinType(CoinType.ETH.name());
-        withdrawal.setAddress(secretKey.getAddress());
+        withdrawal.setAddress(account.getAddress());
         withdrawal.setFee(gasPrice);
-        withdrawal.setAmount(account.getBalance());
+        withdrawal.setAmount(account.getBalance().subtract(gasPrice.multiply(Transfer.GAS_LIMIT)));
         withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
         withdrawal.setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
         withdrawalService.add(withdrawal);
@@ -117,8 +123,12 @@ public class EthConcentrationServiceImpl implements InitializingBean {
         String secretKeyId = accountSysPrmService.getWithdrawalAccount(bipCoinType);
         SecretKey secretKey = secretKeyService.getById(secretKeyId);
 
-        List<Withdrawal> untreatedWithdrawalList = withdrawalService.getUntreatedWithdrawal(secretKey.getAddress());
-        if(untreatedWithdrawalList !=null ){
+        if(account.getAddress().equals(secretKey.getAddress())) {
+            return;
+        }
+
+        List<Withdrawal> untreatedWithdrawalList = withdrawalService.getUntreatedWithdrawal(account.getAddress());
+        if(untreatedWithdrawalList != null && untreatedWithdrawalList.size()>0){
             return;
         }
 
@@ -126,9 +136,12 @@ public class EthConcentrationServiceImpl implements InitializingBean {
         BigInteger gasLimit = new BigInteger("100000");
         BigInteger oleFee = gasPrice.multiply(gasLimit);
 
-        oleConcentration(secretKey, account, gasPrice, oleFee);
+        boolean isOleConcentration = oleConcentration(secretKey, account, gasPrice, oleFee);
+        if(isOleConcentration) {
+            account.setBalance(account.getBalance().subtract(oleFee));
+        }
 
-        ethConcentration(secretKey, account, gasPrice, oleFee);
+        ethConcentration(secretKey, account, gasPrice);
 
     }
 

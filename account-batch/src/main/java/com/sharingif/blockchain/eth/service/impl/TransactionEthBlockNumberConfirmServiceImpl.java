@@ -81,13 +81,11 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
             }
         }
 
-        Address address = (Address)transferResponseList.get(0);
-        Uint256 amount = (Uint256)transferResponseList.get(1);
-
         if(!transactionEth.getTxFrom().toLowerCase().equals(transaction.getFrom().toLowerCase())) {
             return false;
         }
         if(isContractTrans) {
+            Address address = (Address)transferResponseList.get(0);
             if(!transactionEth.getTxTo().toLowerCase().equals(address.getValue().toLowerCase())) {
                 return false;
             }
@@ -103,6 +101,7 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
             return false;
         }
         if(isContractTrans) {
+            Uint256 amount = (Uint256)transferResponseList.get(1);
             if(transactionEth.getTxValue().compareTo(amount.getValue()) != 0) {
                 return false;
             }

@@ -100,9 +100,10 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
 
 
         BigInteger fee = req.getGasPrice().multiply(Transfer.GAS_LIMIT);
-        accountService.freezingBalance(secretKey.getAddress(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
+        accountService.freezingBalance(withdrawal.getAddress(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
         withdrawalService.updateFee(withdrawal.getId(), fee);
 
+        withdrawalService.updateTaskStatusToProcessing(withdrawal.getId());
         EthTransferRsp rsp = ethApiService.transfer(req);
         String txHash = ethereumService.ethSendRawTransaction(rsp.getHexValue());
 
@@ -123,11 +124,12 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
         // ETH手续费
         BigInteger fee = req.getGasPrice().multiply(req.getGasLimit());
         withdrawalService.updateFee(withdrawal.getId(), fee);
-        accountService.freezingBalance(secretKey.getAddress(), withdrawal.getCoinType(), fee);
+        accountService.freezingBalance(withdrawal.getAddress(), withdrawal.getCoinType(), fee);
 
         // 合约账户
-        accountService.freezingBalance(secretKey.getAddress(), withdrawal.getSubCoinType(), withdrawal.getAmount());
+        accountService.freezingBalance(withdrawal.getAddress(), withdrawal.getSubCoinType(), withdrawal.getAmount());
 
+        withdrawalService.updateTaskStatusToProcessing(withdrawal.getId());
         Erc20TransferRsp rsp = ethErc20ContractApiService.transfer(req);
         String txHash = ethereumService.ethSendRawTransaction(rsp.getHexValue());
 
@@ -137,8 +139,6 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
     protected void withdrawalUntreatedStatus(Withdrawal withdrawal) {
         String secretKeyId = accountSysPrmService.getWithdrawalAccount(CoinTypeConvert.convertToBipCoinType(withdrawal.getCoinType()));
         SecretKey secretKey = secretKeyService.getById(secretKeyId);
-
-
 
         BigInteger nonce =  ethereumService.ethGetTransactionCountPending(secretKey.getAddress());
         BigInteger gasPrice = withdrawal.getFee();

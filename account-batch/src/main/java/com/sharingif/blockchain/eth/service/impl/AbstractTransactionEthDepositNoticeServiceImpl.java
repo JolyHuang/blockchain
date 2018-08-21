@@ -38,6 +38,7 @@ public abstract class AbstractTransactionEthDepositNoticeServiceImpl extends Abs
         transactionEthApiReq.setTxTime(transactionEth.getTxTime());
         transactionEthApiReq.setConfirmBlockNumber(transactionEth.getConfirmBlockNumber());
         transactionEthApiReq.setTxType(transactionEth.getTxType());
+        transactionEthApiReq.setTxStatus(transactionEth.getTxStatus());
 
         if(TransactionEth.TX_STATUS_VALID.equals(transactionEth.getTxStatus())) {
             if(TransactionEth.TX_RECEIPT_STATUS_SUCCESS.equals(transactionEth.getTxReceiptStatus())) {
@@ -45,9 +46,10 @@ public abstract class AbstractTransactionEthDepositNoticeServiceImpl extends Abs
             } else {
                 transactionEthApiReq.setTxStatus(TransactionEth.TX_STATUS_INVALID);
             }
-        } else {
+        }
+
+        if(TransactionEth.TX_STATUS_INVALID.equals(transactionEth.getTxStatus())) {
             transactionEthApiReq.setTxValue(BigInteger.ZERO);
-            transactionEthApiReq.setTxStatus(TransactionEth.TX_STATUS_INVALID);
         }
 
         return transactionEthApiReq;

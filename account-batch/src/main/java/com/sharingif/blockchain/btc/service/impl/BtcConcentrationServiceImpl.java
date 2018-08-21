@@ -9,6 +9,7 @@ import com.sharingif.blockchain.btc.service.BtcService;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.service.SecretKeyService;
+import com.sharingif.cube.core.util.UUIDUtils;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.slf4j.Logger;
@@ -78,8 +79,12 @@ public class BtcConcentrationServiceImpl implements InitializingBean {
         String secretKeyId = accountSysPrmService.getWithdrawalAccount(bipCoinType);
         SecretKey secretKey = secretKeyService.getById(secretKeyId);
 
-        List<Withdrawal> untreatedWithdrawalList = withdrawalService.getUntreatedWithdrawal(secretKey.getAddress());
-        if(untreatedWithdrawalList !=null ){
+        if(account.getAddress().equals(secretKey.getAddress())) {
+            return;
+        }
+
+        List<Withdrawal> untreatedWithdrawalList = withdrawalService.getUntreatedWithdrawal(account.getAddress());
+        if(untreatedWithdrawalList != null && untreatedWithdrawalList.size()>0){
             return;
         }
 
@@ -87,8 +92,9 @@ public class BtcConcentrationServiceImpl implements InitializingBean {
         BigInteger amount = account.getBalance().subtract(fee);
 
         Withdrawal withdrawal = new Withdrawal();
+        withdrawal.setWithdrawalId(UUIDUtils.generateUUID());
         withdrawal.setCoinType(CoinType.BTC.name());
-        withdrawal.setAddress(secretKey.getAddress());
+        withdrawal.setAddress(account.getAddress());
         withdrawal.setFee(fee);
         withdrawal.setAmount(amount);
         withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);

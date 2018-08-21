@@ -74,6 +74,15 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, String> i
 	}
 
 	@Override
+	public void updateTaskStatusToProcessing(String id) {
+		Withdrawal withdrawal = new Withdrawal();
+		withdrawal.setId(id);
+		withdrawal.setTaskStatus(Withdrawal.TASK_STATUS_PROCESSING);
+
+		withdrawalDAO.updateById(withdrawal);
+	}
+
+	@Override
 	public void updateTaskStatusToFail(String id) {
 		Withdrawal withdrawal = new Withdrawal();
 		withdrawal.setId(id);
