@@ -21,4 +21,11 @@ public interface SecretKeyService extends IBaseService<SecretKey, String> {
      */
     String decryptPassword(String password);
 
+    /**
+     * 根据地址查询SecretKey
+     * @param address
+     * @return
+     */
+    SecretKey getSecretKeyByAddress(String address);
+
 }

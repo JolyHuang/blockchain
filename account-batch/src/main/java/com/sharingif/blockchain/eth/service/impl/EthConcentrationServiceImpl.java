@@ -5,6 +5,7 @@ import com.sharingif.blockchain.account.model.entity.Withdrawal;
 import com.sharingif.blockchain.account.service.AccountService;
 import com.sharingif.blockchain.account.service.AccountSysPrmService;
 import com.sharingif.blockchain.account.service.WithdrawalService;
+import com.sharingif.blockchain.app.constants.Constants;
 import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.service.SecretKeyService;
@@ -92,7 +93,8 @@ public class EthConcentrationServiceImpl implements InitializingBean {
         withdrawal.setWithdrawalId(UUIDUtils.generateUUID());
         withdrawal.setCoinType(CoinType.ETH.name());
         withdrawal.setSubCoinType(CoinType.OLE.name());
-        withdrawal.setAddress(account.getAddress());
+        withdrawal.setTxFrom(account.getAddress());
+        withdrawal.setTxTo(secretKey.getAddress());
         withdrawal.setFee(gasPrice);
         withdrawal.setAmount(oleAccount.getBalance());
         withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
@@ -110,7 +112,8 @@ public class EthConcentrationServiceImpl implements InitializingBean {
         Withdrawal withdrawal = new Withdrawal();
         withdrawal.setWithdrawalId(UUIDUtils.generateUUID());
         withdrawal.setCoinType(CoinType.ETH.name());
-        withdrawal.setAddress(account.getAddress());
+        withdrawal.setTxFrom(account.getAddress());
+        withdrawal.setTxTo(secretKey.getAddress());
         withdrawal.setFee(gasPrice);
         withdrawal.setAmount(account.getBalance().subtract(gasPrice.multiply(Transfer.GAS_LIMIT)));
         withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
@@ -127,13 +130,13 @@ public class EthConcentrationServiceImpl implements InitializingBean {
             return;
         }
 
-        List<Withdrawal> untreatedWithdrawalList = withdrawalService.getUntreatedWithdrawal(account.getAddress());
+        List<Withdrawal> untreatedWithdrawalList = withdrawalService.getUntreatedStatusByTxFrom(account.getAddress());
         if(untreatedWithdrawalList != null && untreatedWithdrawalList.size()>0){
             return;
         }
 
         BigInteger gasPrice = ethereumService.getGasPrice();
-        BigInteger gasLimit = new BigInteger("100000");
+        BigInteger gasLimit = new BigInteger(Constants.ETH_TRANSFOR_GAS_LIMIT);
         BigInteger oleFee = gasPrice.multiply(gasLimit);
 
         boolean isOleConcentration = oleConcentration(secretKey, account, gasPrice, oleFee);

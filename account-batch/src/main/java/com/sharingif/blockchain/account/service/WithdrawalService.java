@@ -79,9 +79,9 @@ public interface WithdrawalService extends IBaseService<Withdrawal, String> {
 
     /**
      * 根据地址获取未处理取现列表
-     * @param address
+     * @param txFrom
      * @return
      */
-    List<Withdrawal> getUntreatedWithdrawal(String address);
+    List<Withdrawal> getUntreatedStatusByTxFrom(String txFrom);
 
 }

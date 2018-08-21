@@ -38,4 +38,12 @@ public class SecretKeyServiceImpl extends BaseServiceImpl<SecretKey, String> imp
         return passwordTextEncryptor.decrypt(password);
     }
 
+    @Override
+    public SecretKey getSecretKeyByAddress(String address) {
+        SecretKey secretKey = new SecretKey();
+        secretKey.setAddress(address);
+
+        return secretKeyDAO.query(secretKey);
+    }
+
 }

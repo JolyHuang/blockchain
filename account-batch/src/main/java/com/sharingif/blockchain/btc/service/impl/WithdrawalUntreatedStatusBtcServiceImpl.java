@@ -3,7 +3,6 @@ package com.sharingif.blockchain.btc.service.impl;
 import com.neemre.btcdcli4j.core.domain.Output;
 import com.sharingif.blockchain.account.model.entity.Withdrawal;
 import com.sharingif.blockchain.account.service.AccountService;
-import com.sharingif.blockchain.account.service.AccountSysPrmService;
 import com.sharingif.blockchain.account.service.WithdrawalService;
 import com.sharingif.blockchain.btc.service.BtcService;
 import com.sharingif.blockchain.crypto.api.btc.entity.BtcTransferListReq;
@@ -41,7 +40,6 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private WithdrawalService withdrawalService;
-    private AccountSysPrmService accountSysPrmService;
     private SecretKeyService secretKeyService;
     private BtcService btcService;
     private BtcApiService btcApiService;
@@ -50,10 +48,6 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
     @Resource
     public void setWithdrawalService(WithdrawalService withdrawalService) {
         this.withdrawalService = withdrawalService;
-    }
-    @Resource
-    public void setAccountSysPrmService(AccountSysPrmService accountSysPrmService) {
-        this.accountSysPrmService = accountSysPrmService;
     }
     @Resource
     public void setSecretKeyService(SecretKeyService secretKeyService) {
@@ -73,17 +67,14 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
     }
 
     protected void withdrawalUntreatedStatus(Withdrawal withdrawal) {
-        int bipCoinType = btcService.getBipCoinType();
-
-        String secretKeyId = accountSysPrmService.getWithdrawalAccount(bipCoinType);
-        SecretKey secretKey = secretKeyService.getById(secretKeyId);
+        SecretKey secretKey = secretKeyService.getSecretKeyByAddress(withdrawal.getTxFrom());
         String password = secretKeyService.decryptPassword(secretKey.getPassword());
 
         BigInteger fee = withdrawal.getFee();
         if(fee == null || fee.compareTo(BigInteger.ZERO) == 0)  {
             fee = new BigInteger("30000");
         }
-        accountService.freezingBalance(withdrawal.getAddress(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
+        accountService.freezingBalance(withdrawal.getTxFrom(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
         withdrawalService.updateFee(withdrawal.getId(), fee);
 
         List<Output> outputList = btcService.getListUnspent(secretKey.getAddress(), withdrawal.getAmount(), fee);
@@ -91,7 +82,7 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
         BtcTransferReq req = new BtcTransferReq();
         req.setSecretKeyId(secretKey.getId());
         req.setPassword(password);
-        req.setToAddress(withdrawal.getAddress());
+        req.setToAddress(withdrawal.getTxTo());
         req.setAmount(withdrawal.getAmount());
         req.setFee(fee);
         List<BtcTransferListReq> btcTransferListReqList = new ArrayList<BtcTransferListReq>(outputList.size());

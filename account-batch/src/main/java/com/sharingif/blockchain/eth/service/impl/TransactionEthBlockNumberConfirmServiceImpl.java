@@ -1,10 +1,9 @@
 package com.sharingif.blockchain.eth.service.impl;
 
 import com.sharingif.blockchain.common.components.ole.OleContract;
-import com.sharingif.blockchain.common.components.ole.TransferEventResponse;
 import com.sharingif.blockchain.eth.service.EthereumService;
-import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.blockchain.eth.service.TransactionEthService;
+import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
 import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
@@ -17,7 +16,6 @@ import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.protocol.core.methods.response.Transaction;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
@@ -63,17 +61,6 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
         boolean isContractTrans = !StringUtils.isTrimEmpty(transactionEth.getContractAddress());
         List<Type> transferResponseList = null;
         if (isContractTrans) {
-            TransactionReceipt transactionReceipt;
-            try {
-                transactionReceipt = ethereumService.getTransactionReceipt(transactionEth.getTxHash());
-
-                if(TransactionEth.RECEIPT_STATUS_FAIL.equals(transactionReceipt.getStatus())) {
-                    return false;
-                }
-            } catch (Throwable e) {
-                logger.error("validateTransaction get transaction receipt error,trans info:{}", transactionEth, e);
-                return false;
-            }
 
             transferResponseList = oleContract.getTransfer(transactionEth.getTxInput());
             if(transferResponseList == null || transferResponseList.isEmpty()) {

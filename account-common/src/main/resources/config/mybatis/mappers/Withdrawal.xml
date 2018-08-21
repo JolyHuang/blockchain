@@ -21,8 +21,11 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	<if test="null!=subCoinType">
     		and SUB_COIN_TYPE = #{subCoinType}
     	</if>
-    	<if test="null!=address">
-    		and ADDRESS = #{address}
+    	<if test="null!=txFrom">
+    		and TX_FROM = #{txFrom}
+    	</if>
+    	<if test="null!=txTo">
+    		and TX_TO = #{txTo}
     	</if>
     	<if test="null!=amount">
     		and AMOUNT = #{amount}
@@ -60,8 +63,11 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    <if test="null!=subCoinType">
 		    SUB_COIN_TYPE = #{subCoinType},
 		    </if>
-		    <if test="null!=address">
-		    ADDRESS = #{address},
+		    <if test="null!=txFrom">
+		    TX_FROM = #{txFrom},
+		    </if>
+		    <if test="null!=txTo">
+		    TX_TO = #{txTo},
 		    </if>
 		    <if test="null!=amount">
 		    AMOUNT = #{amount},
@@ -91,7 +97,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         <result property="withdrawalId" column="WITHDRAWAL_ID"/>
         <result property="coinType" column="COIN_TYPE"/>
         <result property="subCoinType" column="SUB_COIN_TYPE"/>
-        <result property="address" column="ADDRESS"/>
+        <result property="txFrom" column="TX_FROM"/>
+        <result property="txTo" column="TX_TO"/>
         <result property="amount" column="AMOUNT"/>
         <result property="fee" column="FEE"/>
         <result property="txHash" column="TX_HASH"/>
@@ -108,7 +115,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,WITHDRAWAL_ID
         	,COIN_TYPE
         	,SUB_COIN_TYPE
-        	,ADDRESS
+        	,TX_FROM
+        	,TX_TO
         	,AMOUNT
         	,FEE
         	,TX_HASH
@@ -121,7 +129,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,#{withdrawalId}
         	,#{coinType}
         	,#{subCoinType}
-        	,#{address}
+        	,#{txFrom}
+        	,#{txTo}
         	,#{amount}
         	,#{fee}
         	,#{txHash}
@@ -163,7 +172,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,WITHDRAWAL_ID
 			,COIN_TYPE
 			,SUB_COIN_TYPE
-			,ADDRESS
+			,TX_FROM
+			,TX_TO
 			,AMOUNT
 			,FEE
 			,TX_HASH
@@ -183,7 +193,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,WITHDRAWAL_ID
 			,COIN_TYPE
 			,SUB_COIN_TYPE
-			,ADDRESS
+			,TX_FROM
+			,TX_TO
 			,AMOUNT
 			,FEE
 			,TX_HASH
@@ -206,7 +217,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,WITHDRAWAL_ID
 			,COIN_TYPE
 			,SUB_COIN_TYPE
-			,ADDRESS
+			,TX_FROM
+			,TX_TO
 			,AMOUNT
 			,FEE
 			,TX_HASH
@@ -236,7 +248,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,WITHDRAWAL_ID
 			,COIN_TYPE
 			,SUB_COIN_TYPE
-			,ADDRESS
+			,TX_FROM
+			,TX_TO
 			,AMOUNT
 			,FEE
 			,TX_HASH

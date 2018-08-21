@@ -7,6 +7,7 @@ import com.sharingif.cube.components.sequence.Sequence;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -71,10 +72,15 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
 	@Length(max=20)
 	private java.lang.String subCoinType;
     /**
-     * 地址			db_column: ADDRESS 
+     * FORM地址			db_column: TX_FROM 
      */	
-	@NotBlank @Length(max=100)
-	private java.lang.String address;
+	@Length(max=100)
+	private java.lang.String txFrom;
+    /**
+     * TO地址			db_column: TX_TO 
+     */	
+	@Length(max=100)
+	private java.lang.String txTo;
     /**
      * 金额			db_column: AMOUNT 
      */	
@@ -136,11 +142,17 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
 	public java.lang.String getSubCoinType() {
 		return this.subCoinType;
 	}
-	public void setAddress(java.lang.String address) {
-		this.address = address;
+	public void setTxFrom(java.lang.String txFrom) {
+		this.txFrom = txFrom;
 	}
-	public java.lang.String getAddress() {
-		return this.address;
+	public java.lang.String getTxFrom() {
+		return this.txFrom;
+	}
+	public void setTxTo(java.lang.String txTo) {
+		this.txTo = txTo;
+	}
+	public java.lang.String getTxTo() {
+		return this.txTo;
 	}
 	public void setAmount(BigInteger amount) {
 		this.amount = amount;
@@ -189,7 +201,7 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
 		Withdrawal withdrawal = new Withdrawal();
 		withdrawal.setWithdrawalId(req.getWithdrawalId());
 		withdrawal.setCoinType(req.getCoinType());
-		withdrawal.setAddress(req.getAddress());
+		withdrawal.setTxTo(req.getAddress());
 		withdrawal.setAmount(req.getAmount());
 
 		return withdrawal;
@@ -201,7 +213,8 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
 					.append("WithdrawalId=").append(getWithdrawalId()).append(", ")
 					.append("CoinType=").append(getCoinType()).append(", ")
 					.append("SubCoinType=").append(getSubCoinType()).append(", ")
-					.append("Address=").append(getAddress()).append(", ")
+					.append("TxFrom=").append(getTxFrom()).append(", ")
+					.append("TxTo=").append(getTxTo()).append(", ")
 					.append("Amount=").append(getAmount()).append(", ")
 					.append("Fee=").append(getFee()).append(", ")
 					.append("TxHash=").append(getTxHash()).append(", ")

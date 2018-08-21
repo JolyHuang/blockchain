@@ -61,16 +61,27 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, java.lang
 
 	@Override
 	public void apply(WithdrawalApplyReq req) {
-		validateWithdrawalAccountBalance(req);
-
 		// 添加支付记录
 		Withdrawal withdrawal = Withdrawal.convertWithdrawalReqToWithdrawal(req);
-		withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
-		withdrawal.setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
+
+		String coinType = req.getCoinType();
 		if(CoinType.OLE.name().equals(req.getCoinType())) {
+			coinType = CoinType.ETH.name();
 			withdrawal.setCoinType(CoinType.ETH.name());
 			withdrawal.setSubCoinType(req.getCoinType());
 		}
+		int bipCoinType = CoinTypeConvert.convertToBipCoinType(coinType);
+		if(CoinType.BTC.name().equals(coinType)) {
+			bipCoinType = btcService.getBipCoinType();
+		}
+		String secretKeyId = accountSysPrmService.getWithdrawalAccount(bipCoinType);
+		SecretKey secretKey = secretKeyService.getById(secretKeyId);
+
+		validateWithdrawalAccountBalance(secretKey, req);
+
+		withdrawal.setTxFrom(secretKey.getAddress());
+		withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
+		withdrawal.setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
 		withdrawalDAO.insert(withdrawal);
 
 		// 添加通知记录
@@ -87,18 +98,7 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, java.lang
 	 * 验证验证余额是否足够
 	 * @param req
 	 */
-	protected void validateWithdrawalAccountBalance(WithdrawalApplyReq req) {
-		String coinType = req.getCoinType();
-		if(CoinType.OLE.name().equals(req.getCoinType())) {
-			coinType = CoinType.ETH.name();
-		}
-		int bipCoinType = CoinTypeConvert.convertToBipCoinType(coinType);
-		if(CoinType.BTC.name().equals(coinType)) {
-			bipCoinType = btcService.getBipCoinType();
-		}
-
-		String secretKeyId = accountSysPrmService.getWithdrawalAccount(bipCoinType);
-		SecretKey secretKey = secretKeyService.getById(secretKeyId);
+	protected void validateWithdrawalAccountBalance(SecretKey secretKey, WithdrawalApplyReq req) {
 		Account account = accountService.getNormalAccountByAddress(secretKey.getAddress(), req.getCoinType());
 		if(account.getBalance().compareTo(req.getAmount()) < 0) {
 			logger.error("insufficient balance error, account:{}, reqAmount:{}", account, req.getAmount());

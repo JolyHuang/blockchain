@@ -120,9 +120,9 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, String> i
 	}
 
 	@Override
-	public List<Withdrawal> getUntreatedWithdrawal(String address) {
+	public List<Withdrawal> getUntreatedStatusByTxFrom(String txFrom) {
 		Withdrawal withdrawal = new Withdrawal();
-		withdrawal.setAddress(address);
+		withdrawal.setTxFrom(txFrom);
 		withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
 
 		return withdrawalDAO.queryList(withdrawal);
