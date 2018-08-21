@@ -307,7 +307,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
 
     protected void threadSleep() {
         try {
-            TimeUnit.SECONDS.sleep(1);
+            TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
             logger.error("ethTransactionsObservable error", e);
         }

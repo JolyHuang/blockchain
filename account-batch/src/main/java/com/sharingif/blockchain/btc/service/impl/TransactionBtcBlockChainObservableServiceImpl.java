@@ -288,7 +288,7 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
             try {
 
                 if(workThreadNumber.get() != 0) {
-                    threadSleep(1);
+                    threadSleep(5);
                     continue;
                 }
 

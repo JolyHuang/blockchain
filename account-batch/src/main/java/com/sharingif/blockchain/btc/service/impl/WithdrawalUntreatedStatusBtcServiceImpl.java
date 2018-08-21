@@ -132,7 +132,7 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
 
                 if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
                     try {
-                        TimeUnit.SECONDS.sleep(1);
+                        TimeUnit.SECONDS.sleep(5);
                     } catch (InterruptedException e) {
                         logger.error("get transaction error", e);
                     }
