@@ -78,6 +78,7 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
         Account account = accountService.getNormalAccountByAddress(address, CoinType.BTC.name());
 
         if(account == null) {
+            logger.error("btc in comfirm balance get mormal account error, transactionBtcUtxo:{}", transactionBtcUtxo);
             transactionBtcUtxoService.updateTxStatusToBalanceError(transactionBtcUtxo.getId());
         }
 
@@ -98,6 +99,7 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
             transactionBtcUtxoService.updateTxStatusToValid(transactionBtcUtxo.getId());
 
         } else {
+            logger.error("btc comfirm balance error, transactionBtcUtxo:{},account:{},currentBalance:{},blockBalance:{}",transactionBtcUtxo, account, currentBalance, blockBalance);
             transactionBtcUtxoService.updateTxStatusToBalanceError(transactionBtcUtxo.getId());
         }
 
@@ -109,13 +111,13 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
         Account account = accountService.getNormalAccountByAddress(address, CoinType.BTC.name());
 
         if(account == null) {
+            logger.error("btc out comfirm balance get mormal account error, transactionBtcUtxo:{}", transactionBtcUtxo);
             transactionBtcUtxoService.updateTxStatusToBalanceError(transactionBtcUtxo.getId());
         }
 
-        Withdrawal withdrawal = withdrawalService.getWithdrawalByTxHash(transactionBtcUtxo.getTxHash());
-        BigInteger txFee = withdrawal.getFee();
+        BigInteger txFee = transactionBtcUtxo.getActualFee();
 
-        BigInteger txBalance = transactionBtcUtxo.getTxValue();
+        BigInteger txBalance = transactionBtcUtxo.getTxValue().subtract(txFee);
         accountService.outBalance(
                 account.getId()
                 ,transactionBtcUtxo.getTxFrom()

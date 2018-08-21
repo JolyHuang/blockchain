@@ -76,6 +76,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         Account account = accountService.getNormalAccountByAddress(address, coinType);
 
         if(account == null) {
+            logger.error("eth in comfirm balance get mormal account error, transactionEth:{}", transactionEth);
             transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
         }
 
@@ -101,6 +102,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
             transactionEthService.updateTxStatusToValid(transactionEth.getId());
 
         } else {
+            logger.error("eth comfirm balance error, transactionEth:{},account:{},currentBalance:{},blockBalance:{}",transactionEth, account, currentBalance, blockBalance);
             transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
         }
 
@@ -152,6 +154,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         // 处理ETH手续费
         Account ethAccount = accountService.getNormalAccountByAddress(address, CoinType.ETH.name());
         if(ethAccount == null) {
+            logger.error("eth in comfirm balance get mormal ethAccount error, address:{}", address);
             transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
         }
         BigInteger actualFee = transactionEth.getActualFee();
@@ -207,6 +210,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         Account account = accountService.getNormalAccountByAddress(address, transactionEth.getCoinType());
 
         if(account == null) {
+            logger.error("eth in comfirm balance get mormal account error, transactionEth:{}", transactionEth);
             transactionEthService.updateTxStatusToBalanceError(transactionEth.getId());
         }
 

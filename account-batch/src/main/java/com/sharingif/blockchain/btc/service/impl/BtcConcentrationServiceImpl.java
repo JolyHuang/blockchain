@@ -83,7 +83,7 @@ public class BtcConcentrationServiceImpl implements InitializingBean {
             return;
         }
 
-        List<Withdrawal> untreatedWithdrawalList = withdrawalService.getUntreatedWithdrawal(account.getAddress());
+        List<Withdrawal> untreatedWithdrawalList = withdrawalService.getUntreatedStatusByTxFrom(account.getAddress());
         if(untreatedWithdrawalList != null && untreatedWithdrawalList.size()>0){
             return;
         }
@@ -94,7 +94,8 @@ public class BtcConcentrationServiceImpl implements InitializingBean {
         Withdrawal withdrawal = new Withdrawal();
         withdrawal.setWithdrawalId(UUIDUtils.generateUUID());
         withdrawal.setCoinType(CoinType.BTC.name());
-        withdrawal.setAddress(account.getAddress());
+        withdrawal.setTxFrom(account.getAddress());
+        withdrawal.setTxTo(secretKey.getAddress());
         withdrawal.setFee(fee);
         withdrawal.setAmount(amount);
         withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);

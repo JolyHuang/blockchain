@@ -2,8 +2,7 @@ package com.sharingif.blockchain.common.components.ole;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.web3j.abi.EventEncoder;
-import org.web3j.abi.TypeReference;
+import org.web3j.abi.*;
 import org.web3j.abi.datatypes.*;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.abi.datatypes.generated.Uint8;
@@ -527,6 +526,31 @@ public class OleContract extends Contract {
                 return typedResponse;
             }
         });
+    }
+
+    public List<Type> getTransfer(String inputData) {
+        Function function = new Function(
+                FUNC_TRANSFER,
+                Arrays.<Type>asList(Address.DEFAULT, Uint256.DEFAULT),
+                Collections.<TypeReference<?>>emptyList());
+
+        String functionSignature = FunctionEncoder.encode(function);
+
+        String method = inputData.substring(0,10);
+
+        if(!method.equals(functionSignature.substring(0,10))) {
+            return null;
+        }
+
+        List<Type> results = FunctionReturnDecoder.decode(
+                inputData.substring(10),
+                Utils.convert(Arrays.<TypeReference<?>>asList(
+                        new TypeReference<Address>(){},
+                        new TypeReference<Uint256>(){})
+                )
+        );
+
+        return results;
     }
 
     public Observable<OwnershipTransferredEventResponse> ownershipTransferredEventObservable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
