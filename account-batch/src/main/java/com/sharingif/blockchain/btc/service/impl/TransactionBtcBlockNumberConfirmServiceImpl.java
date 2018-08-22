@@ -89,7 +89,10 @@ public class TransactionBtcBlockNumberConfirmServiceImpl implements Initializing
             rawTransaction = btcService.getRawTransaction(transactionBtcUtxo.getTxHash());
         } catch (Exception e) {
             logger.error("btc validate transaction confirm block number error, transactionBtcUtxo:{}", transactionBtcUtxo, e);
-            transactionBtcUtxoService.updateTxStatusToInvalid(transactionBtcUtxo.getId());
+            Integer currentBlockCount = btcService.getBlockCount();
+            if(currentBlockCount > (transactionBtcUtxo.getBlockNumber().intValue()+validBlockNumber)) {
+                transactionBtcUtxoService.updateTxStatusToInvalid(transactionBtcUtxo.getId());
+            }
             return;
         }
         Integer confirmations = rawTransaction.getConfirmations();

@@ -152,10 +152,55 @@ public class AccountServiceImpl extends BaseServiceImpl<Account, java.lang.Strin
 	}
 
 	@Override
-	public void outBalance(String id, String from, String to, String coinType, String txHash, Date txTime, BigInteger balance, BigInteger actualFee) {
+	public void outTotalOutAndBalance(String id, String from, String to, String coinType, String txId, Date txTime, BigInteger balance) {
 		// 添加账户流水
-		accountJnlService.out(from, to, coinType, txHash, txTime, balance);
-		accountJnlService.out(from, to, coinType, txHash, txTime, actualFee);
+		accountJnlService.out(from, to, coinType, txId, txTime, balance);
+
+		int number = accountDAO.updateTotalOutAndBalanceById(id, balance);
+		if(number == 0) {
+			logger.error("outTotalOutAndBalance actualFee insufficient freeze balance, accountId:{},balance:{}", id, balance);
+			throw new ValidationCubeException("insufficient freeze balance");
+		}
+	}
+
+	@Override
+	public void outEthTotalOutAndBalance(String id, String from, String to, String coinType, String txId, Date txTime, BigInteger balance, BigInteger actualFee) {
+		// 添加账户流水
+		accountJnlService.out(from, to, coinType, txId, txTime, balance);
+		accountJnlService.out(from, to, coinType, txId, txTime, actualFee);
+
+		BigInteger totalBalance = balance.add(actualFee);
+		int number = accountDAO.updateTotalOutAndBalanceById(id, totalBalance);
+		if(number == 0) {
+			logger.error("outTotalOutAndBalance insufficient freeze balance, accountId:{},balance:{}", id, totalBalance);
+			throw new ValidationCubeException("insufficient freeze balance");
+		}
+	}
+
+	@Override
+	public void outContractTotalOutAndBalance(String ethAccountId, String contractAccountId, String from, String to, String coinType, String txId, Date txTime, BigInteger balance, BigInteger actualFee) {
+		outTotalOutAndBalance(ethAccountId, from, to, CoinType.ETH.name(), txId, txTime, actualFee);
+
+		outTotalOutAndBalance(ethAccountId, from, to, coinType, txId, txTime, balance);
+	}
+
+	@Override
+	public void outBalance(String id, String from, String to, String coinType, String txId, Date txTime, BigInteger balance) {
+		// 添加账户流水
+		accountJnlService.out(from, to, coinType, txId, txTime, balance);
+
+		int number = accountDAO.updateTotalOutAndFrozenAmountById(id, balance);
+		if(number == 0) {
+			logger.error("outBalance btc insufficient freeze balance, accountId:{},balance:{}", id, balance);
+			throw new ValidationCubeException("insufficient freeze balance");
+		}
+	}
+
+	@Override
+	public void outBalance(String id, String from, String to, String coinType, String txId, Date txTime, BigInteger balance, BigInteger actualFee) {
+		// 添加账户流水
+		accountJnlService.out(from, to, coinType, txId, txTime, balance);
+		accountJnlService.out(from, to, coinType, txId, txTime, actualFee);
 
 		// 修改账号表
 		BigInteger totalBalance = balance.add(actualFee);
@@ -167,10 +212,10 @@ public class AccountServiceImpl extends BaseServiceImpl<Account, java.lang.Strin
 	}
 
 	@Override
-	public void outContractBalance(String ethAccountId, String contractAccountId, String from, String to, String coinType, String txHash, Date txTime, BigInteger balance, BigInteger withdrawalFee, BigInteger actualFee) {
+	public void outContractBalance(String ethAccountId, String contractAccountId, String from, String to, String coinType, String txId, Date txTime, BigInteger balance, BigInteger withdrawalFee, BigInteger actualFee) {
 		// 添加账户流水
-		accountJnlService.out(from, to, coinType, txHash, txTime, balance);
-		accountJnlService.out(from, to, CoinType.ETH.name(), txHash, txTime, actualFee);
+		accountJnlService.out(from, to, coinType, txId, txTime, balance);
+		accountJnlService.out(from, to, CoinType.ETH.name(), txId, txTime, actualFee);
 
 		// 修改ETH账号表
 		int number = accountDAO.updateTotalOutFrozenAmountBalanceById(ethAccountId, actualFee, withdrawalFee, withdrawalFee.subtract(actualFee));

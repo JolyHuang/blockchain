@@ -1,10 +1,15 @@
 package com.sharingif.blockchain.btc.service.impl;
 
+import com.sharingif.blockchain.account.model.entity.Account;
 import com.sharingif.blockchain.account.model.entity.Withdrawal;
+import com.sharingif.blockchain.account.service.AccountService;
+import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * 取现失败通知
@@ -17,6 +22,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class TransactionBtcWithdrawalFailNoticeServiceImpl extends AbstractTransactionBtcWithdrawalNoticeServiceImpl {
 
+    private AccountService accountService;
+
+    @Resource
+    public void setAccountService(AccountService accountService) {
+        this.accountService = accountService;
+    }
+
     @Override
     PaginationRepertory<TransactionBtcUtxo> getPaginationRepertory(PaginationCondition<TransactionBtcUtxo> paginationCondition) {
         return getTransactionBtcUtxoService().getOutInvalid(paginationCondition);
@@ -25,7 +37,13 @@ public class TransactionBtcWithdrawalFailNoticeServiceImpl extends AbstractTrans
     @Override
     void updateTxStatus(Withdrawal withdrawal, String txHash) {
         getTransactionBtcUtxoService().updateTxStatusToWithdrawalFailNotified(txHash);
-        getWithdrawalService().updateStatusToFail(withdrawal.getId());
+
+        if(withdrawal != null) {
+            Account account = accountService.getNormalAccountByAddress(withdrawal.getTxFrom(), CoinType.BTC.name());
+            accountService.unfreezeBalance(account.getId(), withdrawal.getAmount().add(withdrawal.getFee()));
+
+            getWithdrawalService().updateStatusToFail(withdrawal.getId());
+        }
     }
 
     @Override

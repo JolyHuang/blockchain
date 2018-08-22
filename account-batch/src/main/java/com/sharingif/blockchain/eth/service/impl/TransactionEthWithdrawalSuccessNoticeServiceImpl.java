@@ -26,7 +26,10 @@ public class TransactionEthWithdrawalSuccessNoticeServiceImpl extends AbstractTr
     @Override
     void updateTxStatus(Withdrawal withdrawal, String id) {
         getTransactionEthService().updateTxStatusToWithdrawalSuccessNotified(id);
-        getWithdrawalService().updateStatusToSuccess(withdrawal.getId());
+
+        if(withdrawal != null) {
+            getWithdrawalService().updateStatusToSuccess(withdrawal.getId());
+        }
     }
 
     @Override

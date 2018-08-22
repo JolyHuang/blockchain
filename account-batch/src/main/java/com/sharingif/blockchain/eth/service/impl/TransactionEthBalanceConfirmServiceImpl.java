@@ -112,10 +112,39 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         BigInteger txBalance = transactionEth.getTxValue();
         BigInteger actualFee = transactionEth.getActualFee();
 
+        Withdrawal withdrawal = withdrawalService.getWithdrawalByTxHash(transactionEth.getTxHash());
+        if(withdrawal == null) {
+
+            if(TransactionEth.TX_RECEIPT_STATUS_FAIL.equals(transactionEth.getTxReceiptStatus())) {
+                accountService.outTotalOutAndBalance(
+                        account.getId()
+                        ,transactionEth.getTxFrom()
+                        ,transactionEth.getTxTo()
+                        ,transactionEth.getCoinType()
+                        ,transactionEth.getId()
+                        ,transactionEth.getTxTime()
+                        ,actualFee
+                );
+            } else {
+                accountService.outEthTotalOutAndBalance(
+                        account.getId()
+                        ,transactionEth.getTxFrom()
+                        ,transactionEth.getTxTo()
+                        ,transactionEth.getCoinType()
+                        ,transactionEth.getId()
+                        ,transactionEth.getTxTime()
+                        ,txBalance
+                        ,actualFee
+                );
+            }
+
+            transactionEthService.updateTxStatusToValid(transactionEth.getId());
+            return;
+        }
+
         if(TransactionEth.TX_RECEIPT_STATUS_FAIL.equals(transactionEth.getTxReceiptStatus())) {
             logger.info("eth out receipt status is valid, transactionEth:{}", transactionEth);
 
-            Withdrawal withdrawal = withdrawalService.getWithdrawalByTxHash(transactionEth.getTxHash());
             BigInteger withdrawalFee = withdrawal.getFee();
             withdrawalService.updateFee(withdrawal.getId(), actualFee);
 
@@ -132,7 +161,6 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
             );
 
             transactionEthService.updateTxStatusToValid(transactionEth.getId());
-
             return;
         }
 
@@ -162,6 +190,34 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         BigInteger txBalance = transactionEth.getTxValue();
 
         Withdrawal withdrawal = withdrawalService.getWithdrawalByTxHash(transactionEth.getTxHash());
+        if(withdrawal == null) {
+            if(TransactionEth.TX_RECEIPT_STATUS_FAIL.equals(transactionEth.getTxReceiptStatus())) {
+                accountService.outTotalOutAndBalance(
+                        account.getId()
+                        ,transactionEth.getTxFrom()
+                        ,transactionEth.getTxTo()
+                        ,transactionEth.getCoinType()
+                        ,transactionEth.getId()
+                        ,transactionEth.getTxTime()
+                        ,actualFee
+                );
+            } else {
+                accountService.outContractTotalOutAndBalance(
+                        ethAccount.getId()
+                        ,account.getId()
+                        ,transactionEth.getTxFrom()
+                        ,transactionEth.getTxTo()
+                        ,transactionEth.getCoinType()
+                        ,transactionEth.getId()
+                        ,transactionEth.getTxTime()
+                        ,txBalance
+                        ,actualFee
+                );
+
+                transactionEthService.updateTxStatusToValid(transactionEth.getId());
+                return;
+            }
+        }
         BigInteger withdrawalFee = withdrawal.getFee();
         withdrawalService.updateFee(withdrawal.getId(), actualFee);
 
@@ -182,7 +238,6 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
             );
 
             transactionEthService.updateTxStatusToValid(transactionEth.getId());
-
             return;
         }
 

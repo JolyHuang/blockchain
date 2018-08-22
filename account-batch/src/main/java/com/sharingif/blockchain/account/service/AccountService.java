@@ -84,6 +84,31 @@ public interface AccountService extends IBaseService<Account, java.lang.String> 
     /**
      * 出账金额
      * @param id
+     */
+    void outTotalOutAndBalance(String id, String from, String to, String coinType, String txId, Date txTime, BigInteger balance);
+
+    /**
+     * 出账金额
+     * @param id
+     * @param balance
+     */
+    void outEthTotalOutAndBalance(String id, String from, String to, String coinType, String txId, Date txTime, BigInteger balance, BigInteger actualFee);
+
+    /**
+     * 出账金额
+     */
+    void outContractTotalOutAndBalance(String ethAccountId, String contractAccountId, String from, String to, String coinType, String txId, Date txTime, BigInteger balance, BigInteger actualFee);
+
+    /**
+     * 出账金额
+     * @param id
+     * @param balance
+     */
+    void outBalance(String id, String from, String to, String coinType, String txId, Date txTime, BigInteger balance);
+
+    /**
+     * 出账金额
+     * @param id
      * @param balance
      */
     void outBalance(String id, String from, String to, String coinType, String txId, Date txTime, BigInteger balance, BigInteger actualFee);

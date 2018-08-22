@@ -268,7 +268,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		  	TOTAL_OUT = TOTAL_OUT + #{balance}
 			,BALANCE = BALANCE - #{balance}
 		WHERE
-		  	ID = #{id}
+		  		ID = #{id}
+		  	AND
+		  		BALANCE >= #{balance}
 	</update>
 
 	<update id="updateTotalOutAndFrozenAmountById">

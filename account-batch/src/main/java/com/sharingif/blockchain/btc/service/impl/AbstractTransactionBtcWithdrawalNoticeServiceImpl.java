@@ -75,17 +75,19 @@ public abstract class AbstractTransactionBtcWithdrawalNoticeServiceImpl extends 
 
     @Transactional
     protected void doTransaction(TransactionBtcUtxo transactionBtcUtxo) {
-        AddressNotice addressNotice = null;
         Withdrawal withdrawal = null;
+        AddressNotice addressNotice = null;
         try {
-            // 获取通知地址
-            addressNotice = getAddressNoticeService().getWithdrawalNoticeAddress(transactionBtcUtxo.getTxTo(), CoinType.BTC.name());
             // 获取取现id
             withdrawal = withdrawalService.getWithdrawalByTxHash(transactionBtcUtxo.getTxHash());
             if(withdrawal == null) {
-                logger.error("getWithdrawalByTxHash error, transactionBtcUtxo:{}", transactionBtcUtxo);
-                throw new UnknownCubeException();
+                // 修改交易状态
+                updateTxStatus(withdrawal, transactionBtcUtxo.getId());
+                return;
             }
+
+            // 获取通知地址
+            addressNotice = getAddressNoticeService().getWithdrawalNoticeAddress(transactionBtcUtxo.getTxTo(), CoinType.BTC.name());
         } catch (Exception e) {
             logger.error("transaction btc info:{}", transactionBtcUtxo, e);
             getTransactionBtcUtxoService().updateTaskStatusToFail(transactionBtcUtxo.getId());

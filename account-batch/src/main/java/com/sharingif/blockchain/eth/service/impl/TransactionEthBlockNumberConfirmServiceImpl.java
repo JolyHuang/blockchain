@@ -116,7 +116,9 @@ public class TransactionEthBlockNumberConfirmServiceImpl implements Initializing
             transaction = ethereumService.getTransactionByHash(transactionEth.getTxHash());
         } catch (Exception e) {
             logger.error("eth validate transaction confirm block number error, transactionEth:{}", transactionEth, e);
-            transactionEthService.updateTxStatusToInvalid(transactionEth.getId());
+            if(currentBlockNumber.compareTo(blockNumber.add(new BigInteger(String.valueOf(validBlockNumber)))) > 0) {
+                transactionEthService.updateTxStatusToInvalid(transactionEth.getId());
+            }
             return;
         }
 
