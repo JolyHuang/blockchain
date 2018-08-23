@@ -182,7 +182,7 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
 
                 PaginationRepertory<TransactionBtcUtxo> paginationRepertory = transactionBtcUtxoService.getUnconfirmedBalance(paginationCondition);
 
-                if (paginationRepertory == null || paginationRepertory.getPageItems() == null) {
+                if (paginationRepertory == null || paginationRepertory.getPageItems() == null || paginationRepertory.getPageItems().size() == 0) {
                     try {
                         TimeUnit.SECONDS.sleep(5);
                     } catch (InterruptedException e) {

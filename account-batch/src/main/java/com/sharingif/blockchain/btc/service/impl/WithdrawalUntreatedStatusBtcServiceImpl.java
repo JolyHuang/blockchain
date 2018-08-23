@@ -130,7 +130,7 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
 
                 PaginationRepertory<Withdrawal> paginationRepertory = withdrawalService.getBtcUntreated(paginationCondition);
 
-                if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
+                if(paginationRepertory == null || paginationRepertory.getPageItems() == null || paginationRepertory.getPageItems().size() == 0) {
                     try {
                         TimeUnit.SECONDS.sleep(5);
                     } catch (InterruptedException e) {

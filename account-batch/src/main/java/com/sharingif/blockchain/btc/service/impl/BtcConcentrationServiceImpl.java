@@ -131,7 +131,7 @@ public class BtcConcentrationServiceImpl implements InitializingBean {
 
                 PaginationRepertory<Account> paginationRepertory = accountService.getPaginationListByStatusCoinTypeBalance(paginationCondition);
 
-                if(paginationRepertory == null || paginationRepertory.getPageItems() == null) {
+                if(paginationRepertory == null || paginationRepertory.getPageItems() == null || paginationRepertory.getPageItems().size() == 0) {
                     continue;
                 }
 

@@ -97,7 +97,7 @@ public abstract class AbstractTransactionBtcNoticeServiceImpl implements Initial
 
                 writeLoadDataLogger(paginationRepertory);
 
-                if (paginationRepertory == null || paginationRepertory.getPageItems() == null) {
+                if (paginationRepertory == null || paginationRepertory.getPageItems() == null || paginationRepertory.getPageItems().size() == 0) {
                     try {
                         TimeUnit.SECONDS.sleep(5);
                     } catch (InterruptedException e) {
