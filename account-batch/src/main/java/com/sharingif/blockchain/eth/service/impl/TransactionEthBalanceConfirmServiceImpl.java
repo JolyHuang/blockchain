@@ -193,7 +193,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         if(withdrawal == null) {
             if(TransactionEth.TX_RECEIPT_STATUS_FAIL.equals(transactionEth.getTxReceiptStatus())) {
                 accountService.outTotalOutAndBalance(
-                        account.getId()
+                        ethAccount.getId()
                         ,transactionEth.getTxFrom()
                         ,transactionEth.getTxTo()
                         ,transactionEth.getCoinType()
@@ -201,6 +201,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
                         ,transactionEth.getTxTime()
                         ,actualFee
                 );
+                return;
             } else {
                 accountService.outContractTotalOutAndBalance(
                         ethAccount.getId()
@@ -213,7 +214,6 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
                         ,txBalance
                         ,actualFee
                 );
-
                 transactionEthService.updateTxStatusToValid(transactionEth.getId());
                 return;
             }

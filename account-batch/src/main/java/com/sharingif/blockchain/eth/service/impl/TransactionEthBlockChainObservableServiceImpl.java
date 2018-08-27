@@ -295,6 +295,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
                     try {
                         ethTransactionsObservable();
                     } catch (Throwable e) {
+                        ethTransactionsObservableIsfinsh = true;
                         logger.error("eth subscribe error", e);
                     }
 

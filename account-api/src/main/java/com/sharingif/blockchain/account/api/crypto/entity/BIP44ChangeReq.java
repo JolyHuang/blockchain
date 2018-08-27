@@ -23,7 +23,7 @@ public class BIP44ChangeReq {
      */
     private Integer account;
     /**
-     * 零钱
+     * change
      */
     private Integer change;
     /**
