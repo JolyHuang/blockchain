@@ -14,8 +14,12 @@ import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
@@ -39,6 +43,7 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
     private AccountService accountService;
     private BtcService btcService;
     private WithdrawalService withdrawalService;
+    private DataSourceTransactionManager dataSourceTransactionManager;
 
     @Resource
     public void setTransactionBtcUtxoService(TransactionBtcUtxoService transactionBtcUtxoService) {
@@ -55,6 +60,10 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
     @Resource
     public void setWithdrawalService(WithdrawalService withdrawalService) {
         this.withdrawalService = withdrawalService;
+    }
+    @Resource
+    public void setDataSourceTransactionManager(DataSourceTransactionManager dataSourceTransactionManager) {
+        this.dataSourceTransactionManager = dataSourceTransactionManager;
     }
 
     @Transactional
@@ -147,6 +156,9 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
     }
 
     protected void confirmBalance(TransactionBtcUtxo transactionBtcUtxo) {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        TransactionStatus status = dataSourceTransactionManager.getTransaction(def);
         try {
             String txType = transactionBtcUtxo.getTxType();
             if (TransactionEth.TX_TYPE_IN.equals(txType)) {
@@ -154,8 +166,11 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
             } else {
                 out(transactionBtcUtxo);
             }
+
+            dataSourceTransactionManager.commit(status);
         }catch (Exception e) {
             logger.error("confirm transaction btc balance error, transactionEth:{}", transactionBtcUtxo, e);
+            dataSourceTransactionManager.rollback(status);
             throw e;
         }
     }

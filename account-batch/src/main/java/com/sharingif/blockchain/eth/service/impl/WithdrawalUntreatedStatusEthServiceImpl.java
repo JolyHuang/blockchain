@@ -21,7 +21,11 @@ import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.web3j.tx.Transfer;
 
 import javax.annotation.Resource;
@@ -49,6 +53,7 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
     private EthereumService ethereumService;
     private OleContract oleContract;
     private AccountService accountService;
+    private DataSourceTransactionManager dataSourceTransactionManager;
 
     @Resource
     public void setWithdrawalService(WithdrawalService withdrawalService) {
@@ -82,6 +87,10 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
     public void setAccountService(AccountService accountService) {
         this.accountService = accountService;
     }
+    @Resource
+    public void setDataSourceTransactionManager(DataSourceTransactionManager dataSourceTransactionManager) {
+        this.dataSourceTransactionManager = dataSourceTransactionManager;
+    }
 
     private String ethWithdrawal(SecretKey secretKey, BigInteger nonce, BigInteger gasPrice, String password, Withdrawal withdrawal) {
         EthTransferReq req = new EthTransferReq();
@@ -94,8 +103,19 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
 
 
         BigInteger fee = req.getGasPrice().multiply(Transfer.GAS_LIMIT);
-        accountService.freezingBalance(withdrawal.getTxFrom(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
-        withdrawalService.updateFee(withdrawal.getId(), fee);
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        TransactionStatus status = dataSourceTransactionManager.getTransaction(def);
+        try {
+            accountService.freezingBalance(withdrawal.getTxFrom(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
+            withdrawalService.updateFee(withdrawal.getId(), fee);
+
+            dataSourceTransactionManager.commit(status);
+        } catch (Exception e) {
+            logger.error("ethWithdrawal error, withdrawal:{}, exception:{}", withdrawal, e);
+            dataSourceTransactionManager.rollback(status);
+            throw e;
+        }
 
         withdrawalService.updateTaskStatusToProcessing(withdrawal.getId());
         EthTransferRsp rsp = ethApiService.transfer(req);
@@ -115,13 +135,24 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
         req.setSecretKeyId(secretKey.getId());
         req.setPassword(password);
 
-        // ETH手续费
-        BigInteger fee = req.getGasPrice().multiply(req.getGasLimit());
-        withdrawalService.updateFee(withdrawal.getId(), fee);
-        accountService.freezingBalance(withdrawal.getTxFrom(), withdrawal.getCoinType(), fee);
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        TransactionStatus status = dataSourceTransactionManager.getTransaction(def);
+        try {
+            // ETH手续费
+            BigInteger fee = req.getGasPrice().multiply(req.getGasLimit());
+            withdrawalService.updateFee(withdrawal.getId(), fee);
+            accountService.freezingBalance(withdrawal.getTxFrom(), withdrawal.getCoinType(), fee);
 
-        // 合约账户
-        accountService.freezingBalance(withdrawal.getTxFrom(), withdrawal.getSubCoinType(), withdrawal.getAmount());
+            // 合约账户
+            accountService.freezingBalance(withdrawal.getTxFrom(), withdrawal.getSubCoinType(), withdrawal.getAmount());
+
+            dataSourceTransactionManager.commit(status);
+        } catch (Exception e) {
+            logger.error("ethContractWithdrawal error, withdrawal:{}, exception:{}", withdrawal, e);
+            dataSourceTransactionManager.rollback(status);
+            throw e;
+        }
 
         withdrawalService.updateTaskStatusToProcessing(withdrawal.getId());
         Erc20TransferRsp rsp = ethErc20ContractApiService.transfer(req);

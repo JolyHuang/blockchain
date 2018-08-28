@@ -18,7 +18,11 @@ import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
@@ -44,6 +48,7 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
     private BtcService btcService;
     private BtcApiService btcApiService;
     private AccountService accountService;
+    private DataSourceTransactionManager dataSourceTransactionManager;
 
     @Resource
     public void setWithdrawalService(WithdrawalService withdrawalService) {
@@ -65,6 +70,10 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
     public void setAccountService(AccountService accountService) {
         this.accountService = accountService;
     }
+    @Resource
+    public void setDataSourceTransactionManager(DataSourceTransactionManager dataSourceTransactionManager) {
+        this.dataSourceTransactionManager = dataSourceTransactionManager;
+    }
 
     protected void withdrawalUntreatedStatus(Withdrawal withdrawal) {
         SecretKey secretKey = secretKeyService.getSecretKeyByAddress(withdrawal.getTxFrom());
@@ -74,8 +83,20 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
         if(fee == null || fee.compareTo(BigInteger.ZERO) == 0)  {
             fee = new BigInteger("30000");
         }
-        accountService.freezingBalance(withdrawal.getTxFrom(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
-        withdrawalService.updateFee(withdrawal.getId(), fee);
+
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        TransactionStatus status = dataSourceTransactionManager.getTransaction(def);
+        try {
+            accountService.freezingBalance(withdrawal.getTxFrom(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
+            withdrawalService.updateFee(withdrawal.getId(), fee);
+
+            dataSourceTransactionManager.commit(status);
+        } catch (Exception e) {
+            logger.error("btcWithdrawal error, withdrawal:{}, exception:{}", withdrawal, e);
+            dataSourceTransactionManager.rollback(status);
+            throw e;
+        }
 
         List<Output> outputList = btcService.getListUnspent(secretKey.getAddress(), withdrawal.getAmount(), fee);
 
