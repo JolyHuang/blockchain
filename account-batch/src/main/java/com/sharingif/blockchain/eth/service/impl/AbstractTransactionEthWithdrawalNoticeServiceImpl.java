@@ -6,8 +6,11 @@ import com.sharingif.blockchain.account.service.WithdrawalService;
 import com.sharingif.blockchain.app.components.UrlBody;
 import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
-import com.sharingif.cube.core.exception.UnknownCubeException;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Resource;
 
@@ -22,6 +25,7 @@ import javax.annotation.Resource;
 public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends AbstractTransactionEthNoticeServiceImpl {
 
     private WithdrawalService withdrawalService;
+    private DataSourceTransactionManager dataSourceTransactionManager;
 
     public WithdrawalService getWithdrawalService() {
         return withdrawalService;
@@ -29,6 +33,10 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
     @Resource
     public void setWithdrawalService(WithdrawalService withdrawalService) {
         this.withdrawalService = withdrawalService;
+    }
+    @Resource
+    public void setDataSourceTransactionManager(DataSourceTransactionManager dataSourceTransactionManager) {
+        this.dataSourceTransactionManager = dataSourceTransactionManager;
     }
 
     protected TransactionEthWithdrawalApiReq convertTransactionEthToTransactionEthWithdrawalApiReq(String withdrawalId, TransactionEth transactionEth) {
@@ -85,8 +93,19 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
             return;
         }
 
-        // 修改交易状态
-        updateTxStatus(withdrawal, transactionEth.getId());
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        TransactionStatus status = dataSourceTransactionManager.getTransaction(def);
+        try {
+            // 修改交易状态
+            updateTxStatus(withdrawal, transactionEth.getId());
+
+            dataSourceTransactionManager.commit(status);
+        } catch (Exception e) {
+            logger.error("eth withdrawal update txStatus error, withdrawal:{}, exception:{}", withdrawal, e);
+            dataSourceTransactionManager.rollback(status);
+            throw e;
+        }
     }
 
     @Deprecated

@@ -11,7 +11,11 @@ import com.sharingif.blockchain.common.constants.CoinType;
 import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
 import com.sharingif.cube.core.exception.UnknownCubeException;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -29,6 +33,7 @@ public abstract class AbstractTransactionBtcWithdrawalNoticeServiceImpl extends 
 
     private WithdrawalService withdrawalService;
     private BtcService btcService;
+    private DataSourceTransactionManager dataSourceTransactionManager;
 
     public WithdrawalService getWithdrawalService() {
         return withdrawalService;
@@ -40,6 +45,10 @@ public abstract class AbstractTransactionBtcWithdrawalNoticeServiceImpl extends 
     @Resource
     public void setBtcService(BtcService btcService) {
         this.btcService = btcService;
+    }
+    @Resource
+    public void setDataSourceTransactionManager(DataSourceTransactionManager dataSourceTransactionManager) {
+        this.dataSourceTransactionManager = dataSourceTransactionManager;
     }
 
     protected TransactionEthWithdrawalApiReq convertTransactionEthWithdrawalApiReq(String withdrawalId, TransactionBtcUtxo transactionBtcUtxo) {
@@ -101,8 +110,19 @@ public abstract class AbstractTransactionBtcWithdrawalNoticeServiceImpl extends 
             return;
         }
 
-        // 修改交易状态
-        updateTxStatus(withdrawal, transactionBtcUtxo.getId());
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        TransactionStatus status = dataSourceTransactionManager.getTransaction(def);
+        try {
+            // 修改交易状态
+            updateTxStatus(withdrawal, transactionBtcUtxo.getId());
+
+            dataSourceTransactionManager.commit(status);
+        } catch (Exception e) {
+            logger.error("btc withdrawal update txStatus error, withdrawal:{}, exception:{}", withdrawal, e);
+            dataSourceTransactionManager.rollback(status);
+            throw e;
+        }
     }
 
     @Deprecated
