@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * Bootstrap
@@ -46,7 +45,6 @@ public class Bootstrap {
                 }).run(args);
     }
 
-    @EnableTransactionManagement
     @EnableAutoConfiguration(exclude={WebMvcAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
     @ComponentScan(
             basePackages = "com.sharingif.blockchain.*.dao,com.sharingif.blockchain.*.service,com.sharingif.blockchain.app.autoconfigure,com.sharingif.cube.spring.boot"
