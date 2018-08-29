@@ -181,7 +181,7 @@ public class AccountServiceImpl extends BaseServiceImpl<Account, java.lang.Strin
 	public void outContractTotalOutAndBalance(String ethAccountId, String contractAccountId, String from, String to, String coinType, String txId, Date txTime, BigInteger balance, BigInteger actualFee) {
 		outTotalOutAndBalance(ethAccountId, from, to, CoinType.ETH.name(), txId, txTime, actualFee);
 
-		outTotalOutAndBalance(ethAccountId, from, to, coinType, txId, txTime, balance);
+		outTotalOutAndBalance(contractAccountId, from, to, coinType, txId, txTime, balance);
 	}
 
 	@Override
