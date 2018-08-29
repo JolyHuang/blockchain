@@ -205,12 +205,11 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
                         ethAccount.getId()
                         ,transactionEth.getTxFrom()
                         ,transactionEth.getTxTo()
-                        ,transactionEth.getCoinType()
+                        ,CoinType.ETH.name()
                         ,transactionEth.getId()
                         ,transactionEth.getTxTime()
                         ,actualFee
                 );
-                return;
             } else {
                 accountService.outContractTotalOutAndBalance(
                         ethAccount.getId()
@@ -223,9 +222,10 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
                         ,txBalance
                         ,actualFee
                 );
-                transactionEthService.updateTxStatusToValid(transactionEth.getId());
-                return;
             }
+
+            transactionEthService.updateTxStatusToValid(transactionEth.getId());
+            return;
         }
         BigInteger withdrawalFee = withdrawal.getFee();
         withdrawalService.updateFee(withdrawal.getId(), actualFee);
