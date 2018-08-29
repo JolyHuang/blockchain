@@ -98,7 +98,7 @@ public class TransactionBtcBlockNumberConfirmServiceImpl implements Initializing
         Integer confirmations = rawTransaction.getConfirmations();
         int confirmBlockNumber = transactionBtcUtxo.getConfirmBlockNumber();
 
-        if(confirmations == confirmBlockNumber && confirmations < validBlockNumber) {
+        if(confirmations == confirmBlockNumber && confirmations <= validBlockNumber) {
             return;
         }
 
