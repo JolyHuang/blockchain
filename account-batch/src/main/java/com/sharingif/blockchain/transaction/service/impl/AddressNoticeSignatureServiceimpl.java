@@ -50,7 +50,7 @@ public class AddressNoticeSignatureServiceimpl implements AddressNoticeSignature
             PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(rsaPrivateKey.getEncoded());
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
-            signature = Signature.getInstance("MD5withRSA");
+            signature = Signature.getInstance("SHA1withRSA");
             signature.initSign(privateKey);
         } catch (Exception e) {
             logger.error("invalid key exception", e);
