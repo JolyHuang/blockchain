@@ -117,7 +117,6 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
             throw e;
         }
 
-        withdrawalService.updateTaskStatusToProcessing(withdrawal.getId());
         EthTransferRsp rsp = ethApiService.transfer(req);
         String txHash = ethereumService.ethSendRawTransaction(rsp.getHexValue());
 
@@ -154,7 +153,6 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
             throw e;
         }
 
-        withdrawalService.updateTaskStatusToProcessing(withdrawal.getId());
         Erc20TransferRsp rsp = ethErc20ContractApiService.transfer(req);
         String txHash = ethereumService.ethSendRawTransaction(rsp.getHexValue());
 
@@ -162,6 +160,8 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
     }
 
     protected void withdrawalUntreatedStatus(Withdrawal withdrawal) {
+        withdrawalService.updateTaskStatusToProcessing(withdrawal.getId());
+
         SecretKey secretKey = secretKeyService.getSecretKeyByAddress(withdrawal.getTxFrom());
 
         BigInteger nonce =  ethereumService.ethGetTransactionCountPending(secretKey.getAddress());

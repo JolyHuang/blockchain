@@ -76,6 +76,8 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
     }
 
     protected void withdrawalUntreatedStatus(Withdrawal withdrawal) {
+        withdrawalService.updateTaskStatusToProcessing(withdrawal.getId());
+
         SecretKey secretKey = secretKeyService.getSecretKeyByAddress(withdrawal.getTxFrom());
         String password = secretKeyService.decryptPassword(secretKey.getPassword());
 
@@ -119,7 +121,6 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
         BtcTransferRsp rsp = btcApiService.transfer(req);
 
         String signRawTransaction = btcService.signRawTransaction(rsp.getRawTransaction());
-        withdrawalService.updateTaskStatusToProcessing(withdrawal.getId());
         String txHash = btcService.sendRawTransaction(signRawTransaction);
         if(StringUtils.isTrimEmpty(txHash)) {
             withdrawalService.updateTaskStatusToFail(withdrawal.getId());
