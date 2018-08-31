@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -37,6 +38,13 @@ public class RemoteContextAutoconfigure {
         ) {
         HttpJsonConnection apacheHttpJsonConnection = new HttpJsonConnection(host, port, contextPath);
         apacheHttpJsonConnection.setSoTimeout(soTimeout);
+        apacheHttpJsonConnection.setExcludeLogTransList(
+                Arrays.asList(
+                        "/btc/transfer"
+                        ,"/eth/transfer"
+                        ,"/erc20/transfer"
+                )
+        );
 
         return apacheHttpJsonConnection;
     }
