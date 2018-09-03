@@ -27,6 +27,34 @@ public interface WithdrawalService extends IBaseService<Withdrawal, String> {
     PaginationRepertory<Withdrawal> getBtcUntreated(PaginationCondition<Withdrawal> paginationCondition);
 
     /**
+     * 获取成功状态eth
+     * @param paginationCondition
+     * @return
+     */
+    PaginationRepertory<Withdrawal> getEthStatusSuccess(PaginationCondition<Withdrawal> paginationCondition);
+
+    /**
+     * 获取成功状态btc
+     * @param paginationCondition
+     * @return
+     */
+    PaginationRepertory<Withdrawal> getBtcStatusSuccess(PaginationCondition<Withdrawal> paginationCondition);
+
+    /**
+     * 获取失败状态eth
+     * @param paginationCondition
+     * @return
+     */
+    PaginationRepertory<Withdrawal> getEthStatusFial(PaginationCondition<Withdrawal> paginationCondition);
+
+    /**
+     * 获取失败状态btc
+     * @param paginationCondition
+     * @return
+     */
+    PaginationRepertory<Withdrawal> getBtcStatusFial(PaginationCondition<Withdrawal> paginationCondition);
+
+    /**
      * 修改状态为处理中
      * @param id
      */
@@ -62,6 +90,18 @@ public interface WithdrawalService extends IBaseService<Withdrawal, String> {
      * @param txHash
      */
     void updateTaskStatusToSuccessAndStatusToProcessingAndTxHash(String id, String txHash);
+
+    /**
+     * 修改状态为成功通知
+     * @param id
+     */
+    void updateStatusToSuccessNotified(String id);
+
+    /**
+     * 修改状态为失败通知
+     * @param id
+     */
+    void updateStatusToFailNotified(String id);
 
     /**
      * 根据txHash获取Withdrawal

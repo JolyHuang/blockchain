@@ -70,7 +70,6 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         this.dataSourceTransactionManager = dataSourceTransactionManager;
     }
 
-    @Transactional
     protected void in(TransactionEth transactionEth) {
         if(TransactionEth.TX_RECEIPT_STATUS_FAIL.equals(transactionEth.getTxReceiptStatus())) {
             logger.info("eth in receipt status is valid, transactionEth:{}", transactionEth);
@@ -267,7 +266,6 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
 
     }
 
-    @Transactional
     protected void out(TransactionEth transactionEth) {
 
         String address = transactionEth.getTxFrom();

@@ -65,7 +65,6 @@ public abstract class AbstractTransactionEthWithdrawalNoticeServiceImpl extends 
         return transactionEthWithdrawalApiReq;
     }
 
-    @Transactional
     protected void doTransactionEth(TransactionEth transactionEth) {
         Withdrawal withdrawal = null;
         AddressNotice addressNotice = null;

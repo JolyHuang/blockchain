@@ -47,6 +47,42 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, String> i
 	}
 
 	@Override
+	public PaginationRepertory<Withdrawal> getEthStatusSuccess(PaginationCondition<Withdrawal> paginationCondition) {
+		paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
+		paginationCondition.getCondition().setStatus(Withdrawal.STATUS_WITHDRAWAL_SUCCESS);
+		paginationCondition.getCondition().setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
+
+		return getPagination(paginationCondition);
+	}
+
+	@Override
+	public PaginationRepertory<Withdrawal> getBtcStatusSuccess(PaginationCondition<Withdrawal> paginationCondition) {
+		paginationCondition.getCondition().setCoinType(CoinType.BTC.name());
+		paginationCondition.getCondition().setStatus(Withdrawal.STATUS_WITHDRAWAL_SUCCESS);
+		paginationCondition.getCondition().setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
+
+		return getPagination(paginationCondition);
+	}
+
+	@Override
+	public PaginationRepertory<Withdrawal> getEthStatusFial(PaginationCondition<Withdrawal> paginationCondition) {
+		paginationCondition.getCondition().setCoinType(CoinType.ETH.name());
+		paginationCondition.getCondition().setStatus(Withdrawal.STATUS_WITHDRAWAL_FAIL);
+		paginationCondition.getCondition().setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
+
+		return getPagination(paginationCondition);
+	}
+
+	@Override
+	public PaginationRepertory<Withdrawal> getBtcStatusFial(PaginationCondition<Withdrawal> paginationCondition) {
+		paginationCondition.getCondition().setCoinType(CoinType.BTC.name());
+		paginationCondition.getCondition().setStatus(Withdrawal.STATUS_WITHDRAWAL_FAIL);
+		paginationCondition.getCondition().setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
+
+		return getPagination(paginationCondition);
+	}
+
+	@Override
 	public void updateStatusToProcessing(String id) {
 		Withdrawal withdrawal = new Withdrawal();
 		withdrawal.setId(id);
@@ -98,6 +134,24 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, String> i
 		withdrawal.setTxHash(txHash);
 		withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_PROCESSING);
 		withdrawal.setTaskStatus(Withdrawal.TASK_STATUS_SUCCESS);
+
+		withdrawalDAO.updateById(withdrawal);
+	}
+
+	@Override
+	public void updateStatusToSuccessNotified(String id) {
+		Withdrawal withdrawal = new Withdrawal();
+		withdrawal.setId(id);
+		withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_SUCCESS_NOTIFIED);
+
+		withdrawalDAO.updateById(withdrawal);
+	}
+
+	@Override
+	public void updateStatusToFailNotified(String id) {
+		Withdrawal withdrawal = new Withdrawal();
+		withdrawal.setId(id);
+		withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_FAIL_NOTIFIED);
 
 		withdrawalDAO.updateById(withdrawal);
 	}

@@ -66,7 +66,6 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
         this.dataSourceTransactionManager = dataSourceTransactionManager;
     }
 
-    @Transactional
     protected void in(TransactionBtcUtxo transactionBtcUtxo) {
         // 如果入账前还有未处理的出账入账暂不处理
         List<TransactionBtcUtxo> withdrawalTransactionBtcUtxoList = transactionBtcUtxoService.getWithdrawalTransactionBtcUtxo(transactionBtcUtxo.getTxTo());
@@ -114,7 +113,6 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
 
     }
 
-    @Transactional
     protected void out(TransactionBtcUtxo transactionBtcUtxo) {
         String address = transactionBtcUtxo.getTxFrom();
         Account account = accountService.getNormalAccountByAddress(address, CoinType.BTC.name());

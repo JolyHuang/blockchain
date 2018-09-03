@@ -111,7 +111,6 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
     /**
      * 保存区块数据
      */
-    @Transactional
     protected void persistenceAndNoticeTransactionEth(TransactionEth transactionEth) {
         if(isDuplicationData(transactionEth.getTxHash(), transactionEth.getBlockNumber(), transactionEth.getTxFrom(), transactionEth.getTxTo(), transactionEth.getTxType())) {
             return;

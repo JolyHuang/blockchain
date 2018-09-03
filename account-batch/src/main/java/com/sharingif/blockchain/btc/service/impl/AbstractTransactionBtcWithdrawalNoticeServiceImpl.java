@@ -82,7 +82,6 @@ public abstract class AbstractTransactionBtcWithdrawalNoticeServiceImpl extends 
         return transactionEthWithdrawalApiReq;
     }
 
-    @Transactional
     protected void doTransaction(TransactionBtcUtxo transactionBtcUtxo) {
         Withdrawal withdrawal = null;
         AddressNotice addressNotice = null;
