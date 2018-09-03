@@ -99,7 +99,6 @@ public class WithdrawalBtcFailNoticeServiceImpl implements InitializingBean {
         transactionEthWithdrawalApiReq.setTxTo(withdrawal.getTxTo());
         transactionEthWithdrawalApiReq.setCoinType(CoinType.BTC.name());
         transactionEthWithdrawalApiReq.setTxValue(withdrawal.getAmount());
-
         if(transactionBtcUtxo != null) {
             transactionEthWithdrawalApiReq.setTxHash(transactionBtcUtxo.getTxHash());
             transactionEthWithdrawalApiReq.setBlockNumber(transactionBtcUtxo.getBlockNumber());
@@ -115,6 +114,10 @@ public class WithdrawalBtcFailNoticeServiceImpl implements InitializingBean {
     }
 
     protected void sendNotice(AddressNotice addressNotice, Withdrawal withdrawal, TransactionBtcUtxo transactionBtcUtxo) {
+        if(addressNotice == null) {
+            return;
+        }
+
         String noticeAddress = addressNotice.getNoticeAddress();
         // 发送通知
         TransactionEthWithdrawalApiReq transactionEthWithdrawalApiReq = convertTransactionEthWithdrawalApiReq(withdrawal, transactionBtcUtxo);
@@ -133,15 +136,8 @@ public class WithdrawalBtcFailNoticeServiceImpl implements InitializingBean {
     }
 
     protected void withdrawalNotice(Withdrawal withdrawal) {
-        AddressNotice addressNotice = null;
-        try {
-            // 获取通知地址
-            addressNotice = addressNoticeService.getWithdrawalNoticeAddress(withdrawal.getTxTo(), CoinType.BTC.name());
-        } catch (Exception e) {
-            logger.error("transaction btc withdrawal:{}", withdrawal, e);
-            withdrawalService.updateTaskStatusToFail(withdrawal.getId());
-            throw e;
-        }
+        // 获取通知地址
+        AddressNotice addressNotice = addressNoticeService.getWithdrawalNoticeAddress(withdrawal.getTxTo(), CoinType.BTC.name());
 
         TransactionBtcUtxo transactionBtcUtxo = null;
         if(!StringUtils.isTrimEmpty(withdrawal.getTxHash())) {

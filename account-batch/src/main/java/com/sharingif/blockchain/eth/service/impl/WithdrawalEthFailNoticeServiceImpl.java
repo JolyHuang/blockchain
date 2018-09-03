@@ -115,6 +115,10 @@ public class WithdrawalEthFailNoticeServiceImpl implements InitializingBean {
     }
 
     protected void sendNotice(AddressNotice addressNotice, Withdrawal withdrawal, TransactionEth transactionEth) {
+        if(addressNotice == null) {
+            return;
+        }
+
         String noticeAddress = addressNotice.getNoticeAddress();
         // 发送通知
         TransactionEthWithdrawalApiReq transactionEthWithdrawalApiReq = convertTransactionEthToTransactionEthWithdrawalApiReq(withdrawal ,transactionEth);
@@ -139,16 +143,9 @@ public class WithdrawalEthFailNoticeServiceImpl implements InitializingBean {
     }
 
     protected void withdrawalNotice(Withdrawal withdrawal) {
-        AddressNotice addressNotice = null;
-        try {
-            String coinType = withdrawal.getSubCoinType() == null ? withdrawal.getCoinType() : withdrawal.getSubCoinType();
-            // 获取通知地址
-            addressNotice = addressNoticeService.getWithdrawalNoticeAddress(withdrawal.getTxTo(), coinType);
-        } catch (Exception e) {
-            logger.error("withdrawal eth info:{}", withdrawal, e);
-            withdrawalService.updateTaskStatusToFail(withdrawal.getId());
-            throw e;
-        }
+        String coinType = withdrawal.getSubCoinType() == null ? withdrawal.getCoinType() : withdrawal.getSubCoinType();
+        // 获取通知地址
+        AddressNotice addressNotice = addressNoticeService.getWithdrawalNoticeAddress(withdrawal.getTxTo(), coinType);
 
         TransactionEth transactionEth = null;
         if(!StringUtils.isTrimEmpty(withdrawal.getTxHash())) {
