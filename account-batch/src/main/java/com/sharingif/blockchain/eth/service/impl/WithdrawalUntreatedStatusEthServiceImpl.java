@@ -188,7 +188,7 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
             return;
         }
 
-        withdrawalService.updateTaskStatusToSuccessAndStatusToProcessingAndTxHash(withdrawal.getId(), txHash);
+        withdrawalService.updateStatusToProcessingAndTxHash(withdrawal.getId(), txHash);
     }
 
     protected void withdrawalUntreatedStatus(PaginationRepertory<Withdrawal> paginationRepertory) {
