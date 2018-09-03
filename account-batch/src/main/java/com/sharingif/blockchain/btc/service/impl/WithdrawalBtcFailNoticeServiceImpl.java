@@ -148,7 +148,7 @@ public class WithdrawalBtcFailNoticeServiceImpl implements InitializingBean {
         try {
             sendNotice(addressNotice, withdrawal, transactionBtcUtxo);
         } catch (Exception e) {
-            logger.error("withdrawal transaction btc send notice error, info:{}", transactionBtcUtxo, e);
+            logger.error("withdrawal transaction btc send notice error, withdrawal:{}", withdrawal, e);
             return;
         }
 
