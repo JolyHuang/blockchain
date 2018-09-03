@@ -166,4 +166,12 @@ public interface TransactionBtcUtxoService extends IBaseService<TransactionBtcUt
      */
     List<TransactionBtcUtxo> getWithdrawalTransactionBtcUtxo(String address);
 
+    /**
+     * 根据txTo、txHash查询TransactionBtcUtxo
+     * @param txTo
+     * @param txHash
+     * @return
+     */
+    TransactionBtcUtxo getTransactionBtcUtxo(String txTo, String txHash);
+
 }

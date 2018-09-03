@@ -239,4 +239,13 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
         return transactionBtcUtxoDAO.queryList(transactionBtcUtxo);
     }
 
+    @Override
+    public TransactionBtcUtxo getTransactionBtcUtxo(String txTo, String txHash) {
+        TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
+        transactionBtcUtxo.setTxTo(txTo);
+        transactionBtcUtxo.setTxHash(txHash);
+
+        return transactionBtcUtxoDAO.query(transactionBtcUtxo);
+    }
+
 }
