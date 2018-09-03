@@ -222,4 +222,13 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
 
         updateById(transactionEth);
     }
+
+    @Override
+    public TransactionEth getTransactionEth(String txTo, String txHash) {
+        TransactionEth transactionEth = new TransactionEth();
+        transactionEth.setTxTo(txTo);
+        transactionEth.setTxHash(txHash);
+
+        return transactionEthDAO.query(transactionEth);
+    }
 }

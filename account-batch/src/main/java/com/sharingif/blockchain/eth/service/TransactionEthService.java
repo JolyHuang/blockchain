@@ -153,4 +153,12 @@ public interface TransactionEthService extends IBaseService<TransactionEth, Stri
      */
     void updateTaskStatusToFail(String id);
 
+    /**
+     * 根据txTo、txHash查询TransactionEth
+     * @param txTo
+     * @param txHash
+     * @return
+     */
+    TransactionEth getTransactionEth(String txTo, String txHash);
+
 }

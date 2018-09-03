@@ -27,9 +27,17 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
 	 */
 	public static final String STATUS_WITHDRAWAL_SUCCESS = "SUCCESS";
 	/**
+	 * 处理状态(SUCCESS:取现成功已通知)
+	 */
+	public static final String STATUS_WITHDRAWAL_SUCCESS_NOTIFIED = "SUCCESS_NOTIFIED";
+	/**
 	 * 处理状态(FAIL:取现失败)
 	 */
 	public static final String STATUS_WITHDRAWAL_FAIL = "FAIL";
+	/**
+	 * 处理状态(FAIL:取现失败已通知)
+	 */
+	public static final String STATUS_WITHDRAWAL_FAIL_NOTIFIED = "FAIL_NOTIFIED";
 
 	/**
 	 * 处理状态(WCL:未处理)
