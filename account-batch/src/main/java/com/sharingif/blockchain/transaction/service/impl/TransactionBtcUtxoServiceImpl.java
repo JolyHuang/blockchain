@@ -244,6 +244,7 @@ public class TransactionBtcUtxoServiceImpl extends BaseServiceImpl<TransactionBt
         TransactionBtcUtxo transactionBtcUtxo = new TransactionBtcUtxo();
         transactionBtcUtxo.setTxTo(txTo);
         transactionBtcUtxo.setTxHash(txHash);
+        transactionBtcUtxo.setTxType(TransactionBtcUtxo.TX_TYPE_OUT);
 
         return transactionBtcUtxoDAO.query(transactionBtcUtxo);
     }

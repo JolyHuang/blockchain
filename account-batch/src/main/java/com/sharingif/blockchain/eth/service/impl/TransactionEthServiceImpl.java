@@ -228,6 +228,7 @@ public class TransactionEthServiceImpl extends BaseServiceImpl<TransactionEth, S
         TransactionEth transactionEth = new TransactionEth();
         transactionEth.setTxTo(txTo);
         transactionEth.setTxHash(txHash);
+        transactionEth.setTxType(TransactionEth.TX_TYPE_OUT);
 
         return transactionEthDAO.query(transactionEth);
     }
