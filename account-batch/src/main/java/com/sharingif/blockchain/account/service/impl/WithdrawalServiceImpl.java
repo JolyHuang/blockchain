@@ -128,11 +128,12 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, String> i
 	}
 
 	@Override
-	public void updateStatusToProcessingAndTxHash(String id, String txHash) {
+	public void updateStatusToProcessingAndTaskStatusToUntreatedAndTxHash(String id, String txHash) {
 		Withdrawal withdrawal = new Withdrawal();
 		withdrawal.setId(id);
 		withdrawal.setTxHash(txHash);
 		withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_PROCESSING);
+		withdrawal.setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
 
 		withdrawalDAO.updateById(withdrawal);
 	}

@@ -89,7 +89,7 @@ public interface WithdrawalService extends IBaseService<Withdrawal, String> {
      * @param id
      * @param txHash
      */
-    void updateStatusToProcessingAndTxHash(String id, String txHash);
+    void updateStatusToProcessingAndTaskStatusToUntreatedAndTxHash(String id, String txHash);
 
     /**
      * 修改状态为成功通知
