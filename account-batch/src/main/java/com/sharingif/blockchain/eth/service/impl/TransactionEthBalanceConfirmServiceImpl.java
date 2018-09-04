@@ -72,7 +72,7 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
 
     protected void in(TransactionEth transactionEth) {
         if(TransactionEth.TX_RECEIPT_STATUS_FAIL.equals(transactionEth.getTxReceiptStatus())) {
-            logger.info("eth in receipt status is valid, transactionEth:{}", transactionEth);
+            logger.info("eth in receipt status is fail, transactionEth:{}", transactionEth);
 
             transactionEthService.updateTxStatusToValid(transactionEth.getId());
 

@@ -67,20 +67,6 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
     }
 
     protected void in(TransactionBtcUtxo transactionBtcUtxo) {
-        // 如果入账前还有未处理的出账入账暂不处理
-        List<TransactionBtcUtxo> withdrawalTransactionBtcUtxoList = transactionBtcUtxoService.getWithdrawalTransactionBtcUtxo(transactionBtcUtxo.getTxTo());
-        if(withdrawalTransactionBtcUtxoList != null) {
-            for(TransactionBtcUtxo withdrawalTransactionBtcUtxo : withdrawalTransactionBtcUtxoList) {
-                String withdrawalTxStatus = withdrawalTransactionBtcUtxo.getTxStatus();
-                if(TransactionBtcUtxo.TX_STATUS_INVALID.equals(withdrawalTxStatus)
-                        &&TransactionBtcUtxo.TX_STATUS_VALID.equals(withdrawalTxStatus)
-                        &&TransactionBtcUtxo.TX_STATUS_WITHDRAWAL_SUCCESS_NOTIFIED.equals(withdrawalTxStatus)
-                        &&TransactionBtcUtxo.TX_STATUS_WITHDRAWAL_FAIL_NOTIFIED.equals(withdrawalTxStatus)
-                ) {
-                    return;
-                }
-            }
-        }
 
         String address = transactionBtcUtxo.getTxTo();
         Account account = accountService.getNormalAccountByAddress(address, CoinType.BTC.name());
