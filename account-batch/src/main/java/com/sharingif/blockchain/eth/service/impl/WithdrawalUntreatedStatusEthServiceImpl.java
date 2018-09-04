@@ -1,9 +1,12 @@
 package com.sharingif.blockchain.eth.service.impl;
 
+import co.olivecoin.wallet.api.blockchain.entity.TransactionEthWithdrawalApiReq;
+import co.olivecoin.wallet.api.blockchain.service.TransactionEthApiService;
 import com.sharingif.blockchain.account.model.entity.Withdrawal;
 import com.sharingif.blockchain.account.service.AccountService;
 import com.sharingif.blockchain.account.service.AddressNonceService;
 import com.sharingif.blockchain.account.service.WithdrawalService;
+import com.sharingif.blockchain.app.components.UrlBody;
 import com.sharingif.blockchain.app.constants.Constants;
 import com.sharingif.blockchain.common.components.ole.OleContract;
 import com.sharingif.blockchain.crypto.api.eth.entity.Erc20TransferReq;
@@ -15,6 +18,10 @@ import com.sharingif.blockchain.crypto.api.eth.service.EthErc20ContractApiServic
 import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.service.SecretKeyService;
 import com.sharingif.blockchain.eth.service.EthereumService;
+import com.sharingif.blockchain.transaction.model.entity.AddressNotice;
+import com.sharingif.blockchain.transaction.model.entity.TransactionEth;
+import com.sharingif.blockchain.transaction.service.AddressNoticeService;
+import com.sharingif.blockchain.transaction.service.AddressNoticeSignatureService;
 import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.persistence.database.pagination.PaginationCondition;
 import com.sharingif.cube.persistence.database.pagination.PaginationRepertory;
@@ -54,6 +61,9 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
     private OleContract oleContract;
     private AccountService accountService;
     private DataSourceTransactionManager dataSourceTransactionManager;
+    private AddressNoticeService addressNoticeService;
+    private AddressNoticeSignatureService addressNoticeSignatureService;
+    private TransactionEthApiService transactionEthApiService;
 
     @Resource
     public void setWithdrawalService(WithdrawalService withdrawalService) {
@@ -90,6 +100,52 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
     @Resource
     public void setDataSourceTransactionManager(DataSourceTransactionManager dataSourceTransactionManager) {
         this.dataSourceTransactionManager = dataSourceTransactionManager;
+    }
+    @Resource
+    public void setAddressNoticeService(AddressNoticeService addressNoticeService) {
+        this.addressNoticeService = addressNoticeService;
+    }
+    @Resource
+    public void setAddressNoticeSignatureService(AddressNoticeSignatureService addressNoticeSignatureService) {
+        this.addressNoticeSignatureService = addressNoticeSignatureService;
+    }
+    @Resource
+    public void setTransactionEthApiService(TransactionEthApiService transactionEthApiService) {
+        this.transactionEthApiService = transactionEthApiService;
+    }
+
+    protected TransactionEthWithdrawalApiReq convertTransactionEthToTransactionEthWithdrawalApiReq(Withdrawal withdrawal) {
+        TransactionEthWithdrawalApiReq transactionEthWithdrawalApiReq = new TransactionEthWithdrawalApiReq();
+        transactionEthWithdrawalApiReq.setWithdrawalId(withdrawal.getWithdrawalId());
+        transactionEthWithdrawalApiReq.setTxStatus(TransactionEth.TX_STATUS_UNTREATED);
+        transactionEthWithdrawalApiReq.setTxFrom(withdrawal.getTxFrom());
+        transactionEthWithdrawalApiReq.setTxTo(withdrawal.getTxTo());
+        String coinType = withdrawal.getSubCoinType() == null ? withdrawal.getCoinType() : withdrawal.getSubCoinType();
+        transactionEthWithdrawalApiReq.setCoinType(coinType);
+        transactionEthWithdrawalApiReq.setTxValue(withdrawal.getAmount());
+        transactionEthWithdrawalApiReq.setTxHash(withdrawal.getTxHash());
+        transactionEthWithdrawalApiReq.setTxType(TransactionEth.TX_TYPE_OUT);
+
+        return transactionEthWithdrawalApiReq;
+    }
+
+    protected void sendNotice(Withdrawal withdrawal) {
+        String coinType = withdrawal.getSubCoinType() == null ? withdrawal.getCoinType() : withdrawal.getSubCoinType();
+        // 获取通知地址
+        AddressNotice addressNotice = addressNoticeService.getWithdrawalNoticeAddress(withdrawal.getTxTo(), coinType);
+
+        if(addressNotice == null) {
+            return;
+        }
+
+        String noticeAddress = addressNotice.getNoticeAddress();
+        // 发送通知
+        TransactionEthWithdrawalApiReq transactionEthWithdrawalApiReq = convertTransactionEthToTransactionEthWithdrawalApiReq(withdrawal);
+        transactionEthWithdrawalApiReq.setSign(addressNoticeSignatureService.sign(transactionEthWithdrawalApiReq.getSignData()));
+        UrlBody<TransactionEthWithdrawalApiReq> transactionEthWithdrawalApiReqUrlBody = new UrlBody<TransactionEthWithdrawalApiReq>();
+        transactionEthWithdrawalApiReqUrlBody.setUrl(noticeAddress);
+        transactionEthWithdrawalApiReqUrlBody.setBody(transactionEthWithdrawalApiReq);
+        transactionEthApiService.withdrawal(transactionEthWithdrawalApiReqUrlBody);
     }
 
     private String ethWithdrawal(SecretKey secretKey, BigInteger nonce, BigInteger gasPrice, String password, Withdrawal withdrawal) {
@@ -189,6 +245,12 @@ public class WithdrawalUntreatedStatusEthServiceImpl implements InitializingBean
         }
 
         withdrawalService.updateStatusToProcessingAndTaskStatusToUntreatedAndTxHash(withdrawal.getId(), txHash);
+
+        try {
+            sendNotice(withdrawal);
+        } catch (Exception e) {
+            logger.error("withdrawal eth send processing notice error", e);
+        }
     }
 
     protected void withdrawalUntreatedStatus(PaginationRepertory<Withdrawal> paginationRepertory) {
