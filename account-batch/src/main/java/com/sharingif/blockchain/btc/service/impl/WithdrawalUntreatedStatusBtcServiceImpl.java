@@ -183,6 +183,7 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
         withdrawalService.updateStatusToProcessingAndTaskStatusToUntreatedAndTxHash(withdrawal.getId(), txHash);
 
         try {
+            withdrawal.setTxHash(txHash);
             sendNotice(withdrawal);
         } catch (Exception e) {
             logger.error("withdrawal btc send processing notice error", e);
