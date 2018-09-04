@@ -15,8 +15,11 @@ import com.sharingif.blockchain.crypto.model.entity.SecretKey;
 import com.sharingif.blockchain.crypto.service.SecretKeyService;
 import com.sharingif.blockchain.transaction.service.AddressNoticeService;
 import com.sharingif.cube.core.exception.validation.ValidationCubeException;
+import com.sharingif.cube.core.util.StringUtils;
 import com.sharingif.cube.support.service.base.impl.BaseServiceImpl;
+import org.bitcoinj.core.Base58;
 import org.springframework.stereotype.Service;
+import org.web3j.utils.Numeric;
 
 import javax.annotation.Resource;
 
@@ -61,6 +64,8 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, java.lang
 
 	@Override
 	public void apply(WithdrawalApplyReq req) {
+        checkAddress(req);
+
 		// 添加支付记录
 		Withdrawal withdrawal = Withdrawal.convertWithdrawalReqToWithdrawal(req);
 
@@ -104,6 +109,44 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, java.lang
 			logger.error("insufficient balance error, account:{}, reqAmount:{}", account, req.getAmount());
 			throw new ValidationCubeException("insufficient balance");
 		}
+	}
+
+    /**
+     * 地址校验
+     * @param req
+     */
+	protected void checkAddress(WithdrawalApplyReq req) {
+        if(CoinType.ETH.name().equals(req.getCoinType())) {
+            String ethAddress = req.getAddress();
+            if (StringUtils.isTrimEmpty(ethAddress) || !ethAddress.startsWith("0x") || ethAddress.length() != 42) {
+                throwInvalidAddressException();
+            }
+
+            try {
+                String cleanInput = Numeric.cleanHexPrefix(ethAddress);
+                // 校验不通过会报错
+                Numeric.toBigIntNoPrefix(cleanInput);
+            } catch (Exception e) {
+                throwInvalidAddressException();
+            }
+        }
+        if(CoinType.BTC.name().equals(req.getCoinType())) {
+            String btcAddress = req.getAddress();
+            // 先判断长度是否是34
+            if(btcAddress.length() != 34) {
+                throwInvalidAddressException();
+            }
+
+            try {
+                Base58.decodeChecked(btcAddress);
+            } catch (Exception e) {
+                throwInvalidAddressException();
+            }
+        }
+    }
+
+	protected void throwInvalidAddressException() {
+		throw new ValidationCubeException("invalid address");
 	}
 
 }
