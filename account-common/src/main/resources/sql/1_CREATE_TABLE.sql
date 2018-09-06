@@ -114,6 +114,7 @@ CREATE TABLE WITHDRAWAL
   TX_FROM               VARCHAR(100) COMMENT 'FORM地址',
   TX_TO                 VARCHAR(100) COMMENT 'TO地址',
   AMOUNT                DECIMAL(65,0) COMMENT '金额',
+  FROZEN_AMOUNT         DECIMAL(65,0) NOT NULL COMMENT '冻结金额',
   FEE                   DECIMAL(65,0) COMMENT '手续费',
   TX_HASH               VARCHAR(100) COMMENT '交易hash',
   STATUS                VARCHAR(20) NOT NULL COMMENT '处理状态(CZWCL:充值未处理、CZCLZ:充值处理中、SUCCESS:充值成功、FAIL:充值失败)',
