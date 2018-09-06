@@ -128,6 +128,14 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
         transactionEthApiService.withdrawal(transactionEthWithdrawalApiReqUrlBody);
     }
 
+    protected BigInteger getTotalBalance(List<Output> outputList) {
+        BigInteger balance = BigInteger.ZERO;
+        for(Output output : outputList) {
+            balance = balance.add(output.getAmount().multiply(TransactionBtcUtxo.BTC_UNIT).toBigInteger());
+        }
+        return balance;
+    }
+
     protected void withdrawalUntreatedStatus(Withdrawal withdrawal) {
         withdrawalService.updateTaskStatusToProcessing(withdrawal.getId());
 
@@ -139,12 +147,15 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
             fee = new BigInteger("30000");
         }
 
+        List<Output> outputList = btcService.getListUnspent(secretKey.getAddress(), withdrawal.getAmount(), fee);
+
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         TransactionStatus status = dataSourceTransactionManager.getTransaction(def);
         try {
-            accountService.freezingBalance(withdrawal.getTxFrom(), withdrawal.getCoinType(), withdrawal.getAmount().add(fee));
-            withdrawalService.updateFee(withdrawal.getId(), fee);
+            BigInteger frozenAmount = getTotalBalance(outputList);
+            accountService.freezingBalance(withdrawal.getTxFrom(), withdrawal.getCoinType(), frozenAmount);
+            withdrawalService.updateFeeAndFrozenAmount(withdrawal.getId(), fee, frozenAmount);
 
             dataSourceTransactionManager.commit(status);
         } catch (Exception e) {
@@ -152,8 +163,6 @@ public class WithdrawalUntreatedStatusBtcServiceImpl implements InitializingBean
             dataSourceTransactionManager.rollback(status);
             throw e;
         }
-
-        List<Output> outputList = btcService.getListUnspent(secretKey.getAddress(), withdrawal.getAmount(), fee);
 
         BtcTransferReq req = new BtcTransferReq();
         req.setSecretKeyId(secretKey.getId());

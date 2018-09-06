@@ -132,7 +132,7 @@ public class WithdrawalBtcFailNoticeServiceImpl implements InitializingBean {
 
     void updateTxStatus(Withdrawal withdrawal) {
         Account account = accountService.getNormalAccountByAddress(withdrawal.getTxFrom(), CoinType.BTC.name());
-        accountService.unfreezeBalance(account.getId(), withdrawal.getAmount().add(withdrawal.getFee()));
+        accountService.unfreezeBalance(account.getId(), withdrawal.getFrozenAmount());
 
         getWithdrawalService().updateStatusToFailNotified(withdrawal.getId());
     }

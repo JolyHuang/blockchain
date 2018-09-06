@@ -118,6 +118,14 @@ public interface WithdrawalService extends IBaseService<Withdrawal, String> {
     void updateFee(String id, BigInteger fee);
 
     /**
+     * 修改手续费、冻结余额
+     * @param id
+     * @param fee
+     * @param frozenAmount
+     */
+    void updateFeeAndFrozenAmount(String id, BigInteger fee, BigInteger frozenAmount);
+
+    /**
      * 根据地址获取未处理取现列表
      * @param txFrom
      * @return

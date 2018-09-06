@@ -30,6 +30,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	<if test="null!=amount">
     		and AMOUNT = #{amount}
     	</if>
+    	<if test="null!=frozenAmount">
+    		and FROZEN_AMOUNT = #{frozenAmount}
+    	</if>
     	<if test="null!=fee">
     		and FEE = #{fee}
     	</if>
@@ -72,6 +75,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		    <if test="null!=amount">
 		    AMOUNT = #{amount},
 		    </if>
+		    <if test="null!=frozenAmount">
+		    FROZEN_AMOUNT = #{frozenAmount},
+		    </if>
 		    <if test="null!=fee">
 		    FEE = #{fee},
 		    </if>
@@ -100,6 +106,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         <result property="txFrom" column="TX_FROM"/>
         <result property="txTo" column="TX_TO"/>
         <result property="amount" column="AMOUNT"/>
+        <result property="frozenAmount" column="FROZEN_AMOUNT"/>
         <result property="fee" column="FEE"/>
         <result property="txHash" column="TX_HASH"/>
         <result property="status" column="STATUS"/>
@@ -118,6 +125,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,TX_FROM
         	,TX_TO
         	,AMOUNT
+        	,FROZEN_AMOUNT
         	,FEE
         	,TX_HASH
         	,STATUS
@@ -132,6 +140,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         	,#{txFrom}
         	,#{txTo}
         	,#{amount}
+        	,#{frozenAmount}
         	,#{fee}
         	,#{txHash}
         	,#{status}
@@ -175,6 +184,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TX_FROM
 			,TX_TO
 			,AMOUNT
+			,FROZEN_AMOUNT
 			,FEE
 			,TX_HASH
 			,STATUS
@@ -196,6 +206,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TX_FROM
 			,TX_TO
 			,AMOUNT
+			,FROZEN_AMOUNT
 			,FEE
 			,TX_HASH
 			,STATUS
@@ -220,6 +231,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TX_FROM
 			,TX_TO
 			,AMOUNT
+			,FROZEN_AMOUNT
 			,FEE
 			,TX_HASH
 			,STATUS
@@ -251,6 +263,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			,TX_FROM
 			,TX_TO
 			,AMOUNT
+			,FROZEN_AMOUNT
 			,FEE
 			,TX_HASH
 			,STATUS

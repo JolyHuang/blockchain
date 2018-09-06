@@ -174,6 +174,16 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, String> i
 	}
 
 	@Override
+	public void updateFeeAndFrozenAmount(String id, BigInteger fee, BigInteger frozenAmount) {
+		Withdrawal withdrawal = new Withdrawal();
+		withdrawal.setId(id);
+		withdrawal.setFee(fee);
+		withdrawal.setFrozenAmount(frozenAmount);
+
+		withdrawalDAO.updateById(withdrawal);
+	}
+
+	@Override
 	public List<Withdrawal> getUntreatedStatusByTxFrom(String txFrom) {
 		Withdrawal withdrawal = new Withdrawal();
 		withdrawal.setTxFrom(txFrom);

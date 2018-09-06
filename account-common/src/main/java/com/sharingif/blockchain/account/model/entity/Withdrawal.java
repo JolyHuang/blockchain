@@ -1,11 +1,12 @@
 package com.sharingif.blockchain.account.model.entity;
 
 
+import javax.validation.constraints.*;
+
 import com.sharingif.blockchain.account.api.account.entity.WithdrawalApplyReq;
 import com.sharingif.cube.components.monitor.IObjectDateOperationHistory;
 import com.sharingif.cube.components.sequence.Sequence;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -55,7 +56,7 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
 	 * 处理状态(FAIL:处理失败)
 	 */
 	public static final String TASK_STATUS_FAIL = "FAIL";
-
+	
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
 	//columns START
     /**
@@ -94,6 +95,11 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
      */	
 	
 	private BigInteger amount;
+    /**
+     * 冻结金额			db_column: FROZEN_AMOUNT 
+     */	
+	@NotNull 
+	private BigInteger frozenAmount;
     /**
      * 手续费			db_column: FEE 
      */	
@@ -168,6 +174,12 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
 	public BigInteger getAmount() {
 		return this.amount;
 	}
+	public void setFrozenAmount(BigInteger frozenAmount) {
+		this.frozenAmount = frozenAmount;
+	}
+	public BigInteger getFrozenAmount() {
+		return this.frozenAmount;
+	}
 	public void setFee(BigInteger fee) {
 		this.fee = fee;
 	}
@@ -224,6 +236,7 @@ public class Withdrawal implements java.io.Serializable, IObjectDateOperationHis
 					.append("TxFrom=").append(getTxFrom()).append(", ")
 					.append("TxTo=").append(getTxTo()).append(", ")
 					.append("Amount=").append(getAmount()).append(", ")
+					.append("FrozenAmount=").append(getFrozenAmount()).append(", ")
 					.append("Fee=").append(getFee()).append(", ")
 					.append("TxHash=").append(getTxHash()).append(", ")
 					.append("Status=").append(getStatus()).append(", ")
