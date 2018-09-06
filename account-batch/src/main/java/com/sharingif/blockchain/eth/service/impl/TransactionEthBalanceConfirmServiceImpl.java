@@ -97,6 +97,9 @@ public class TransactionEthBalanceConfirmServiceImpl implements InitializingBean
         }
         BigInteger txBalance = transactionEth.getTxValue();
         BigInteger currentBalance = account.getBalance().add(txBalance);
+
+        logger.info("eth comfirm balance, accountId:{}, address:{}, currentBalance:{}, blockBalance:{}", account.getId(), address, currentBalance, blockBalance);
+
         if(currentBalance.compareTo(blockBalance) <= 0) {
             accountService.inBalance(
                     account.getId()

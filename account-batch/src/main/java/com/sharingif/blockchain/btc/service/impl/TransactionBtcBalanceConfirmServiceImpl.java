@@ -80,6 +80,8 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
         BigInteger txBalance = transactionBtcUtxo.getTxValue();
         BigInteger currentBalance = account.getBalance().add(txBalance);
 
+        logger.info("btc comfirm balance,accountId:{}, address:{}, currentBalance:{}, blockBalance:{}",account.getId(), address, currentBalance, blockBalance);
+
         if(currentBalance.compareTo(blockBalance) <= 0) {
             accountService.inBalance(
                     account.getId()
