@@ -98,6 +98,7 @@ public class BtcConcentrationServiceImpl implements InitializingBean {
         withdrawal.setTxTo(secretKey.getAddress());
         withdrawal.setFee(fee);
         withdrawal.setAmount(amount);
+        withdrawal.setFrozenAmount(BigInteger.ZERO);
         withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
         withdrawal.setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
         withdrawalService.add(withdrawal);

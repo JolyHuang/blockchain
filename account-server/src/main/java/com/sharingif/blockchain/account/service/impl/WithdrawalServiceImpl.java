@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.web3j.utils.Numeric;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
 
 @Service
 public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, java.lang.String> implements WithdrawalService {
@@ -85,6 +86,7 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, java.lang
 		validateWithdrawalAccountBalance(secretKey, req);
 
 		withdrawal.setTxFrom(secretKey.getAddress());
+		withdrawal.setFrozenAmount(BigInteger.ZERO);
 		withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
 		withdrawal.setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
 		withdrawalDAO.insert(withdrawal);
