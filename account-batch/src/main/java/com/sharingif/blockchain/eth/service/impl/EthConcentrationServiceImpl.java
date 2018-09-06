@@ -117,6 +117,7 @@ public class EthConcentrationServiceImpl implements InitializingBean {
         withdrawal.setTxTo(secretKey.getAddress());
         withdrawal.setFee(gasPrice);
         withdrawal.setAmount(account.getBalance().subtract(gasPrice.multiply(Transfer.GAS_LIMIT)));
+        withdrawal.setFrozenAmount(BigInteger.ZERO);
         withdrawal.setStatus(Withdrawal.STATUS_WITHDRAWAL_UNTREATED);
         withdrawal.setTaskStatus(Withdrawal.TASK_STATUS_UNTREATED);
         withdrawalService.add(withdrawal);
