@@ -76,7 +76,7 @@ public class TransactionBtcBalanceConfirmServiceImpl implements InitializingBean
             transactionBtcUtxoService.updateTxStatusToBalanceError(transactionBtcUtxo.getId());
         }
 
-        BigInteger blockBalance = btcService.getReceivedByAddress(address, transactionBtcUtxo.getConfirmBlockNumber());
+        BigInteger blockBalance = btcService.getBalanceByAddress(address);
         BigInteger txBalance = transactionBtcUtxo.getTxValue();
         BigInteger currentBalance = account.getBalance().add(txBalance);
 

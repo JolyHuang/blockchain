@@ -58,12 +58,19 @@ public interface BtcService {
     RawTransaction getRawTransaction(String txId);
 
     /**
-     * 查询地址余额
+     * 查询接收金额
      * @param address
      * @param confirmations
      * @return
      */
     BigInteger getReceivedByAddress(String address, Integer confirmations);
+
+    /**
+     * 根据地址查询余额
+     * @param address
+     * @return
+     */
+    BigInteger getBalanceByAddress(String address);
 
     /**
      * 签名交易

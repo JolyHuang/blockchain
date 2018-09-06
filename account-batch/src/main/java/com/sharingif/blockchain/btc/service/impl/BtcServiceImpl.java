@@ -113,6 +113,26 @@ public class BtcServiceImpl implements BtcService {
         }
     }
 
+    @Override
+    public BigInteger getBalanceByAddress(String address) {
+        BigInteger balance = BigInteger.ZERO;
+
+        List<Output> outputs = null;
+        try {
+            outputs = btcdClient.listUnspent(2,9999999, Arrays.asList(address));
+        } catch (Exception e) {
+            logger.error("get getlistUnspent error", e);
+            throw new CubeRuntimeException(e);
+        }
+        if(outputs == null) {
+            return balance;
+        }
+        for(Output output : outputs) {
+            balance = balance.add(output.getAmount().multiply(TransactionBtcUtxo.BTC_UNIT).toBigInteger());
+        }
+        return balance;
+    }
+
     public String signRawTransaction(String rawTransaction) {
         SignatureResult signatureResult;
         try {
