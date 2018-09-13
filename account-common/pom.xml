@@ -4,7 +4,7 @@
 
 	<groupId>com.sharingif.blockchain</groupId>
 	<artifactId>account-common</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>201809131-RELEASE</version>
 	<packaging>jar</packaging>
 	<name>account-common</name>
 	<url>http://maven.apache.org</url>
@@ -73,12 +73,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>crypto-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>201809131-RELEASE</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>account-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>201809131-RELEASE</version>
         </dependency>
 
         <dependency>
