@@ -6,7 +6,7 @@
 
     <groupId>com.sharingif.blockchain</groupId>
     <artifactId>crypto-server</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>201809131-RELEASE</version>
     <packaging>jar</packaging>
     <name>crypto-server Maven Webapp</name>
     <url>http://maven.apache.org</url>
@@ -71,7 +71,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>crypto-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>201809131-RELEASE</version>
         </dependency>
 
         <dependency>

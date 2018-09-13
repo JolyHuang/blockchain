@@ -6,7 +6,7 @@
 
     <groupId>com.sharingif.blockchain</groupId>
     <artifactId>crypto-api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>201809131-RELEASE</version>
     <packaging>jar</packaging>
     <name>crypto-api Maven Webapp</name>
     <url>http://maven.apache.org</url>
