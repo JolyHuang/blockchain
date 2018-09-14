@@ -275,7 +275,8 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         } else {
             startBlockNumber = blockChainSync.getCurrentSyncBlockNumber();
             // 判断当前块数是否与区块链区块数相等，如果相等不处理
-            if(startBlockNumber.compareTo(blockNumber) == 0) {
+            if(startBlockNumber.compareTo(blockNumber) >= 0) {
+                logger.info("startBlockNumber more than blockNumber return,startBlockNumber:{},blockNumber:{}",startBlockNumber,blockNumber);
                 return;
             }
         }
