@@ -115,15 +115,24 @@ public class EthereumServiceImpl implements EthereumService {
 
     @Override
     public BigInteger ethGetTransactionCountPending(String address) {
-        EthGetTransactionCount ethGetTransactionCount = null;
+        EthGetTransactionCount ethGetTransactionCountPending = null;
+        EthGetTransactionCount ethGetTransactionCountLatest = null;
         try {
-            ethGetTransactionCount = web3j.ethGetTransactionCount(address, DefaultBlockParameterName.PENDING).sendAsync().get();
+            ethGetTransactionCountPending = web3j.ethGetTransactionCount(address, DefaultBlockParameterName.PENDING).sendAsync().get();
+            ethGetTransactionCountLatest = web3j.ethGetTransactionCount(address, DefaultBlockParameterName.LATEST).sendAsync().get();
         } catch (Exception e) {
             logger.error("ethGetTransactionCountPending error", e);
             throw new CubeRuntimeException(e);
         }
 
-        return ethGetTransactionCount.getTransactionCount();
+        BigInteger noncePending = ethGetTransactionCountPending.getTransactionCount();
+        BigInteger nonceLatest = ethGetTransactionCountLatest.getTransactionCount();
+
+        if(noncePending.compareTo(nonceLatest) > 0) {
+            return noncePending;
+        } else {
+            return nonceLatest;
+        }
     }
 
 }
