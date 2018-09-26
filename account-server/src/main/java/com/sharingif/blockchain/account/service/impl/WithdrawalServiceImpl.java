@@ -2,6 +2,7 @@ package com.sharingif.blockchain.account.service.impl;
 
 
 import com.sharingif.blockchain.account.api.account.entity.WithdrawalApplyReq;
+import com.sharingif.blockchain.account.api.account.entity.WithdrawalApplyRsp;
 import com.sharingif.blockchain.account.dao.WithdrawalDAO;
 import com.sharingif.blockchain.account.model.entity.Account;
 import com.sharingif.blockchain.account.model.entity.Withdrawal;
@@ -64,7 +65,7 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, java.lang
 	}
 
 	@Override
-	public void apply(WithdrawalApplyReq req) {
+	public WithdrawalApplyRsp apply(WithdrawalApplyReq req) {
         checkAddress(req);
 
 		// 添加支付记录
@@ -99,6 +100,11 @@ public class WithdrawalServiceImpl extends BaseServiceImpl<Withdrawal, java.lang
 				,req.getCoinType()
 		);
 
+		WithdrawalApplyRsp rsp = new WithdrawalApplyRsp();
+		rsp.setWithdrawalId(req.getWithdrawalId());
+		rsp.setWithdrawalOrderId(withdrawal.getId());
+
+		return rsp;
 	}
 
 	/**
