@@ -4,7 +4,7 @@
 
 	<groupId>com.sharingif.blockchain</groupId>
 	<artifactId>account-batch</artifactId>
-	<version>201809301-RELEASE</version>
+	<version>201810111-RELEASE</version>
 	<packaging>jar</packaging>
 	<name>account-batch</name>
 	<url>http://maven.apache.org</url>
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>account-common</artifactId>
-            <version>201809131-RELEASE</version>
+            <version>201810111-RELEASE</version>
         </dependency>
         <dependency>
             <groupId>co.olivecoin.wallet</groupId>

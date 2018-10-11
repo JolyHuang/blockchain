@@ -4,7 +4,7 @@
 
 	<groupId>com.sharingif.blockchain</groupId>
 	<artifactId>account-common</artifactId>
-	<version>201809301-RELEASE</version>
+	<version>201810111-RELEASE</version>
 	<packaging>jar</packaging>
 	<name>account-common</name>
 	<url>http://maven.apache.org</url>
