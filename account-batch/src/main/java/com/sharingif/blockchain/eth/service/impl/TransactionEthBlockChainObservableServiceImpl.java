@@ -129,11 +129,12 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         persistenceAndNoticeTransactionEth(transactionEth);
     }
 
-    protected void handlerEthContractTransactions(TransactionEth transactionEth, ETHAddressRegister ethAddressRegister, TransactionReceipt transactionReceipt){
+    protected void handlerEthContractTransactions(TransactionEth transactionEth, ETHAddressRegister ethAddressRegister){
         Map<String, String> subCoinTypeMap = ethAddressRegister.getSubCoinTypeMap(transactionEth.getTxTo());
 
         List<Type> transferResponseList = oleContract.getTransfer(transactionEth.getTxInput());
         if(transferResponseList == null || transferResponseList.isEmpty()) {
+            logger.info("transfer response list is null, transactionEth:{}", transactionEth);
             return;
         }
 
@@ -185,7 +186,7 @@ public class TransactionEthBlockChainObservableServiceImpl implements Initializi
         // 查询需要监听的数据
         ETHAddressRegister ethAddressRegister = addressRegisterService.getETHAddressRegister();
         if(isListenContractTrans(transactionEth, ethAddressRegister)) {
-            handlerEthContractTransactions(transactionEth, ethAddressRegister, transactionReceipt);
+            handlerEthContractTransactions(transactionEth, ethAddressRegister);
             return;
         }
 

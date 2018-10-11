@@ -529,6 +529,10 @@ public class OleContract extends Contract {
     }
 
     public List<Type> getTransfer(String inputData) {
+        if(inputData.length()<10) {
+            return null;
+        }
+
         Function function = new Function(
                 FUNC_TRANSFER,
                 Arrays.<Type>asList(Address.DEFAULT, Uint256.DEFAULT),
