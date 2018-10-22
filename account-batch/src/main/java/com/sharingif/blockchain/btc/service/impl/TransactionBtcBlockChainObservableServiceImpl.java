@@ -4,11 +4,11 @@ import com.neemre.btcdcli4j.core.domain.*;
 import com.neemre.btcdcli4j.core.domain.enums.ScriptTypes;
 import com.sharingif.blockchain.btc.entity.UtxoRawInput;
 import com.sharingif.blockchain.btc.service.BtcService;
+import com.sharingif.blockchain.btc.service.TransactionBtcUtxoService;
 import com.sharingif.blockchain.transaction.model.entity.BlockChainSync;
 import com.sharingif.blockchain.transaction.model.entity.TransactionBtcUtxo;
 import com.sharingif.blockchain.transaction.service.AddressRegisterService;
 import com.sharingif.blockchain.transaction.service.BlockChainSyncService;
-import com.sharingif.blockchain.btc.service.TransactionBtcUtxoService;
 import com.sharingif.cube.core.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,7 +179,14 @@ public class TransactionBtcBlockChainObservableServiceImpl implements Initializi
                 continue;
             }
 
-            RawTransaction inRawTransaction = btcService.getRawTransaction(txId);
+            RawTransaction inRawTransaction = null;
+            try{
+                inRawTransaction = btcService.getRawTransaction(txId);
+            } catch (Throwable e) {
+                logger.error("btcService.getRawTransaction,txHash:{}, txId:{}, throwable:{}", txHash, txId, e);
+                continue;
+            }
+
             RawOutput rawOutput = inRawTransaction.getVOut().get(vOutIndex);
 
             UtxoRawInput utxoRawInput = new UtxoRawInput();

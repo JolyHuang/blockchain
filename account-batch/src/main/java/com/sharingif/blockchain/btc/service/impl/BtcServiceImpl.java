@@ -98,8 +98,8 @@ public class BtcServiceImpl implements BtcService {
     public RawTransaction getRawTransaction(String txId) {
         try {
             return (RawTransaction)btcdClient.getRawTransaction(txId, 1);
-        } catch (Exception e) {
-            logger.error("get raw transaction error", e);
+        } catch (Throwable e) {
+            logger.error("get raw transaction error,txId:{}, throwable:{}", txId, e);
             throw new CubeRuntimeException(e);
         }
     }
